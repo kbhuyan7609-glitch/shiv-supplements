@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS orders(
 
 app.use(express.json({limit:"1mb"}));
 app.use(express.urlencoded({extended:true}));
+app.set("trust proxy", 1);
 app.use(session({
  secret:process.env.SESSION_SECRET||"CHANGE_THIS_SECRET",
  resave:false,saveUninitialized:false,
