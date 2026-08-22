@@ -111,55 +111,31 @@ function loginForm(){
  <p style="color:#99a3b3;font-size:12px;margin-top:14px">New customer? Tap <b>Registration</b> above.</p>`;
 }
 function registerForm() {
-  return `
-    <div class="row">
-
-      <div class="field">
-        <label>Full Name *</label>
-        <input id="name" placeholder="Your full name">
-      </div>
-
-      <div class="field">
-        <label>Mobile Number *</label>
-        <input id="cphone" name="phone" type="tel"
-               maxlength="10"
-               placeholder="10-digit mobile number">
-      </div>
-
-      <div class="field">
-        <label>Email Address *</label>
-        <input id="email" type="email"
-               placeholder="your@email.com">
-      </div>
-
-      <div class="field">
-        <label>Password *</label>
-        <input id="password" type="password"
-               placeholder="Minimum 6 characters">
-      </div>
-
-      <button class="primary" onclick="register()">
-        Send OTP
-      </button>
-
-      <div id="otpArea" style="display:none;margin-top:12px">
-
-        <div class="field">
-          <label>Enter OTP *</label>
-          <input id="otp"
-                 type="text"
-                 maxlength="6"
-                 placeholder="Enter 6-digit OTP">
-        </div>
-
-        <button class="primary" onclick="verifyRegistrationOTP()">
-          Verify OTP & Create Account
-        </button>
-
-      </div>
-
+  return `<div class="row">
+    <div class="field">
+      <label>Full Name *</label>
+      <input id="name" placeholder="Your full name">
     </div>
-  `;
+
+    <div class="field">
+      <label>Mobile Number *</label>
+      <input id="regPhone" type="tel" maxlength="10" placeholder="10-digit mobile number">
+    </div>
+
+    <div class="field">
+      <label>Email Address *</label>
+      <input id="email" type="email" placeholder="your@email.com">
+    </div>
+
+    <div class="field">
+      <label>Password *</label>
+      <input id="password" type="password" placeholder="Minimum 6 characters">
+    </div>
+  </div>
+
+  <button class="primary" onclick="register()">
+    Create Account
+  </button>`;
 }
 function showLogin(){
  document.getElementById("loginTab").className="tab active";
@@ -172,50 +148,42 @@ function showRegister(){
  document.getElementById("formArea").innerHTML=registerForm();
 }
 async function login(){let r=await fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:val("email"),password:val("password")})});let x=await r.json();if(!r.ok)return alert(x.error);closeM("accountModal");document.getElementById("accountText").textContent="Account"}
-async function register() {
-  const name = val("name");
-  const phone = val("phone");
-  const email = val("email");
-  const password = val("password");
+async function register(){
+  const name=val("name");
+  const phone=val("regPhone");
+  const email=val("email");
+  const password=val("password");
 
-  if (!name || !phone || !email || !password) {
-    alert("Please fill all required fields");
-    return;
-  }
+  if(!name||!phone||!email||!password)
+    return alert("Please fill all required fields.");
 
-  if (!/^\d{10}$/.test(phone)) {
-    alert("Enter a valid 10-digit mobile number");
-    return;
-  }
+  if(!/^[6-9]\d{9}$/.test(phone))
+    return alert("Enter a valid 10-digit mobile number.");
 
-  if (password.length < 6) {
-    alert("Password must be at least 6 characters");
-    return;
-  }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    return alert("Enter a valid email address.");
 
-  try {
-    const response = await fetch("/api/send-otp", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ phone })
+  if(password.length<6)
+    return alert("Password must contain at least 6 characters.");
+
+  try{
+    const r=await fetch("/api/register",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({name,phone,email,password})
     });
 
-    const data = await response.json();
+    const x=await r.json();
 
-    if (!response.ok) {
-      alert(data.message || "Failed to send OTP");
-      return;
-    }
+    if(!r.ok)
+      return alert(x.message||"Registration failed.");
 
-    alert("OTP sent successfully!");
-
-    document.getElementById("otpArea").style.display = "block";
-
-  } catch (error) {
-    console.error(error);
-    alert("Unable to send OTP");
+    alert("Account created successfully!");
+    closeM("accountModal");
+    document.getElementById("accountText").textContent="Account";
+  }catch(e){
+    console.error("REGISTER ERROR:",e);
+    alert("Unable to create account. Please try again.");
   }
 }
 async function logout(){await fetch("/api/logout",{method:"POST"});document.getElementById("accountText").textContent="Login";renderAccount()}
@@ -224,61 +192,6 @@ async function pay(){const data={name:val("cname"),phone:val("cphone"),email:val
 function val(id){return document.getElementById(id).value.trim()}function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
 function show(id){document.getElementById(id).style.display="block"}function closeM(id){document.getElementById(id).style.display="none"}
 renderProducts();renderCart();me().then(u=>{if(u)document.getElementById("accountText").textContent="Account"});
- async function sendOTP() {
-  const phoneInput = [...document.querySelectorAll('input[name="phone"]')]
-    .find(el => el.offsetParent !== null && el.value.trim());
 
-const phone = phoneInput ? phoneInput.value.trim() : "";
-
-   if (!phone) {
-    alert("Mobile number is required");
-    return;
-}
-
-    try {
-        const response = await fetch("/api/send-otp", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                mobile: phone
-            })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            const otp = prompt("Enter the OTP you received:");
-
-            if (!otp) return;
-
-            const verifyResponse = await fetch("/api/verify-otp", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    phone: phone,
-                    otp: otp
-                })
-            });
-
-            const verifyData = await verifyResponse.json();
-
-            if (verifyData.success) {
-                alert("OTP verified successfully!");
-            } else {
-                alert(verifyData.message || "Invalid OTP");
-            }
-        } else {
-            alert(data.message || "Could not send OTP");
-        }
-
-    } catch (error) {
-        console.error("OTP ERROR:", error);
-        alert("OTP service error");
-    }
-}
 </script>
 </body></html>
