@@ -225,7 +225,7 @@ function val(id){return document.getElementById(id).value.trim()}function esc(s)
 function show(id){document.getElementById(id).style.display="block"}function closeM(id){document.getElementById(id).style.display="none"}
 renderProducts();renderCart();me().then(u=>{if(u)document.getElementById("accountText").textContent="Account"});
  async function sendOTP() {
-    const phone = val("cphone");
+   const phone = document.querySelector('input[name="phone"]')?.value.trim();
 
    if (!phone) {
     alert("Mobile number is required");
