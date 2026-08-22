@@ -1,52 +1,334 @@
-const express=require("express");
-const session=require("express-session");
-const bcrypt=require("bcryptjs");
-const Database=require("better-sqlite3");
-const Razorpay=require("razorpay");
-const crypto=require("crypto");
-const path=require("path");
-const app=express();
-const db=new Database(process.env.DB_PATH||"shiv_supplements.db");
+require("dotenv").config();
+
+const express = require("express");
+const path = require("path");
+const crypto = require("crypto");
+const Database = require("better-sqlite3");
+const Razorpay = require("razorpay");
+const session = require("express-session");
+
+const app = express();
+const PORT = process.env.PORT || 10000;
+
+/* =========================
+   DATABASE
+========================= */
+
+const db = new Database(
+  process.env.DB_PATH || path.join(__dirname, "shiv_supplements.db")
+);
+
+db.pragma("journal_mode = WAL");
 
 db.exec(`
-CREATE TABLE IF NOT EXISTS users(
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- name TEXT NOT NULL,
- phone TEXT NOT NULL,
- email TEXT UNIQUE NOT NULL,
- password_hash TEXT NOT NULL,
- created_at TEXT DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  phone TEXT UNIQUE NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  password_hash TEXT NOT NULL,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
-CREATE TABLE IF NOT EXISTS orders(
- id INTEGER PRIMARY KEY AUTOINCREMENT,
- user_id INTEGER NOT NULL,
- name TEXT NOT NULL,
- phone TEXT NOT NULL,
- email TEXT NOT NULL,
- address TEXT NOT NULL,
- items_json TEXT NOT NULL,
- amount_paise INTEGER NOT NULL,
- status TEXT DEFAULT 'pending',
- razorpay_order_id TEXT,
- razorpay_payment_id TEXT,
- created_at TEXT DEFAULT CURRENT_TIMESTAMP
-);`);
 
-app.use(express.json({limit:"1mb"}));
-app.use(express.urlencoded({extended:true}));
+CREATE TABLE IF NOT EXISTS orders (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER,
+  name TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  email TEXT NOT NULL,
+  address TEXT NOT NULL,
+  items_json TEXT NOT NULL,
+  amount_paise INTEGER NOT NULL,
+  status TEXT DEFAULT 'pending',
+  razorpay_order_id TEXT,
+  razorpay_payment_id TEXT,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+`);
+
+/* =========================
+   EXPRESS
+========================= */
+
+app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ extended: true }));
+
 app.set("trust proxy", 1);
-app.use(session({
- secret:process.env.SESSION_SECRET||"CHANGE_THIS_SECRET",
- resave:false,saveUninitialized:false,
- cookie:{httpOnly:true,sameSite:"lax",secure:process.env.NODE_ENV==="production",maxAge:7*24*60*60*1000}
-}));
-app.use(express.static(path.join(__dirname,"public")));
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "CHANGE_THIS_SESSION_SECRET",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    }
+  })
+);
+
 app.use(express.static(path.join(__dirname, "public")));
 
-// ================= MSG91 OTP =================
+/* =========================
+   RAZORPAY
+========================= */
 
-const MSG91_AUTHKEY = process.env.MSG91_AUTHKEY;
-const MSG91_TEMPLATE_ID = process.env.MSG91_TEMPLATE_ID;
+let razorpay = null;
+
+if (
+  process.env.RAZORPAY_KEY_ID &&
+  process.env.RAZORPAY_KEY_SECRET
+) {
+  razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET
+  });
+}
+
+/* =========================
+   HELPERS
+========================= */
+
+function hashPassword(password) {
+  return crypto
+    .createHash("sha256")
+    .update(password)
+    .digest("hex");
+}
+
+function safeUser(user) {
+  if (!user) return null;
+
+  return {
+    id: user.id,
+    name: user.name,
+    phone: user.phone,
+    email: user.email
+  };
+}
+
+function normalizePhone(phone) {
+  return String(phone || "")
+    .replace(/\D/g, "")
+    .slice(-10);
+}
+
+function validEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function validPhone(phone) {
+  return /^[6-9]\d{9}$/.test(phone);
+}
+
+function requireLogin(req, res, next) {
+  if (!req.session.user) {
+    return res.status(401).json({
+      success: false,
+      message: "Please login first"
+    });
+  }
+
+  next();
+}
+
+/* =========================
+   HEALTH CHECK
+========================= */
+
+app.get("/api/health", (req, res) => {
+  res.json({
+    success: true,
+    message: "Shiv Supplements server is running"
+  });
+});
+
+/* =========================
+   CURRENT USER
+========================= */
+
+app.get("/api/me", (req, res) => {
+  res.json({
+    success: true,
+    user: req.session.user || null
+  });
+});
+
+/* =========================
+   REGISTER
+========================= */
+
+app.post("/api/register", (req, res) => {
+  try {
+    const { name, phone, email, password } = req.body;
+
+    if (!name || !phone || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Name, phone, email and password are required"
+      });
+    }
+
+    const cleanPhone = normalizePhone(phone);
+    const cleanEmail = String(email).trim().toLowerCase();
+
+    if (!validPhone(cleanPhone)) {
+      return res.status(400).json({
+        success: false,
+        message: "Enter a valid 10-digit mobile number"
+      });
+    }
+
+    if (!validEmail(cleanEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: "Enter a valid email address"
+      });
+    }
+
+    if (String(password).length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must contain at least 6 characters"
+      });
+    }
+
+    const existing = db
+      .prepare(
+        "SELECT id FROM users WHERE phone = ? OR email = ?"
+      )
+      .get(cleanPhone, cleanEmail);
+
+    if (existing) {
+      return res.status(409).json({
+        success: false,
+        message: "Phone number or email is already registered"
+      });
+    }
+
+    const passwordHash = hashPassword(password);
+
+    const result = db
+      .prepare(
+        `
+        INSERT INTO users
+        (name, phone, email, password_hash)
+        VALUES (?, ?, ?, ?)
+        `
+      )
+      .run(
+        String(name).trim(),
+        cleanPhone,
+        cleanEmail,
+        passwordHash
+      );
+
+    const user = db
+      .prepare(
+        "SELECT id, name, phone, email FROM users WHERE id = ?"
+      )
+      .get(result.lastInsertRowid);
+
+    req.session.user = user;
+
+    res.json({
+      success: true,
+      message: "Registration successful",
+      user: safeUser(user)
+    });
+  } catch (error) {
+    console.error("REGISTER ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Registration failed"
+    });
+  }
+});
+
+/* =========================
+   LOGIN
+========================= */
+
+app.post("/api/login", (req, res) => {
+  try {
+    const { phone, email, password } = req.body;
+
+    const identifier = String(phone || email || "").trim();
+
+    if (!identifier || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Phone/email and password are required"
+      });
+    }
+
+    const user = db
+      .prepare(
+        `
+        SELECT *
+        FROM users
+        WHERE phone = ? OR email = ?
+        `
+      )
+      .get(
+        normalizePhone(identifier),
+        identifier.toLowerCase()
+      );
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid login details"
+      });
+    }
+
+    const passwordHash = hashPassword(password);
+
+    if (passwordHash !== user.password_hash) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid login details"
+      });
+    }
+
+    const sessionUser = safeUser(user);
+
+    req.session.user = sessionUser;
+
+    res.json({
+      success: true,
+      message: "Login successful",
+      user: sessionUser
+    });
+  } catch (error) {
+    console.error("LOGIN ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Login failed"
+    });
+  }
+});
+
+/* =========================
+   LOGOUT
+========================= */
+
+app.post("/api/logout", (req, res) => {
+  req.session.destroy(() => {
+    res.json({
+      success: true,
+      message: "Logged out successfully"
+    });
+  });
+});
+
+/* =========================
+   OTP - SEND
+========================= */
 
 app.post("/api/send-otp", async (req, res) => {
   try {
@@ -59,25 +341,56 @@ app.post("/api/send-otp", async (req, res) => {
       });
     }
 
-    const phone = String(mobile).replace(/\D/g, "");
+    const phone = normalizePhone(mobile);
 
-    const response = await fetch("https://control.msg91.com/api/v5/otp", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "authkey": MSG91_AUTHKEY
-      },
-      body: JSON.stringify({
-        template_id: MSG91_TEMPLATE_ID,
-        mobile: phone
-      })
-    });
+    if (!validPhone(phone)) {
+      return res.status(400).json({
+        success: false,
+        message: "Enter a valid 10-digit mobile number"
+      });
+    }
+
+    /*
+      MSG91 configuration.
+
+      Add these variables in Render:
+
+      MSG91_AUTH_KEY
+      MSG91_TEMPLATE_ID
+    */
+
+    if (!process.env.MSG91_AUTH_KEY) {
+      return res.status(500).json({
+        success: false,
+        message: "MSG91_AUTH_KEY is not configured"
+      });
+    }
+
+    const response = await fetch(
+      "https://control.msg91.com/api/v5/otp",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authkey: process.env.MSG91_AUTH_KEY
+        },
+        body: JSON.stringify({
+          template_id: process.env.MSG91_TEMPLATE_ID,
+          mobile: "91" + phone,
+          otp_length: 6,
+          otp_expiry: 10
+        })
+      }
+    );
 
     const data = await response.json();
 
-    console.log("MSG91:", data);
+    console.log("MSG91 SEND OTP:", data);
 
-    if (data.type === "success") {
+    if (
+      data.type === "success" ||
+      data.type === "successfully"
+    ) {
       return res.json({
         success: true,
         message: "OTP sent successfully"
@@ -86,11 +399,10 @@ app.post("/api/send-otp", async (req, res) => {
 
     res.status(400).json({
       success: false,
-      message: data.message || "Failed to send OTP"
+      message: data.message || "Unable to send OTP"
     });
-
   } catch (error) {
-    console.error("MSG91 OTP error:", error);
+    console.error("MSG91 SEND OTP ERROR:", error);
 
     res.status(500).json({
       success: false,
@@ -98,6 +410,10 @@ app.post("/api/send-otp", async (req, res) => {
     });
   }
 });
+
+/* =========================
+   OTP - VERIFY
+========================= */
 
 app.post("/api/verify-otp", async (req, res) => {
   try {
@@ -110,21 +426,37 @@ app.post("/api/verify-otp", async (req, res) => {
       });
     }
 
-    const phone = String(mobile).replace(/\D/g, "");
+    const phone = normalizePhone(mobile);
+
+    if (!validPhone(phone)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid mobile number"
+      });
+    }
+
+    if (!process.env.MSG91_AUTH_KEY) {
+      return res.status(500).json({
+        success: false,
+        message: "MSG91_AUTH_KEY is not configured"
+      });
+    }
 
     const response = await fetch(
-      `https://control.msg91.com/api/v5/otp/verify?otp=${encodeURIComponent(otp)}&mobile=${encodeURIComponent(phone)}`,
+      `https://control.msg91.com/api/v5/otp/verify?mobile=91${phone}&otp=${encodeURIComponent(
+        otp
+      )}`,
       {
         method: "GET",
         headers: {
-          "authkey": MSG91_AUTHKEY
+          authkey: process.env.MSG91_AUTH_KEY
         }
       }
     );
 
     const data = await response.json();
 
-    console.log("MSG91 Verify:", data);
+    console.log("MSG91 VERIFY OTP:", data);
 
     if (data.type === "success") {
       return res.json({
@@ -137,9 +469,8 @@ app.post("/api/verify-otp", async (req, res) => {
       success: false,
       message: data.message || "Invalid OTP"
     });
-
   } catch (error) {
-    console.error("MSG91 verification error:", error);
+    console.error("MSG91 VERIFY OTP ERROR:", error);
 
     res.status(500).json({
       success: false,
@@ -148,65 +479,344 @@ app.post("/api/verify-otp", async (req, res) => {
   }
 });
 
-// ================= END MSG91 OTP =================
-const safe=u=>u&&({id:u.id,name:u.name,phone:u.phone,email:u.email});
-const emailOk=e=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e||"");
-const phoneOk=p=>/^\+?[0-9]{10,13}$/.test((p||"").replace(/[\s-]/g,""));
+/* =========================
+   CREATE RAZORPAY ORDER
+========================= */
 
-app.get("/api/me",(req,res)=>res.json({user:safe(req.session.user)}));
+app.post("/api/create-order", async (req, res) => {
+  try {
+    if (!razorpay) {
+      return res.status(500).json({
+        success: false,
+        message: "Razorpay is not configured"
+      });
+    }
 
-app.post("/api/register",async(req,res)=>{
- const {name,phone,email,password}=req.body;
- if(!name||!phone||!email||!password||password.length<6) return res.status(400).json({error:"Please complete all fields. Password must be at least 6 characters."});
- if(!phoneOk(phone)) return res.status(400).json({error:"Enter a valid mobile number."});
- if(!emailOk(email)) return res.status(400).json({error:"Enter a valid email address."});
- try{
-  const hash=await bcrypt.hash(password,12);
-  const r=db.prepare("INSERT INTO users(name,phone,email,password_hash) VALUES(?,?,?,?)").run(name.trim(),phone.replace(/[\s-]/g,""),email.toLowerCase().trim(),hash);
-  const u=db.prepare("SELECT id,name,phone,email FROM users WHERE id=?").get(r.lastInsertRowid);
-  req.session.user=u;res.json({user:safe(u)});
- }catch(e){res.status(400).json({error:"That email is already registered."});}
+    const {
+      name,
+      phone,
+      email,
+      address,
+      items,
+      amount
+    } = req.body;
+
+    if (
+      !name ||
+      !phone ||
+      !email ||
+      !address ||
+      !items ||
+      amount === undefined
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "All order details are required"
+      });
+    }
+
+    const numericAmount = Number(amount);
+
+    if (
+      !Number.isFinite(numericAmount) ||
+      numericAmount <= 0
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid amount"
+      });
+    }
+
+    const amountPaise = Math.round(numericAmount * 100);
+
+    const razorpayOrder = await razorpay.orders.create({
+      amount: amountPaise,
+      currency: "INR",
+      receipt:
+        "shiv_" +
+        Date.now() +
+        "_" +
+        crypto.randomBytes(3).toString("hex")
+    });
+
+    const result = db
+      .prepare(
+        `
+        INSERT INTO orders
+        (
+          user_id,
+          name,
+          phone,
+          email,
+          address,
+          items_json,
+          amount_paise,
+          status,
+          razorpay_order_id
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `
+      )
+      .run(
+        req.session.user ? req.session.user.id : null,
+        String(name).trim(),
+        normalizePhone(phone),
+        String(email).trim().toLowerCase(),
+        String(address).trim(),
+        JSON.stringify(items),
+        amountPaise,
+        "pending",
+        razorpayOrder.id
+      );
+
+    res.json({
+      success: true,
+      order: {
+        id: result.lastInsertRowid,
+        razorpayOrderId: razorpayOrder.id,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency
+      }
+    });
+  } catch (error) {
+    console.error("CREATE ORDER ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Could not create payment order"
+    });
+  }
 });
 
-app.post("/api/login",async(req,res)=>{
- const {email,password}=req.body;
- const u=db.prepare("SELECT * FROM users WHERE email=?").get((email||"").toLowerCase().trim());
- if(!u||!(await bcrypt.compare(password||"",u.password_hash))) return res.status(401).json({error:"Incorrect email or password."});
- req.session.user={id:u.id,name:u.name,phone:u.phone,email:u.email};res.json({user:safe(req.session.user)});
+/* =========================
+   VERIFY RAZORPAY PAYMENT
+========================= */
+
+app.post("/api/verify-payment", (req, res) => {
+  try {
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature
+    } = req.body;
+
+    if (
+      !razorpay_order_id ||
+      !razorpay_payment_id ||
+      !razorpay_signature
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Payment details are incomplete"
+      });
+    }
+
+    if (!process.env.RAZORPAY_KEY_SECRET) {
+      return res.status(500).json({
+        success: false,
+        message: "Razorpay secret is not configured"
+      });
+    }
+
+    const generatedSignature = crypto
+      .createHmac(
+        "sha256",
+        process.env.RAZORPAY_KEY_SECRET
+      )
+      .update(
+        razorpay_order_id +
+          "|" +
+          razorpay_payment_id
+      )
+      .digest("hex");
+
+    if (generatedSignature !== razorpay_signature) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid payment signature"
+      });
+    }
+
+    db.prepare(
+      `
+      UPDATE orders
+      SET
+        status = 'paid',
+        razorpay_payment_id = ?
+      WHERE razorpay_order_id = ?
+      `
+    ).run(
+      razorpay_payment_id,
+      razorpay_order_id
+    );
+
+    res.json({
+      success: true,
+      message: "Payment verified successfully"
+    });
+  } catch (error) {
+    console.error("PAYMENT VERIFY ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Payment verification failed"
+    });
+  }
 });
 
-app.post("/api/logout",(req,res)=>req.session.destroy(()=>res.json({ok:true})));
+/* =========================
+   GET USER ORDERS
+========================= */
 
-app.get("/api/orders",(req,res)=>{
- if(!req.session.user)return res.status(401).json({error:"Login required"});
- const rows=db.prepare("SELECT id,items_json,amount_paise,status,created_at FROM orders WHERE user_id=? ORDER BY id DESC").all(req.session.user.id);
- res.json({orders:rows});
+app.get("/api/orders", requireLogin, (req, res) => {
+  try {
+    const orders = db
+      .prepare(
+        `
+        SELECT
+          id,
+          name,
+          phone,
+          email,
+          address,
+          items_json,
+          amount_paise,
+          status,
+          razorpay_order_id,
+          razorpay_payment_id,
+          created_at
+        FROM orders
+        WHERE user_id = ?
+        ORDER BY id DESC
+        `
+      )
+      .all(req.session.user.id);
+
+    const formattedOrders = orders.map((order) => ({
+      ...order,
+      amount: order.amount_paise / 100,
+      items: JSON.parse(order.items_json)
+    }));
+
+    res.json({
+      success: true,
+      orders: formattedOrders
+    });
+  } catch (error) {
+    console.error("GET ORDERS ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Could not load orders"
+    });
+  }
 });
 
-app.post("/api/create-order",async(req,res)=>{
- if(!req.session.user)return res.status(401).json({error:"Please login before checkout."});
- const {name,phone,email,address,items,total}=req.body;
- if(!name||!phone||!email||!address||!Array.isArray(items)||!items.length||!Number.isFinite(total)||total<=0)return res.status(400).json({error:"Please complete your order details."});
- if(!process.env.RAZORPAY_KEY_ID||!process.env.RAZORPAY_KEY_SECRET)return res.status(503).json({error:"Razorpay is not configured yet. Add your live/test keys on the server."});
- try{
-  const rz=new Razorpay({key_id:process.env.RAZORPAY_KEY_ID,key_secret:process.env.RAZORPAY_KEY_SECRET});
-  const order=await rz.orders.create({amount:Math.round(total*100),currency:"INR",receipt:"SS"+Date.now()});
-  const r=db.prepare(`INSERT INTO orders(user_id,name,phone,email,address,items_json,amount_paise,razorpay_order_id) VALUES(?,?,?,?,?,?,?,?)`)
-   .run(req.session.user.id,name,phone,email,address,JSON.stringify(items),Math.round(total*100),order.id);
-  res.json({localOrderId:r.lastInsertRowid,razorpayOrderId:order.id,keyId:process.env.RAZORPAY_KEY_ID});
- }catch(e){console.error(e);res.status(500).json({error:"Could not start payment."});}
+/* =========================
+   ADMIN ORDERS
+========================= */
+
+app.get("/api/admin/orders", (req, res) => {
+  try {
+    const orders = db
+      .prepare(
+        `
+        SELECT *
+        FROM orders
+        ORDER BY id DESC
+        `
+      )
+      .all();
+
+    res.json({
+      success: true,
+      orders: orders.map((order) => ({
+        ...order,
+        amount: order.amount_paise / 100,
+        items: JSON.parse(order.items_json)
+      }))
+    });
+  } catch (error) {
+    console.error("ADMIN ORDERS ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Could not load orders"
+    });
+  }
 });
 
-app.post("/api/verify-payment",(req,res)=>{
- if(!req.session.user)return res.status(401).json({error:"Login required"});
- const {localOrderId,razorpayPaymentId,razorpayOrderId,razorpaySignature}=req.body;
- const row=db.prepare("SELECT * FROM orders WHERE id=? AND user_id=?").get(localOrderId,req.session.user.id);
- if(!row)return res.status(404).json({error:"Order not found."});
- const expected=crypto.createHmac("sha256",process.env.RAZORPAY_KEY_SECRET).update(row.razorpay_order_id+"|"+razorpayPaymentId).digest("hex");
- if(expected!==razorpaySignature||row.razorpay_order_id!==razorpayOrderId)return res.status(400).json({error:"Payment verification failed."});
- db.prepare("UPDATE orders SET status='paid',razorpay_payment_id=? WHERE id=?").run(razorpayPaymentId,row.id);
- res.json({ok:true});
+/* =========================
+   UPDATE ORDER STATUS
+========================= */
+
+app.patch("/api/admin/orders/:id", (req, res) => {
+  try {
+    const { status } = req.body;
+
+    const allowed = [
+      "pending",
+      "paid",
+      "processing",
+      "shipped",
+      "delivered",
+      "cancelled"
+    ];
+
+    if (!allowed.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid order status"
+      });
+    }
+
+    const result = db
+      .prepare(
+        `
+        UPDATE orders
+        SET status = ?
+        WHERE id = ?
+        `
+      )
+      .run(status, req.params.id);
+
+    if (!result.changes) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found"
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Order status updated"
+    });
+  } catch (error) {
+    console.error("UPDATE ORDER ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Could not update order"
+    });
+  }
 });
 
-app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
-app.listen(process.env.PORT||3000,()=>console.log("Shiv Supplements online store running"));
+/* =========================
+   SPA FALLBACK
+========================= */
+
+app.get("*", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "public", "index.html")
+  );
+});
+
+/* =========================
+   START SERVER
+========================= */
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(
+    `Shiv Supplements server running on port ${PORT}`
+  );
+});
