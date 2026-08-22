@@ -110,16 +110,56 @@ function loginForm(){
  <button class="primary" onclick="login()">Login</button>
  <p style="color:#99a3b3;font-size:12px;margin-top:14px">New customer? Tap <b>Registration</b> above.</p>`;
 }
-function registerForm(){
- return `<div class="row">
- <div class="field"><label>Full Name *</label><input id="name" placeholder="Your full name"></div>
- <div class="field"><label>Mobile Number *</label><input id="phone" type="tel" inputmode="numeric" maxlength="13" placeholder="10-digit mobile number"></div>
- </div>
- <div class="field"><label>Email Address *</label><input id="email" type="email" placeholder="you@example.com"></div>
- <div class="field"><label>Password *</label><input id="password" type="password" placeholder="Minimum 6 characters"></div>
- <div style="background:#171d26;border:1px solid #303845;border-radius:10px;padding:11px;margin:12px 0;color:#cbd2dc;font-size:12px">📱 <b>Mobile number is required</b> for your customer account and order updates.</div>
- <button class="primary" onclick="register()">Create Customer Account</button>
+function registerForm() {
+  return `
+    <div class="row">
 
+      <div class="field">
+        <label>Full Name *</label>
+        <input id="name" placeholder="Your full name">
+      </div>
+
+      <div class="field">
+        <label>Mobile Number *</label>
+        <input id="phone" type="tel"
+               maxlength="10"
+               placeholder="10-digit mobile number">
+      </div>
+
+      <div class="field">
+        <label>Email Address *</label>
+        <input id="email" type="email"
+               placeholder="your@email.com">
+      </div>
+
+      <div class="field">
+        <label>Password *</label>
+        <input id="password" type="password"
+               placeholder="Minimum 6 characters">
+      </div>
+
+      <button class="primary" onclick="register()">
+        Send OTP
+      </button>
+
+      <div id="otpArea" style="display:none;margin-top:12px">
+
+        <div class="field">
+          <label>Enter OTP *</label>
+          <input id="otp"
+                 type="text"
+                 maxlength="6"
+                 placeholder="Enter 6-digit OTP">
+        </div>
+
+        <button class="primary" onclick="verifyRegistrationOTP()">
+          Verify OTP & Create Account
+        </button>
+
+      </div>
+
+    </div>
+  `;
 }
 function showLogin(){
  document.getElementById("loginTab").className="tab active";
@@ -132,7 +172,52 @@ function showRegister(){
  document.getElementById("formArea").innerHTML=registerForm();
 }
 async function login(){let r=await fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:val("email"),password:val("password")})});let x=await r.json();if(!r.ok)return alert(x.error);closeM("accountModal");document.getElementById("accountText").textContent="Account"}
-async function register(){let r=await fetch("/api/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:val("name"),phone:val("phone"),email:val("email"),password:val("password")})});let x=await r.json();if(!r.ok)return alert(x.error);closeM("accountModal");document.getElementById("accountText").textContent="Account"}
+async function register() {
+  const name = val("name");
+  const phone = val("phone");
+  const email = val("email");
+  const password = val("password");
+
+  if (!name || !phone || !email || !password) {
+    alert("Please fill all required fields");
+    return;
+  }
+
+  if (!/^\d{10}$/.test(phone)) {
+    alert("Enter a valid 10-digit mobile number");
+    return;
+  }
+
+  if (password.length < 6) {
+    alert("Password must be at least 6 characters");
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/send-otp", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ phone })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.message || "Failed to send OTP");
+      return;
+    }
+
+    alert("OTP sent successfully!");
+
+    document.getElementById("otpArea").style.display = "block";
+
+  } catch (error) {
+    console.error(error);
+    alert("Unable to send OTP");
+  }
+}
 async function logout(){await fetch("/api/logout",{method:"POST"});document.getElementById("accountText").textContent="Login";renderAccount()}
 async function startCheckout(){let u=await me();if(!u){closeM("cartModal");openAccount();return}closeM("cartModal");document.getElementById("checkoutArea").innerHTML=`<p style="color:#99a3b3">Logged in as ${esc(u.email)}</p><div class="row"><div class="field"><label>Name</label><input id="cname" value="${esc(u.name)}"></div><div class="field"><label>Mobile</label><input id="cphone" value="${esc(u.phone)}"></div></div><div class="field"><label>Email</label><input id="cemail" value="${esc(u.email)}"></div><div class="field"><label>Delivery Address</label><textarea id="caddress" placeholder="Full address with PIN code"></textarea></div><div class="total">Payable: ${money(total())}</div><button class="primary" onclick="pay()">Pay Securely with Razorpay</button><p style="color:#99a3b3;font-size:12px">Razorpay will show the payment methods enabled on your merchant account.</p>`;show("checkoutModal")}
 async function pay(){const data={name:val("cname"),phone:val("cphone"),email:val("cemail"),address:val("caddress"),items:cart,total:total()};if(!data.name||!data.phone||!data.email||!data.address)return alert("Please complete delivery details.");let r=await fetch("/api/create-order",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});let x=await r.json();if(!r.ok)return alert(x.error);const options={key:x.keyId,amount:Math.round(data.total*100),currency:"INR",name:"Shiv Supplements",description:"Sports nutrition order",order_id:x.razorpayOrderId,prefill:{name:data.name,email:data.email,contact:data.phone},theme:{color:"#f7b51b"},handler:async(resp)=>{let v=await fetch("/api/verify-payment",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({localOrderId:x.localOrderId,razorpayPaymentId:resp.razorpay_payment_id,razorpayOrderId:resp.razorpay_order_id,razorpaySignature:resp.razorpay_signature})});let z=await v.json();if(!z.ok)return alert(z.error||"Payment verification failed.");cart=[];save();closeM("checkoutModal");alert("Payment successful! Your order has been placed.")}};new Razorpay(options).open()}
