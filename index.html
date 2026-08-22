@@ -121,7 +121,7 @@ function registerForm() {
 
       <div class="field">
         <label>Mobile Number *</label>
-        <input id="phone" type="tel"
+        <input id="cphone" name="phone" type="tel"
                maxlength="10"
                placeholder="10-digit mobile number">
       </div>
@@ -225,7 +225,7 @@ function val(id){return document.getElementById(id).value.trim()}function esc(s)
 function show(id){document.getElementById(id).style.display="block"}function closeM(id){document.getElementById(id).style.display="none"}
 renderProducts();renderCart();me().then(u=>{if(u)document.getElementById("accountText").textContent="Account"});
  async function sendOTP() {
-   const phone = document.querySelector('input[name="phone"]')?.value.trim();
+   const phone = document.getElementById("cphone").value.trim();
 
    if (!phone) {
     alert("Mobile number is required");
