@@ -225,7 +225,10 @@ function val(id){return document.getElementById(id).value.trim()}function esc(s)
 function show(id){document.getElementById(id).style.display="block"}function closeM(id){document.getElementById(id).style.display="none"}
 renderProducts();renderCart();me().then(u=>{if(u)document.getElementById("accountText").textContent="Account"});
  async function sendOTP() {
-   const phone = document.getElementById("cphone").value.trim();
+  const phoneInput = [...document.querySelectorAll('input[name="phone"]')]
+    .find(el => el.offsetParent !== null && el.value.trim());
+
+const phone = phoneInput ? phoneInput.value.trim() : "";
 
    if (!phone) {
     alert("Mobile number is required");
