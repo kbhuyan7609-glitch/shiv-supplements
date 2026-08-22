@@ -41,7 +41,114 @@ app.use(session({
  cookie:{httpOnly:true,sameSite:"lax",secure:process.env.NODE_ENV==="production",maxAge:7*24*60*60*1000}
 }));
 app.use(express.static(path.join(__dirname,"public")));
+app.use(express.static(path.join(__dirname, "public")));
 
+// ================= MSG91 OTP =================
+
+const MSG91_AUTHKEY = process.env.MSG91_AUTHKEY;
+const MSG91_TEMPLATE_ID = process.env.MSG91_TEMPLATE_ID;
+
+app.post("/api/send-otp", async (req, res) => {
+  try {
+    const { mobile } = req.body;
+
+    if (!mobile) {
+      return res.status(400).json({
+        success: false,
+        message: "Mobile number is required"
+      });
+    }
+
+    const phone = String(mobile).replace(/\D/g, "");
+
+    const response = await fetch("https://control.msg91.com/api/v5/otp", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "authkey": MSG91_AUTHKEY
+      },
+      body: JSON.stringify({
+        template_id: MSG91_TEMPLATE_ID,
+        mobile: phone
+      })
+    });
+
+    const data = await response.json();
+
+    console.log("MSG91:", data);
+
+    if (data.type === "success") {
+      return res.json({
+        success: true,
+        message: "OTP sent successfully"
+      });
+    }
+
+    res.status(400).json({
+      success: false,
+      message: data.message || "Failed to send OTP"
+    });
+
+  } catch (error) {
+    console.error("MSG91 OTP error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "OTP service error"
+    });
+  }
+});
+
+app.post("/api/verify-otp", async (req, res) => {
+  try {
+    const { mobile, otp } = req.body;
+
+    if (!mobile || !otp) {
+      return res.status(400).json({
+        success: false,
+        message: "Mobile and OTP are required"
+      });
+    }
+
+    const phone = String(mobile).replace(/\D/g, "");
+
+    const response = await fetch(
+      `https://control.msg91.com/api/v5/otp/verify?otp=${encodeURIComponent(otp)}&mobile=${encodeURIComponent(phone)}`,
+      {
+        method: "GET",
+        headers: {
+          "authkey": MSG91_AUTHKEY
+        }
+      }
+    );
+
+    const data = await response.json();
+
+    console.log("MSG91 Verify:", data);
+
+    if (data.type === "success") {
+      return res.json({
+        success: true,
+        message: "OTP verified successfully"
+      });
+    }
+
+    res.status(400).json({
+      success: false,
+      message: data.message || "Invalid OTP"
+    });
+
+  } catch (error) {
+    console.error("MSG91 verification error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "OTP verification error"
+    });
+  }
+});
+
+// ================= END MSG91 OTP =================
 const safe=u=>u&&({id:u.id,name:u.name,phone:u.phone,email:u.email});
 const emailOk=e=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e||"");
 const phoneOk=p=>/^\+?[0-9]{10,13}$/.test((p||"").replace(/[\s-]/g,""));
