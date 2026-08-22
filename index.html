@@ -227,7 +227,10 @@ renderProducts();renderCart();me().then(u=>{if(u)document.getElementById("accoun
  async function sendOTP() {
     const phone = val("phone");
 
-    if (!phone) return;
+   if (!phone) {
+    alert("Mobile number is required");
+    return;
+}
 
     try {
         const response = await fetch("/api/send-otp", {
