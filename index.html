@@ -119,6 +119,7 @@ function registerForm(){
  <div class="field"><label>Password *</label><input id="password" type="password" placeholder="Minimum 6 characters"></div>
  <div style="background:#171d26;border:1px solid #303845;border-radius:10px;padding:11px;margin:12px 0;color:#cbd2dc;font-size:12px">📱 <b>Mobile number is required</b> for your customer account and order updates.</div>
  <button class="primary" onclick="register()">Create Customer Account</button>`;
+ <button class="primary" onclick="sendOTP()">Verify Mobile with OTP</button>
 }
 function showLogin(){
  document.getElementById("loginTab").className="tab active";
@@ -138,5 +139,55 @@ async function pay(){const data={name:val("cname"),phone:val("cphone"),email:val
 function val(id){return document.getElementById(id).value.trim()}function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
 function show(id){document.getElementById(id).style.display="block"}function closeM(id){document.getElementById(id).style.display="none"}
 renderProducts();renderCart();me().then(u=>{if(u)document.getElementById("accountText").textContent="Account"});
+ async function sendOTP() {
+    const phone = prompt("Enter your 10-digit mobile number:");
+
+    if (!phone) return;
+
+    try {
+        const response = await fetch("/api/send-otp", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                phone: phone
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            const otp = prompt("Enter the OTP you received:");
+
+            if (!otp) return;
+
+            const verifyResponse = await fetch("/api/verify-otp", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    phone: phone,
+                    otp: otp
+                })
+            });
+
+            const verifyData = await verifyResponse.json();
+
+            if (verifyData.success) {
+                alert("OTP verified successfully!");
+            } else {
+                alert(verifyData.message || "Invalid OTP");
+            }
+        } else {
+            alert(data.message || "Could not send OTP");
+        }
+
+    } catch (error) {
+        console.error("OTP ERROR:", error);
+        alert("OTP service error");
+    }
+}
 </script>
 </body></html>
