@@ -69,7 +69,7 @@ app.use(
   })
 );
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(__dirname));
 
 /* =========================
    RAZORPAY
@@ -806,8 +806,8 @@ app.patch("/api/admin/orders/:id", (req, res) => {
 ========================= */
 
 app.get("/{*splat}", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});;
+  res.sendFile(path.join(__dirname, "index.html"));
+});
 
 /* =========================
    START SERVER
