@@ -200,6 +200,8 @@ app.post("/api/admin/logout", (req, res) => {
     success: true,
     message: "Admin logged out"
   });
+  // 🔐 PROTECT ALL ADMIN ROUTES
+app.use("/api/admin", requireAdmin);
 });
 
 app.get("/api/admin/me", (req, res) => {
