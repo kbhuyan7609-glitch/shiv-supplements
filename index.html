@@ -1015,6 +1015,7 @@ Login or create your account.
 
 
 <script>
+/* Shiv Supplements - UPI checkout fixed version 2026-08-23 */
 
 /* =====================================================
    SHIV SUPPLEMENTS
@@ -1031,6 +1032,9 @@ const UPI_ID = "YOUR_UPI_ID@upi";
 const STORE_NAME = "Shiv Supplements";
 
 const QR_IMAGE = "qr.png";
+
+// Stores the current UPI order ID so it can never be lost between screens.
+let currentUPIOrderId = null;
 
 
 /* =====================================================
@@ -2188,8 +2192,14 @@ return;
 }
 
 
+currentUPIOrderId = Number(
+  data.order.id ||
+  data.order.localOrderId ||
+  0
+);
+
 showUPIPayment(
-data.order
+  data.order
 );
 
 
@@ -2215,9 +2225,19 @@ alert(
 
 function showUPIPayment(order){
 
-const amount =
-Number(order.amount);
+const amount = Number(order?.amount || 0);
 
+// Accept either field returned by different server versions.
+const safeOrderId = Number(
+  order?.id ||
+  order?.localOrderId ||
+  0
+);
+
+currentUPIOrderId =
+  Number.isInteger(safeOrderId) && safeOrderId > 0
+    ? safeOrderId
+    : null;
 
 document
 .getElementById("checkoutArea")
@@ -2229,30 +2249,21 @@ document
 📱 Pay Using UPI
 </div>
 
-
 <div class="upiText">
-
-Scan the QR code using
-PhonePe, Google Pay, Paytm or any UPI app.
-
+Scan the QR code using PhonePe, Google Pay, Paytm or any UPI app.
 <br><br>
-
 Pay the exact amount:
-
 </div>
-
 
 <div class="total">
 ${money(amount)}
 </div>
-
 
 <img
 class="qr"
 src="${QR_IMAGE}"
 alt="Shiv Supplements UPI QR Code"
 onerror="this.style.display='none';document.getElementById('qrError').style.display='block';">
-
 
 <div
 id="qrError"
@@ -2263,26 +2274,21 @@ Please upload qr.png to the same folder as index.html.
 
 </div>
 
-
 <div class="upiText">
 UPI ID
 </div>
-
 
 <div class="upiId">
 ${esc(UPI_ID)}
 </div>
 
-
 <br>
-
 
 <button
 class="copyBtn"
 onclick="copyUPI()">
 📋 Copy UPI ID
 </button>
-
 
 <div class="orderNumber">
 
@@ -2291,19 +2297,14 @@ onclick="copyUPI()">
 <br>
 
 <span style="font-size:24px;color:#ffd45c">
-#${order.id}
+${currentUPIOrderId ? "#" + currentUPIOrderId : "Creating..."}
 </span>
 
 </div>
 
-
 <p class="upiText">
-
-After successful payment,
-enter the UTR / transaction reference number below.
-
+After successful payment, enter the UTR / transaction reference number below.
 </p>
-
 
 <div class="field">
 
@@ -2315,20 +2316,27 @@ UTR / Transaction Reference Number *
 id="utrInput"
 type="text"
 maxlength="100"
-placeholder="Enter UTR / transaction ID">
+autocomplete="off"
+placeholder="Enter UTR / transaction ID"
+oninput="updateUTRButton()">
 
 </div>
 
+<div
+id="utrError"
+style="display:none;color:#ff9b9b;font-size:13px;margin:8px 0">
+</div>
 
 <button
+id="submitUTRButton"
 class="primary"
 style="width:100%"
-onclick="submitUTR(${order.id})">
+onclick="submitUTR(currentUPIOrderId)"
+disabled>
 
 Submit Payment Details
 
 </button>
-
 
 <p
 style="color:#99a3b3;font-size:12px;margin-top:15px">
@@ -2342,6 +2350,55 @@ until the store admin verifies your payment.
 </div>
 
 `;
+
+setTimeout(()=>{
+  const input = document.getElementById("utrInput");
+  if(input) input.focus();
+}, 100);
+
+}
+
+
+/* =====================================================
+   UTR BUTTON STATE
+===================================================== */
+
+function updateUTRButton(){
+
+const input =
+document.getElementById("utrInput");
+
+const button =
+document.getElementById("submitUTRButton");
+
+const error =
+document.getElementById("utrError");
+
+if(!input || !button) return;
+
+const utr =
+input.value.trim();
+
+button.disabled =
+  utr.length < 6 ||
+  !currentUPIOrderId;
+
+if(error){
+
+if(utr.length > 0 && utr.length < 6){
+
+error.textContent =
+"Please enter at least 6 characters of your UTR.";
+
+error.style.display = "block";
+
+}else{
+
+error.style.display = "none";
+
+}
+
+}
 
 }
 
@@ -2379,31 +2436,66 @@ alert(
 
 async function submitUTR(orderId){
 
-const utr =
-val("utrInput");
+const numericOrderId =
+  Number(orderId || currentUPIOrderId || 0);
 
+const utr =
+  val("utrInput");
+
+const errorBox =
+  document.getElementById("utrError");
+
+const button =
+  document.getElementById("submitUTRButton");
+
+function showUTRError(message){
+
+  if(errorBox){
+    errorBox.textContent = message;
+    errorBox.style.display = "block";
+  }else{
+    alert(message);
+  }
+
+}
+
+if(
+  !Number.isInteger(numericOrderId) ||
+  numericOrderId <= 0
+){
+
+showUTRError(
+  "Your order number was not created. Please go back and create the order again."
+);
+
+return;
+
+}
 
 if(!utr){
 
-alert(
-"Please enter your UTR / transaction reference number."
+showUTRError(
+  "Please enter your UTR / transaction reference number."
 );
 
 return;
 
 }
-
 
 if(utr.length < 6){
 
-alert(
-"Please enter a valid UTR / transaction reference number."
+showUTRError(
+  "Please enter a valid UTR / transaction reference number."
 );
 
 return;
 
 }
 
+if(button){
+  button.disabled = true;
+  button.textContent = "Submitting...";
+}
 
 try{
 
@@ -2418,9 +2510,17 @@ headers:{
 "Content-Type":"application/json"
 },
 
+credentials:"same-origin",
+
 body:JSON.stringify({
 
-localOrderId:orderId,
+localOrderId:numericOrderId,
+
+// Send aliases too so this works with the current
+// and earlier manual-order server implementations.
+orderId:numericOrderId,
+
+id:numericOrderId,
 
 utr:utr
 
@@ -2428,23 +2528,30 @@ utr:utr
 
 });
 
+let data = {};
 
-const data =
-await response.json();
-
+try{
+  data = await response.json();
+}catch(e){
+  data = {};
+}
 
 if(!response.ok){
 
-alert(
-data.message ||
-data.error ||
-"Could not submit payment details."
+showUTRError(
+  data.message ||
+  data.error ||
+  "Could not submit payment details. Please try again."
 );
+
+if(button){
+  button.disabled = false;
+  button.textContent = "Submit Payment Details";
+}
 
 return;
 
 }
-
 
 document
 .getElementById("checkoutArea")
@@ -2463,7 +2570,7 @@ Payment Details Submitted
 <p style="color:#99a3b3">
 
 Order ID:
-<b>#${orderId}</b>
+<b>#${numericOrderId}</b>
 
 <br><br>
 
@@ -2473,10 +2580,8 @@ UTR:
 </p>
 
 <p>
-
 Your payment is now
 <b>Pending Verification</b>.
-
 </p>
 
 <p style="color:#99a3b3;font-size:13px">
@@ -2486,24 +2591,21 @@ and update the order status.
 
 </p>
 
-
 <button
 class="primary"
 onclick="finishOrder()">
-
 Done
-
 </button>
 
 </div>
 
 `;
 
+currentUPIOrderId =
+  numericOrderId;
 
-cart=[];
-
+cart = [];
 save();
-
 
 }catch(error){
 
@@ -2512,9 +2614,14 @@ console.error(
 error
 );
 
-alert(
-"Unable to submit UTR. Please try again."
+showUTRError(
+"Unable to submit UTR. Please check your internet connection and try again."
 );
+
+if(button){
+  button.disabled = false;
+  button.textContent = "Submit Payment Details";
+}
 
 }
 
