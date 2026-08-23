@@ -4,25 +4,10 @@ const express = require("express");
 const path = require("path");
 const crypto = require("crypto");
 const Database = require("better-sqlite3");
-const Razorpay = require("razorpay");
 const session = require("express-session");
 
 const app = express();
-const PORT = process.env.PORT || 10000;
-// =========================
-// ADMIN AUTHENTICATION
-// =========================
-
-function requireAdmin(req, res, next) {
-  if (!req.session.admin) {
-    return res.status(401).json({
-      success: false,
-      message: "Admin login required"
-    });
-  }
-
-  next();
-}
+const PORT = Number(process.env.PORT) || 10000;
 
 /* =========================
    DATABASE
@@ -54,11 +39,22 @@ CREATE TABLE IF NOT EXISTS orders (
   items_json TEXT NOT NULL,
   amount_paise INTEGER NOT NULL,
   status TEXT DEFAULT 'pending',
-  razorpay_order_id TEXT,
-  razorpay_payment_id TEXT,
+  payment_method TEXT DEFAULT 'UPI',
+  payment_ref TEXT,
   created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 `);
+
+// Migrate older databases without breaking existing orders.
+const orderColumns = db.prepare("PRAGMA table_info(orders)").all();
+const hasColumn = (name) => orderColumns.some((c) => c.name === name);
+
+if (!hasColumn("payment_method")) {
+  db.exec("ALTER TABLE orders ADD COLUMN payment_method TEXT DEFAULT 'UPI'");
+}
+if (!hasColumn("payment_ref")) {
+  db.exec("ALTER TABLE orders ADD COLUMN payment_ref TEXT");
+}
 
 /* =========================
    EXPRESS
@@ -66,7 +62,6 @@ CREATE TABLE IF NOT EXISTS orders (
 
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true }));
-
 app.set("trust proxy", 1);
 
 app.use(
@@ -86,35 +81,15 @@ app.use(
 app.use(express.static(__dirname));
 
 /* =========================
-   RAZORPAY
-========================= */
-
-let razorpay = null;
-
-if (
-  process.env.RAZORPAY_KEY_ID &&
-  process.env.RAZORPAY_KEY_SECRET
-) {
-  razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET
-  });
-}
-
-/* =========================
    HELPERS
 ========================= */
 
 function hashPassword(password) {
-  return crypto
-    .createHash("sha256")
-    .update(password)
-    .digest("hex");
+  return crypto.createHash("sha256").update(String(password)).digest("hex");
 }
 
 function safeUser(user) {
   if (!user) return null;
-
   return {
     id: user.id,
     name: user.name,
@@ -124,23 +99,26 @@ function safeUser(user) {
 }
 
 function normalizePhone(phone) {
-  return String(phone || "")
-    .replace(/\D/g, "")
-    .slice(-10);
+  return String(phone || "").replace(/\D/g, "").slice(-10);
 }
 
 function validEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || ""));
 }
 
 function validPhone(phone) {
-  return /^[6-9]\d{9}$/.test(phone);
+  return /^[6-9]\d{9}$/.test(String(phone || ""));
 }
 
 function requireLogin(req, res, next) {
-  // =========================
-// ADMIN AUTHENTICATION
-// =========================
+  if (!req.session.user) {
+    return res.status(401).json({
+      success: false,
+      message: "Please login first"
+    });
+  }
+  next();
+}
 
 function requireAdmin(req, res, next) {
   if (!req.session.admin) {
@@ -149,88 +127,78 @@ function requireAdmin(req, res, next) {
       message: "Admin login required"
     });
   }
-
   next();
 }
 
-app.post("/api/admin/login", (req, res) => {
-  try {
-    const { username, password } = req.body;
+function parseItems(items) {
+  if (!Array.isArray(items) || items.length === 0) return null;
+  return items.map((item) => ({
+    id: item.id ?? null,
+    name: String(item.name || "Product").slice(0, 200),
+    price: Number(item.price) || 0,
+    qty: Math.max(1, Number(item.qty || item.quantity || 1))
+  }));
+}
 
-    if (!username || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Username and password are required"
-      });
-    }
+function createPendingOrder(req, body) {
+  const { name, phone, email, address, items, amount } = body;
 
-    if (
-      username !== process.env.ADMIN_USERNAME ||
-      password !== process.env.ADMIN_PASSWORD
-    ) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid admin credentials"
-      });
-    }
-
-    req.session.admin = {
-      username: username
-    };
-
-    res.json({
-      success: true,
-      message: "Admin login successful"
-    });
-
-  } catch (error) {
-    console.error("ADMIN LOGIN ERROR:", error);
-
-    res.status(500).json({
-      success: false,
-      message: "Admin login failed"
-    });
+  if (!name || !phone || !email || !address || amount === undefined) {
+    throw Object.assign(new Error("All order details are required"), { status: 400 });
   }
-});
 
-app.post("/api/admin/logout", (req, res) => {
-  delete req.session.admin;
+  const cleanPhone = normalizePhone(phone);
+  const cleanEmail = String(email).trim().toLowerCase();
+  const cleanItems = parseItems(items);
+  const numericAmount = Number(amount);
 
-  res.json({
-    success: true,
-    message: "Admin logged out"
-  });
-  // 🔐 PROTECT ALL ADMIN ROUTES
-app.use("/api/admin", requireAdmin);
-});
+  if (!validPhone(cleanPhone)) {
+    throw Object.assign(new Error("Enter a valid 10-digit mobile number"), { status: 400 });
+  }
+  if (!validEmail(cleanEmail)) {
+    throw Object.assign(new Error("Enter a valid email address"), { status: 400 });
+  }
+  if (!cleanItems) {
+    throw Object.assign(new Error("Order items are required"), { status: 400 });
+  }
+  if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
+    throw Object.assign(new Error("Invalid order amount"), { status: 400 });
+  }
 
-app.get("/api/admin/me", (req, res) => {
-  res.json({
-    success: true,
-    loggedIn: !!req.session.admin,
-    admin: req.session.admin || null
-  });
-});
+  const result = db.prepare(`
+    INSERT INTO orders (
+      user_id, name, phone, email, address,
+      items_json, amount_paise, status, payment_method
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', 'UPI')
+  `).run(
+    req.session.user.id,
+    String(name).trim().slice(0, 150),
+    cleanPhone,
+    cleanEmail,
+    String(address).trim().slice(0, 1000),
+    JSON.stringify(cleanItems),
+    Math.round(numericAmount * 100)
+  );
+
+  return {
+    id: Number(result.lastInsertRowid),
+    amount: numericAmount,
+    currency: "INR",
+    status: "pending",
+    paymentMethod: "UPI"
+  };
+}
+
 /* =========================
-   HEALTH CHECK
+   HEALTH / USER
 ========================= */
 
 app.get("/api/health", (req, res) => {
-  res.json({
-    success: true,
-    message: "Shiv Supplements server is running"
-  });
+  res.json({ success: true, message: "Shiv Supplements server is running" });
 });
 
-/* =========================
-   CURRENT USER
-========================= */
-
 app.get("/api/me", (req, res) => {
-  res.json({
-    success: true,
-    user: req.session.user || null
-  });
+  res.json({ success: true, user: req.session.user || null });
 });
 
 /* =========================
@@ -242,679 +210,211 @@ app.post("/api/register", (req, res) => {
     const { name, phone, email, password } = req.body;
 
     if (!name || !phone || !email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Name, phone, email and password are required"
-      });
+      return res.status(400).json({ success: false, message: "Name, phone, email and password are required" });
     }
 
     const cleanPhone = normalizePhone(phone);
     const cleanEmail = String(email).trim().toLowerCase();
 
     if (!validPhone(cleanPhone)) {
-      return res.status(400).json({
-        success: false,
-        message: "Enter a valid 10-digit mobile number"
-      });
+      return res.status(400).json({ success: false, message: "Enter a valid 10-digit mobile number" });
     }
-
     if (!validEmail(cleanEmail)) {
-      return res.status(400).json({
-        success: false,
-        message: "Enter a valid email address"
-      });
+      return res.status(400).json({ success: false, message: "Enter a valid email address" });
     }
-
     if (String(password).length < 6) {
-      return res.status(400).json({
-        success: false,
-        message: "Password must contain at least 6 characters"
-      });
+      return res.status(400).json({ success: false, message: "Password must contain at least 6 characters" });
     }
 
-    const existing = db
-      .prepare(
-        "SELECT id FROM users WHERE phone = ? OR email = ?"
-      )
-      .get(cleanPhone, cleanEmail);
-
+    const existing = db.prepare("SELECT id FROM users WHERE phone = ? OR email = ?").get(cleanPhone, cleanEmail);
     if (existing) {
-      return res.status(409).json({
-        success: false,
-        message: "Phone number or email is already registered"
-      });
+      return res.status(409).json({ success: false, message: "Phone number or email is already registered" });
     }
 
-    const passwordHash = hashPassword(password);
+    const result = db.prepare(`
+      INSERT INTO users (name, phone, email, password_hash)
+      VALUES (?, ?, ?, ?)
+    `).run(String(name).trim(), cleanPhone, cleanEmail, hashPassword(password));
 
-    const result = db
-      .prepare(
-        `
-        INSERT INTO users
-        (name, phone, email, password_hash)
-        VALUES (?, ?, ?, ?)
-        `
-      )
-      .run(
-        String(name).trim(),
-        cleanPhone,
-        cleanEmail,
-        passwordHash
-      );
-
-    const user = db
-      .prepare(
-        "SELECT id, name, phone, email FROM users WHERE id = ?"
-      )
-      .get(result.lastInsertRowid);
-
+    const user = db.prepare("SELECT id, name, phone, email FROM users WHERE id = ?").get(result.lastInsertRowid);
     req.session.user = user;
 
-    res.json({
-      success: true,
-      message: "Registration successful",
-      user: safeUser(user)
-    });
+    res.json({ success: true, message: "Registration successful", user: safeUser(user) });
   } catch (error) {
     console.error("REGISTER ERROR:", error);
-
-    res.status(500).json({
-      success: false,
-      message: "Registration failed"
-    });
+    res.status(500).json({ success: false, message: "Registration failed" });
   }
 });
 
 /* =========================
-   LOGIN
+   LOGIN / LOGOUT
 ========================= */
 
 app.post("/api/login", (req, res) => {
   try {
-    const { phone, email, password } = req.body;
-
-    const identifier = String(phone || email || "").trim();
+    const identifier = String(req.body.phone || req.body.email || "").trim();
+    const password = String(req.body.password || "");
 
     if (!identifier || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Phone/email and password are required"
-      });
+      return res.status(400).json({ success: false, message: "Phone/email and password are required" });
     }
 
-    const user = db
-      .prepare(
-        `
-        SELECT *
-        FROM users
-        WHERE phone = ? OR email = ?
-        `
-      )
-      .get(
-        normalizePhone(identifier),
-        identifier.toLowerCase()
-      );
+    const user = db.prepare(`
+      SELECT * FROM users
+      WHERE phone = ? OR email = ?
+    `).get(normalizePhone(identifier), identifier.toLowerCase());
 
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid login details"
-      });
+    if (!user || hashPassword(password) !== user.password_hash) {
+      return res.status(401).json({ success: false, message: "Invalid login details" });
     }
 
-    const passwordHash = hashPassword(password);
-
-    if (passwordHash !== user.password_hash) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid login details"
-      });
-    }
-
-    const sessionUser = safeUser(user);
-
-    req.session.user = sessionUser;
-
-    res.json({
-      success: true,
-      message: "Login successful",
-      user: sessionUser
-    });
+    req.session.user = safeUser(user);
+    res.json({ success: true, message: "Login successful", user: req.session.user });
   } catch (error) {
     console.error("LOGIN ERROR:", error);
-
-    res.status(500).json({
-      success: false,
-      message: "Login failed"
-    });
+    res.status(500).json({ success: false, message: "Login failed" });
   }
 });
 
-/* =========================
-   LOGOUT
-========================= */
-
 app.post("/api/logout", (req, res) => {
   req.session.destroy(() => {
-    res.json({
-      success: true,
-      message: "Logged out successfully"
-    });
+    res.json({ success: true, message: "Logged out successfully" });
   });
 });
 
 /* =========================
-   OTP - SEND
+   MSG91 OTP
 ========================= */
 
 app.post("/api/send-otp", async (req, res) => {
   try {
-    const { mobile } = req.body;
-
-    if (!mobile) {
-      return res.status(400).json({
-        success: false,
-        message: "Mobile number is required"
-      });
-    }
-
-    const phone = normalizePhone(mobile);
+    const phone = normalizePhone(req.body.mobile || req.body.phone);
 
     if (!validPhone(phone)) {
-      return res.status(400).json({
-        success: false,
-        message: "Enter a valid 10-digit mobile number"
-      });
+      return res.status(400).json({ success: false, message: "Enter a valid 10-digit mobile number" });
+    }
+    if (!process.env.MSG91_AUTH_KEY || !process.env.MSG91_TEMPLATE_ID) {
+      return res.status(500).json({ success: false, message: "MSG91 OTP is not configured" });
     }
 
-    /*
-      MSG91 configuration.
-
-      Add these variables in Render:
-
-      MSG91_AUTH_KEY
-      MSG91_TEMPLATE_ID
-    */
-
-    if (!process.env.MSG91_AUTH_KEY) {
-      return res.status(500).json({
-        success: false,
-        message: "MSG91_AUTH_KEY is not configured"
-      });
-    }
-
-    const response = await fetch(
-      "https://control.msg91.com/api/v5/otp",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authkey: process.env.MSG91_AUTH_KEY
-        },
-        body: JSON.stringify({
-          template_id: process.env.MSG91_TEMPLATE_ID,
-          mobile: "91" + phone,
-          otp_length: 6,
-          otp_expiry: 10
-        })
-      }
-    );
+    const response = await fetch("https://control.msg91.com/api/v5/otp", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authkey: process.env.MSG91_AUTH_KEY
+      },
+      body: JSON.stringify({
+        template_id: process.env.MSG91_TEMPLATE_ID,
+        mobile: "91" + phone,
+        otp_length: 6,
+        otp_expiry: 10
+      })
+    });
 
     const data = await response.json();
-
     console.log("MSG91 SEND OTP:", data);
 
-    if (
-      data.type === "success" ||
-      data.type === "successfully"
-    ) {
-      return res.json({
-        success: true,
-        message: "OTP sent successfully"
-      });
+    if (data.type === "success" || data.type === "successfully") {
+      return res.json({ success: true, message: "OTP sent successfully" });
     }
 
-    res.status(400).json({
-      success: false,
-      message: data.message || "Unable to send OTP"
-    });
+    res.status(400).json({ success: false, message: data.message || "Unable to send OTP" });
   } catch (error) {
     console.error("MSG91 SEND OTP ERROR:", error);
-
-    res.status(500).json({
-      success: false,
-      message: "OTP service error"
-    });
+    res.status(500).json({ success: false, message: "OTP service error" });
   }
 });
-
-/* =========================
-   OTP - VERIFY
-========================= */
 
 app.post("/api/verify-otp", async (req, res) => {
   try {
-    const { mobile, otp } = req.body;
+    const phone = normalizePhone(req.body.mobile || req.body.phone);
+    const otp = String(req.body.otp || "").trim();
 
-    if (!mobile || !otp) {
-      return res.status(400).json({
-        success: false,
-        message: "Mobile and OTP are required"
-      });
+    if (!validPhone(phone) || !otp) {
+      return res.status(400).json({ success: false, message: "Mobile and OTP are required" });
     }
-
-    const phone = normalizePhone(mobile);
-
-    if (!validPhone(phone)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid mobile number"
-      });
-    }
-
     if (!process.env.MSG91_AUTH_KEY) {
-      return res.status(500).json({
-        success: false,
-        message: "MSG91_AUTH_KEY is not configured"
-      });
+      return res.status(500).json({ success: false, message: "MSG91 OTP is not configured" });
     }
 
     const response = await fetch(
-      `https://control.msg91.com/api/v5/otp/verify?mobile=91${phone}&otp=${encodeURIComponent(
-        otp
-      )}`,
-      {
-        method: "GET",
-        headers: {
-          authkey: process.env.MSG91_AUTH_KEY
-        }
-      }
+      `https://control.msg91.com/api/v5/otp/verify?mobile=91${phone}&otp=${encodeURIComponent(otp)}`,
+      { headers: { authkey: process.env.MSG91_AUTH_KEY } }
     );
 
     const data = await response.json();
-
     console.log("MSG91 VERIFY OTP:", data);
 
     if (data.type === "success") {
-      return res.json({
-        success: true,
-        message: "OTP verified successfully"
-      });
+      return res.json({ success: true, message: "OTP verified successfully" });
     }
 
-    res.status(400).json({
-      success: false,
-      message: data.message || "Invalid OTP"
-    });
+    res.status(400).json({ success: false, message: data.message || "Invalid OTP" });
   } catch (error) {
     console.error("MSG91 VERIFY OTP ERROR:", error);
-
-    res.status(500).json({
-      success: false,
-      message: "OTP verification error"
-    });
+    res.status(500).json({ success: false, message: "OTP verification error" });
   }
 });
 
 /* =========================
-   CREATE RAZORPAY ORDER
+   ORDERS — NO RAZORPAY
 ========================= */
 
-app.get("/api/admin/orders", (req, res) => {
+// Creates a pending UPI order. No online payment gateway is used.
+app.post("/api/create-order", requireLogin, (req, res) => {
   try {
-    if (!razorpay) {
-      return res.status(500).json({
-        success: false,
-        message: "Razorpay is not configured"
-      });
-    }
-
-    const {
-      name,
-      phone,
-      email,
-      address,
-      items,
-      amount
-    } = req.body;
-
-    if (
-      !name ||
-      !phone ||
-      !email ||
-      !address ||
-      !items ||
-      amount === undefined
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "All order details are required"
-      });
-    }
-
-    const numericAmount = Number(amount);
-
-    if (
-      !Number.isFinite(numericAmount) ||
-      numericAmount <= 0
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid amount"
-      });
-    }
-
-    const amountPaise = Math.round(numericAmount * 100);
-
-    const razorpayOrder = await razorpay.orders.create({
-      amount: amountPaise,
-      currency: "INR",
-      receipt:
-        "shiv_" +
-        Date.now() +
-        "_" +
-        crypto.randomBytes(3).toString("hex")
-    });
-
-    const result = db
-      .prepare(
-        `
-        INSERT INTO orders
-        (
-          user_id,
-          name,
-          phone,
-          email,
-          address,
-          items_json,
-          amount_paise,
-          status,
-          razorpay_order_id
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `
-      )
-      .run(
-        req.session.user ? req.session.user.id : null,
-        String(name).trim(),
-        normalizePhone(phone),
-        String(email).trim().toLowerCase(),
-        String(address).trim(),
-        JSON.stringify(items),
-        amountPaise,
-        "pending",
-        razorpayOrder.id
-      );
-
+    const order = createPendingOrder(req, req.body);
     res.json({
       success: true,
-      order: {
-        id: result.lastInsertRowid,
-        razorpayOrderId: razorpayOrder.id,
-        amount: razorpayOrder.amount,
-        currency: razorpayOrder.currency
-      }
+      message: "Order created. Pay by UPI and submit your UTR.",
+      order
     });
   } catch (error) {
     console.error("CREATE ORDER ERROR:", error);
-
-    res.status(500).json({
-      success: false,
-      message: "Could not create payment order"
-    });
+    res.status(error.status || 500).json({ success: false, message: error.message || "Could not create order" });
   }
 });
 
-/* =========================
-   VERIFY RAZORPAY PAYMENT
-========================= */
-
-app.post("/api/verify-payment", async (req, res) => {
+// Submits the UPI transaction/reference number for admin verification.
+app.post("/api/manual-order", requireLogin, (req, res) => {
   try {
-    const {
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature
-    } = req.body;
+    const orderId = Number(req.body.localOrderId || req.body.orderId || req.body.id);
+    const utr = String(req.body.utr || req.body.paymentRef || "").trim().slice(0, 100);
 
-    if (
-      !razorpay_order_id ||
-      !razorpay_payment_id ||
-      !razorpay_signature
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Payment details are incomplete"
-      });
+    if (!Number.isInteger(orderId) || orderId <= 0 || !utr) {
+      return res.status(400).json({ success: false, message: "Order ID and UTR are required" });
     }
 
-    if (!process.env.RAZORPAY_KEY_SECRET) {
-      return res.status(500).json({
-        success: false,
-        message: "Razorpay secret is not configured"
-      });
+    const order = db.prepare("SELECT * FROM orders WHERE id = ? AND user_id = ?").get(orderId, req.session.user.id);
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+    if (order.status !== "pending") {
+      return res.status(400).json({ success: false, message: "This order is no longer pending" });
     }
 
-    const generatedSignature = crypto
-      .createHmac(
-        "sha256",
-        process.env.RAZORPAY_KEY_SECRET
-      )
-      .update(
-        razorpay_order_id +
-          "|" +
-          razorpay_payment_id
-      )
-      .digest("hex");
-
-    if (generatedSignature !== razorpay_signature) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid payment signature"
-      });
-    }
-
-    db.prepare(
-      `
-      UPDATE orders
-      SET
-        status = 'paid',
-        razorpay_payment_id = ?
-      WHERE razorpay_order_id = ?
-      `
-    ).run(
-      razorpay_payment_id,
-      razorpay_order_id
-    );
+    db.prepare(`UPDATE orders SET payment_ref = ?, payment_method = 'UPI' WHERE id = ?`).run(utr, orderId);
 
     res.json({
       success: true,
-      message: "Payment verified successfully"
+      message: "UTR submitted. Your payment will be verified by the admin.",
+      order: { id: orderId, status: "pending", paymentRef: utr }
     });
   } catch (error) {
-    console.error("PAYMENT VERIFY ERROR:", error);
-
-    res.status(500).json({
-      success: false,
-      message: "Payment verification failed"
-    });
+    console.error("MANUAL PAYMENT ERROR:", error);
+    res.status(500).json({ success: false, message: "Could not submit payment details" });
   }
 });
-
-/* =========================
-   GET USER ORDERS
-========================= */
 
 app.get("/api/orders", requireLogin, (req, res) => {
   try {
-    const orders = db
-      .prepare(
-        `
-        SELECT
-          id,
-          name,
-          phone,
-          email,
-          address,
-          items_json,
-          amount_paise,
-          status,
-          razorpay_order_id,
-          razorpay_payment_id,
-          created_at
-        FROM orders
-        WHERE user_id = ?
-        ORDER BY id DESC
-        `
-      )
-      .all(req.session.user.id);
-
-    const formattedOrders = orders.map((order) => ({
-      ...order,
-      amount: order.amount_paise / 100,
-      items: JSON.parse(order.items_json)
-    }));
-
-    res.json({
-      success: true,
-      orders: formattedOrders
-    });
-  } catch (error) {
-    console.error("GET ORDERS ERROR:", error);
-
-    res.status(500).json({
-      success: false,
-      message: "Could not load orders"
-    });
-  }
-});
-/* =========================
-   MANUAL UPI ORDER
-========================= */
-
-app.post("/api/manual-order", requireLogin, (req, res) => {
-  try {
-    const {
-      name,
-      phone,
-      email,
-      address,
-      items,
-      amount,
-      utr
-    } = req.body;
-
-    if (
-      !name ||
-      !phone ||
-      !email ||
-      !address ||
-      !Array.isArray(items) ||
-      !items.length ||
-      !utr
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "All order details and UTR are required"
-      });
-    }
-
-    const numericAmount = Number(amount);
-
-    if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid order amount"
-      });
-    }
-
-    const cleanPhone = normalizePhone(phone);
-    const cleanEmail = String(email).trim().toLowerCase();
-    const cleanUtr = String(utr).trim().slice(0, 100);
-
-    if (!validPhone(cleanPhone)) {
-      return res.status(400).json({
-        success: false,
-        message: "Enter a valid 10-digit mobile number"
-      });
-    }
-
-    if (!validEmail(cleanEmail)) {
-      return res.status(400).json({
-        success: false,
-        message: "Enter a valid email address"
-      });
-    }
-
-    const amountPaise = Math.round(numericAmount * 100);
-
-    const manualOrderId =
-      "UPI-MANUAL-" +
-      Date.now() +
-      "-" +
-      crypto.randomBytes(3).toString("hex");
-
-    const result = db.prepare(`
-      INSERT INTO orders (
-        user_id,
-        name,
-        phone,
-        email,
-        address,
-        items_json,
-        amount_paise,
-        status,
-        razorpay_order_id,
-        razorpay_payment_id
-      )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(
-      req.session.user ? req.session.user.id : null,
-      String(name).trim(),
-      cleanPhone,
-      cleanEmail,
-      String(address).trim(),
-      JSON.stringify(items),
-      amountPaise,
-      "pending",
-      manualOrderId,
-      cleanUtr
-    );
-
-    return res.json({
-      success: true,
-      message: "Order submitted successfully",
-      order: {
-        id: result.lastInsertRowid,
-        status: "pending",
-        utr: cleanUtr
-      }
-    });
-
-  } catch (error) {
-    console.error("MANUAL ORDER ERROR:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Could not create manual payment order"
-    });
-  }
-});
-/* =========================
-   ADMIN ORDERS
-========================= */
-
-app.get("/api/admin/orders", (req, res) => {
-  try {
-    const orders = db
-      .prepare(
-        `
-        SELECT *
-        FROM orders
-        ORDER BY id DESC
-        `
-      )
-      .all();
+    const orders = db.prepare(`
+      SELECT id, name, phone, email, address, items_json,
+             amount_paise, status, payment_method, payment_ref, created_at
+      FROM orders
+      WHERE user_id = ?
+      ORDER BY id DESC
+    `).all(req.session.user.id);
 
     res.json({
       success: true,
@@ -925,132 +425,110 @@ app.get("/api/admin/orders", (req, res) => {
       }))
     });
   } catch (error) {
-    console.error("ADMIN ORDERS ERROR:", error);
-
-    res.status(500).json({
-      success: false,
-      message: "Could not load orders"
-    });
+    console.error("GET ORDERS ERROR:", error);
+    res.status(500).json({ success: false, message: "Could not load orders" });
   }
 });
 
 /* =========================
-   UPDATE ORDER STATUS
+   ADMIN AUTH
 ========================= */
 
+app.post("/api/admin/login", (req, res) => {
+  try {
+    const username = String(req.body.username || "");
+    const password = String(req.body.password || "");
+
+    if (!username || !password) {
+      return res.status(400).json({ success: false, message: "Username and password are required" });
+    }
+    if (!process.env.ADMIN_USERNAME || !process.env.ADMIN_PASSWORD) {
+      return res.status(500).json({ success: false, message: "Admin credentials are not configured" });
+    }
+    if (username !== process.env.ADMIN_USERNAME || password !== process.env.ADMIN_PASSWORD) {
+      return res.status(401).json({ success: false, message: "Invalid admin credentials" });
+    }
+
+    req.session.admin = true;
+    res.json({ success: true, message: "Admin login successful" });
+  } catch (error) {
+    console.error("ADMIN LOGIN ERROR:", error);
+    res.status(500).json({ success: false, message: "Admin login failed" });
+  }
+});
+
+app.post("/api/admin/logout", (req, res) => {
+  delete req.session.admin;
+  res.json({ success: true, message: "Admin logged out" });
+});
+
+app.get("/api/admin/me", (req, res) => {
+  res.json({ success: true, loggedIn: !!req.session.admin });
+});
+
+app.use("/api/admin", requireAdmin);
+
 /* =========================
-   ADMIN APPROVE PAYMENT
+   ADMIN ORDERS
 ========================= */
+
+app.get("/api/admin/orders", (req, res) => {
+  try {
+    const orders = db.prepare("SELECT * FROM orders ORDER BY id DESC").all();
+    res.json({
+      success: true,
+      orders: orders.map((order) => ({
+        ...order,
+        amount: order.amount_paise / 100,
+        items: JSON.parse(order.items_json)
+      }))
+    });
+  } catch (error) {
+    console.error("ADMIN ORDERS ERROR:", error);
+    res.status(500).json({ success: false, message: "Could not load orders" });
+  }
+});
 
 app.patch("/api/admin/orders/:id/approve-payment", (req, res) => {
   try {
     const orderId = Number(req.params.id);
-
-    if (!Number.isInteger(orderId)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid order ID"
-      });
+    if (!Number.isInteger(orderId) || orderId <= 0) {
+      return res.status(400).json({ success: false, message: "Invalid order ID" });
     }
 
-    const order = db
-      .prepare("SELECT * FROM orders WHERE id = ?")
-      .get(orderId);
-
-    if (!order) {
-      return res.status(404).json({
-        success: false,
-        message: "Order not found"
-      });
-    }
-
-    if (order.status === "paid") {
-      return res.status(400).json({
-        success: false,
-        message: "Payment is already approved"
-      });
-    }
-
+    const order = db.prepare("SELECT * FROM orders WHERE id = ?").get(orderId);
+    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
     if (order.status !== "pending") {
-      return res.status(400).json({
-        success: false,
-        message: "Only pending orders can be approved"
-      });
+      return res.status(400).json({ success: false, message: "Only pending orders can be approved" });
+    }
+    if (!order.payment_ref) {
+      return res.status(400).json({ success: false, message: "No UTR/payment reference submitted" });
     }
 
-    db.prepare(`
-      UPDATE orders
-      SET status = 'paid'
-      WHERE id = ?
-    `).run(orderId);
-
-    res.json({
-      success: true,
-      message: "Payment approved successfully"
-    });
-
+    db.prepare("UPDATE orders SET status = 'paid' WHERE id = ?").run(orderId);
+    res.json({ success: true, message: "Payment approved successfully" });
   } catch (error) {
     console.error("APPROVE PAYMENT ERROR:", error);
-
-    res.status(500).json({
-      success: false,
-      message: "Could not approve payment"
-    });
+    res.status(500).json({ success: false, message: "Could not approve payment" });
   }
 });
 
-
-/* =========================
-   UPDATE ORDER STATUS
-========================= */
-
 app.patch("/api/admin/orders/:id", (req, res) => {
   try {
-    const { status } = req.body;
-
-    const allowed = [
-      "pending",
-      "paid",
-      "processing",
-      "shipped",
-      "delivered",
-      "cancelled"
-    ];
+    const status = String(req.body.status || "");
+    const allowed = ["pending", "paid", "processing", "shipped", "delivered", "cancelled"];
 
     if (!allowed.includes(status)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid order status"
-      });
+      return res.status(400).json({ success: false, message: "Invalid order status" });
     }
 
-    const result = db
-      .prepare(`
-        UPDATE orders
-        SET status = ?
-        WHERE id = ?
-      `)
-      .run(status, req.params.id);
+    const result = db.prepare("UPDATE orders SET status = ? WHERE id = ?").run(status, req.params.id);
+    if (!result.changes) return res.status(404).json({ success: false, message: "Order not found" });
 
-    if (!result.changes) {
-      return res.status(404).json({
-        success: false,
-        message: "Order not found"
-      });
-    }
-
-    res.json({
-      success: true,
-      message: "Order status updated"
-    });
-
+    res.json({ success: true, message: "Order status updated" });
   } catch (error) {
     console.error("UPDATE ORDER ERROR:", error);
-
-    res.status(500).json({
-      success: false,
-      message: "Could not update order"
-    });
+    res.status(500).json({ success: false, message: "Could not update order" });
   }
 });
 
@@ -1063,11 +541,9 @@ app.get("/{*splat}", (req, res) => {
 });
 
 /* =========================
-   START SERVER
+   START
 ========================= */
 
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(
-    `Shiv Supplements server running on port ${PORT}`
-  );
+  console.log(`Shiv Supplements server running on port ${PORT}`);
 });
