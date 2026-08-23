@@ -861,6 +861,72 @@ app.get("/api/admin/orders", (req, res) => {
    UPDATE ORDER STATUS
 ========================= */
 
+/* =========================
+   ADMIN APPROVE PAYMENT
+========================= */
+
+app.patch("/api/admin/orders/:id/approve-payment", (req, res) => {
+  try {
+    const orderId = Number(req.params.id);
+
+    if (!Number.isInteger(orderId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid order ID"
+      });
+    }
+
+    const order = db
+      .prepare("SELECT * FROM orders WHERE id = ?")
+      .get(orderId);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found"
+      });
+    }
+
+    if (order.status === "paid") {
+      return res.status(400).json({
+        success: false,
+        message: "Payment is already approved"
+      });
+    }
+
+    if (order.status !== "pending") {
+      return res.status(400).json({
+        success: false,
+        message: "Only pending orders can be approved"
+      });
+    }
+
+    db.prepare(`
+      UPDATE orders
+      SET status = 'paid'
+      WHERE id = ?
+    `).run(orderId);
+
+    res.json({
+      success: true,
+      message: "Payment approved successfully"
+    });
+
+  } catch (error) {
+    console.error("APPROVE PAYMENT ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Could not approve payment"
+    });
+  }
+});
+
+
+/* =========================
+   UPDATE ORDER STATUS
+========================= */
+
 app.patch("/api/admin/orders/:id", (req, res) => {
   try {
     const { status } = req.body;
@@ -882,13 +948,11 @@ app.patch("/api/admin/orders/:id", (req, res) => {
     }
 
     const result = db
-      .prepare(
-        `
+      .prepare(`
         UPDATE orders
         SET status = ?
         WHERE id = ?
-        `
-      )
+      `)
       .run(status, req.params.id);
 
     if (!result.changes) {
@@ -902,6 +966,7 @@ app.patch("/api/admin/orders/:id", (req, res) => {
       success: true,
       message: "Order status updated"
     });
+
   } catch (error) {
     console.error("UPDATE ORDER ERROR:", error);
 
