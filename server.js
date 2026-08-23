@@ -711,7 +711,118 @@ app.get("/api/orders", requireLogin, (req, res) => {
     });
   }
 });
+/* =========================
+   MANUAL UPI ORDER
+========================= */
 
+app.post("/api/manual-order", requireLogin, (req, res) => {
+  try {
+    const {
+      name,
+      phone,
+      email,
+      address,
+      items,
+      amount,
+      utr
+    } = req.body;
+
+    if (
+      !name ||
+      !phone ||
+      !email ||
+      !address ||
+      !Array.isArray(items) ||
+      !items.length ||
+      !utr
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "All order details and UTR are required"
+      });
+    }
+
+    const numericAmount = Number(amount);
+
+    if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid order amount"
+      });
+    }
+
+    const cleanPhone = normalizePhone(phone);
+    const cleanEmail = String(email).trim().toLowerCase();
+    const cleanUtr = String(utr).trim().slice(0, 100);
+
+    if (!validPhone(cleanPhone)) {
+      return res.status(400).json({
+        success: false,
+        message: "Enter a valid 10-digit mobile number"
+      });
+    }
+
+    if (!validEmail(cleanEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: "Enter a valid email address"
+      });
+    }
+
+    const amountPaise = Math.round(numericAmount * 100);
+
+    const manualOrderId =
+      "UPI-MANUAL-" +
+      Date.now() +
+      "-" +
+      crypto.randomBytes(3).toString("hex");
+
+    const result = db.prepare(`
+      INSERT INTO orders (
+        user_id,
+        name,
+        phone,
+        email,
+        address,
+        items_json,
+        amount_paise,
+        status,
+        razorpay_order_id,
+        razorpay_payment_id
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      req.session.user ? req.session.user.id : null,
+      String(name).trim(),
+      cleanPhone,
+      cleanEmail,
+      String(address).trim(),
+      JSON.stringify(items),
+      amountPaise,
+      "pending",
+      manualOrderId,
+      cleanUtr
+    );
+
+    return res.json({
+      success: true,
+      message: "Order submitted successfully",
+      order: {
+        id: result.lastInsertRowid,
+        status: "pending",
+        utr: cleanUtr
+      }
+    });
+
+  } catch (error) {
+    console.error("MANUAL ORDER ERROR:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Could not create manual payment order"
+    });
+  }
+});
 /* =========================
    ADMIN ORDERS
 ========================= */
