@@ -718,6 +718,9 @@ footer{
     bottom:12px;
   }
 }
+
+/* CUSTOMER ACCOUNT / ORDERS */
+.accountActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.orderHistory{margin-top:22px}.orderHistoryHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.orderHistoryHead h3{margin:0}.orderRefresh{border:1px solid #3a424f;background:#151b23;color:#fff;border-radius:9px;padding:8px 12px;font-weight:800}.orderCard{background:#0b1016;border:1px solid #303a47;border-radius:14px;padding:16px;margin:12px 0}.orderCardTop{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}.orderId{color:#ffd45c;font-weight:950;font-size:17px}.orderDate{color:#7f8998;font-size:12px;margin-top:4px}.orderStatus{display:inline-block;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:950;letter-spacing:.3px}.orderStatus.pending{background:#3d2d05;color:#ffd45c}.orderStatus.paid{background:#0b3b24;color:#52e39a}.orderStatus.processing{background:#172d54;color:#7db2ff}.orderStatus.shipped{background:#073b58;color:#55c7ff}.orderStatus.delivered{background:#243b12;color:#a0f56a}.orderStatus.cancelled{background:#48151a;color:#ff777f}.orderItems{margin-top:12px;border-top:1px solid #252d38}.orderItem{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #1c232d;font-size:13px}.orderItem:last-child{border-bottom:0}.orderTotal{margin-top:12px;font-size:18px;font-weight:950;color:#ffd45c}.orderPayment{margin-top:10px;color:#aeb7c4;font-size:12px;line-height:1.6}.orderEmpty{color:#99a3b3;background:#0b1016;border:1px dashed #343d49;border-radius:12px;padding:18px;text-align:center}
 </style>
 </head>
 
@@ -1429,20 +1432,27 @@ ${esc(user.email)}
 
 </p>
 
-<button
-class="primary"
-onclick="closeM('accountModal');openCart()">
-Cart & Checkout
+<div class="accountActions">
+
+<button class="primary" onclick="closeM('accountModal');openCart()">
+🛒 Cart & Checkout
 </button>
 
-<button
-class="secondary"
-onclick="logout()">
-Logout
+<button class="secondary" onclick="loadMyOrders()">
+📦 My Orders
 </button>
+
+<button class="secondary" onclick="logout()">
+🚪 Logout
+</button>
+
+</div>
+
+<div id="ordersArea" class="orderHistory"></div>
 
 `;
 
+loadMyOrders();
 return;
 
 }
@@ -1859,6 +1869,63 @@ renderAccount();
 
 }
 
+
+/* =====================================================
+   CUSTOMER ORDER HISTORY
+===================================================== */
+async function loadMyOrders(){
+  const area=document.getElementById("ordersArea");
+  if(!area)return;
+  area.innerHTML='<div class="orderEmpty">Loading your orders...</div>';
+  try{
+    const response=await fetch("/api/orders",{method:"GET",credentials:"same-origin",cache:"no-store"});
+    if(response.status===401){area.innerHTML='<div class="orderEmpty">Please login again to view your orders.</div>';return;}
+    const data=await response.json();
+    if(!response.ok)throw new Error(data.message||data.error||"Could not load orders.");
+    const orders=Array.isArray(data.orders)?data.orders:[];
+    if(!orders.length){area.innerHTML='<div class="orderHistoryHead"><h3>📦 My Orders</h3><button class="orderRefresh" onclick="loadMyOrders()">🔄</button></div><div class="orderEmpty">You haven\'t placed any orders yet.<br><br>Add products to your cart and place your first order.</div>';return;}
+    area.innerHTML='<div class="orderHistoryHead"><h3>📦 My Orders</h3><button class="orderRefresh" onclick="loadMyOrders()">🔄 Refresh</button></div>'+orders.map(renderCustomerOrder).join("");
+  }catch(error){
+    console.error("MY ORDERS ERROR:",error);
+    area.innerHTML='<div class="orderEmpty">❌ Could not load your orders.<br><small>'+esc(error.message||"Please try again.")+'</small><br><br><button class="orderRefresh" onclick="loadMyOrders()">Try Again</button></div>';
+  }
+}
+
+function renderCustomerOrder(order){
+  const orderId=order.id||order.order_id||"—";
+  const status=String(order.status||order.payment_status||"pending").toLowerCase();
+  const items=Array.isArray(order.items)?order.items:[];
+  const paise=Number(order.amount_paise);
+  let amount=Number(order.amount);
+  if(!Number.isFinite(amount))amount=Number(order.total);
+  if(!Number.isFinite(amount)&&Number.isFinite(paise))amount=paise/100;
+  if(!Number.isFinite(amount))amount=0;
+  const method=order.payment_method||"UPI";
+  const ref=order.payment_ref||"";
+  const itemHTML=items.length?items.map(item=>{const name=item.name||item.product_name||"Product";const qty=Number(item.qty||item.quantity||1);const price=Number(item.price||0);return '<div class="orderItem"><span>'+esc(name)+' × '+qty+'</span><span>'+money(price*qty)+'</span></div>';}).join(""): '<div class="orderItem"><span>Order items</span><span>—</span></div>';
+  return '<div class="orderCard"><div class="orderCardTop"><div><div class="orderId">Order #'+esc(orderId)+'</div><div class="orderDate">'+formatOrderDate(order.created_at)+'</div></div><span class="orderStatus '+orderStatusClass(status)+'">'+esc(orderStatusText(status))+'</span></div><div class="orderItems">'+itemHTML+'</div><div class="orderTotal">Total: '+money(amount)+'</div><div class="orderPayment">💳 Payment: '+esc(method)+'<br>'+(ref?'🔢 UTR: <b>'+esc(ref)+'</b>':'🔢 UTR: Not submitted yet')+'</div></div>';
+}
+
+function orderStatusClass(status){
+  if(status==="paid")return "paid";
+  if(status==="processing")return "processing";
+  if(status==="shipped")return "shipped";
+  if(status==="delivered")return "delivered";
+  if(status==="cancelled"||status==="canceled")return "cancelled";
+  return "pending";
+}
+function orderStatusText(status){
+  if(status==="paid")return "PAYMENT APPROVED";
+  if(status==="processing")return "PROCESSING";
+  if(status==="shipped")return "SHIPPED 🚚";
+  if(status==="delivered")return "DELIVERED ✅";
+  if(status==="cancelled"||status==="canceled")return "CANCELLED";
+  return "PAYMENT PENDING";
+}
+function formatOrderDate(value){
+  if(!value)return "";
+  try{const d=new Date(value);if(Number.isNaN(d.getTime()))return esc(value);return esc(d.toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short"}));}catch(e){return esc(value);}
+}
 
 /* =====================================================
    CHECKOUT
