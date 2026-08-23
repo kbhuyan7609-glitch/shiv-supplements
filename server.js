@@ -9,6 +9,20 @@ const session = require("express-session");
 
 const app = express();
 const PORT = process.env.PORT || 10000;
+// =========================
+// ADMIN AUTHENTICATION
+// =========================
+
+function requireAdmin(req, res, next) {
+  if (!req.session.admin) {
+    return res.status(401).json({
+      success: false,
+      message: "Admin login required"
+    });
+  }
+
+  next();
+}
 
 /* =========================
    DATABASE
@@ -124,16 +138,77 @@ function validPhone(phone) {
 }
 
 function requireLogin(req, res, next) {
-  if (!req.session.user) {
+  // =========================
+// ADMIN AUTHENTICATION
+// =========================
+
+function requireAdmin(req, res, next) {
+  if (!req.session.admin) {
     return res.status(401).json({
       success: false,
-      message: "Please login first"
+      message: "Admin login required"
     });
   }
 
   next();
 }
 
+app.post("/api/admin/login", (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Username and password are required"
+      });
+    }
+
+    if (
+      username !== process.env.ADMIN_USERNAME ||
+      password !== process.env.ADMIN_PASSWORD
+    ) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid admin credentials"
+      });
+    }
+
+    req.session.admin = {
+      username: username
+    };
+
+    res.json({
+      success: true,
+      message: "Admin login successful"
+    });
+
+  } catch (error) {
+    console.error("ADMIN LOGIN ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Admin login failed"
+    });
+  }
+});
+
+app.post("/api/admin/logout", (req, res) => {
+  delete req.session.admin;
+
+  res.json({
+    success: true,
+    message: "Admin logged out"
+  });
+});
+
+app.get("/api/admin/me", (req, res) => {
+  res.json({
+    success: true,
+    loggedIn: !!req.session.admin,
+    admin: req.session.admin || null
+  });
+});
 /* =========================
    HEALTH CHECK
 ========================= */
@@ -483,7 +558,7 @@ app.post("/api/verify-otp", async (req, res) => {
    CREATE RAZORPAY ORDER
 ========================= */
 
-app.post("/api/create-order", async (req, res) => {
+app.get("/api/admin/orders", (req, res) => {
   try {
     if (!razorpay) {
       return res.status(500).json({
