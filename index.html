@@ -11,651 +11,688 @@ content="Shiv Supplements — premium sports nutrition store for protein, creati
 
 <style>
 :root{
---bg:#07090d;
---surface:#0e1218;
---surface2:#151a22;
---text:#f7f8fb;
---muted:#99a3b3;
---line:#252d38;
---gold:#f7b51b;
---orange:#ff7417;
---green:#25d366
+  --bg:#07090d;
+  --surface:#0e1218;
+  --surface2:#151a22;
+  --text:#f7f8fb;
+  --muted:#99a3b3;
+  --line:#252d38;
+  --gold:#f7b51b;
+  --orange:#ff7417;
+  --green:#25d366;
 }
 
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
-html{scroll-behavior:smooth}
+html{
+  scroll-behavior:smooth;
+}
 
 body{
-margin:0;
-background:var(--bg);
-color:var(--text);
-font-family:Inter,Arial,sans-serif
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,Arial,sans-serif;
 }
 
 a{
-text-decoration:none;
-color:inherit
+  text-decoration:none;
+  color:inherit;
 }
 
-button,input,textarea,select{
-font:inherit
+button,
+input,
+textarea,
+select{
+  font:inherit;
 }
 
 .announce{
-background:linear-gradient(90deg,var(--gold),var(--orange));
-color:#101010;
-text-align:center;
-font-weight:900;
-font-size:13px;
-padding:9px
+  background:linear-gradient(90deg,var(--gold),var(--orange));
+  color:#101010;
+  text-align:center;
+  font-weight:900;
+  font-size:13px;
+  padding:9px;
 }
 
 nav{
-position:sticky;
-top:0;
-z-index:100;
-background:#07090df2;
-backdrop-filter:blur(18px);
-border-bottom:1px solid var(--line)
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:#07090df2;
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line);
 }
 
 .nav{
-max-width:1240px;
-margin:auto;
-padding:9px 20px;
-display:flex;
-align-items:center;
-gap:25px
+  max-width:1240px;
+  margin:auto;
+  padding:9px 20px;
+  display:flex;
+  align-items:center;
+  gap:25px;
 }
 
 .brand img{
-width:62px;
-height:62px;
-object-fit:contain
+  width:62px;
+  height:62px;
+  object-fit:contain;
 }
 
 .links{
-display:flex;
-gap:24px;
-color:#cbd1dc;
-font-size:14px;
-font-weight:800
+  display:flex;
+  gap:24px;
+  color:#cbd1dc;
+  font-size:14px;
+  font-weight:800;
 }
 
 .links a:hover{
-color:var(--gold)
+  color:var(--gold);
 }
 
-.grow{flex:1}
+.grow{
+  flex:1;
+}
 
 .navBtn{
-background:#11161e;
-border:1px solid #37404c;
-color:#fff;
-border-radius:10px;
-padding:11px 14px;
-font-weight:800
+  background:#11161e;
+  border:1px solid #37404c;
+  color:#fff;
+  border-radius:10px;
+  padding:11px 14px;
+  font-weight:800;
+  cursor:pointer;
 }
 
 .cartBtn{
-background:linear-gradient(135deg,var(--gold),var(--orange));
-border:0;
-color:#111;
-border-radius:10px;
-padding:12px 15px;
-font-weight:950
+  background:linear-gradient(135deg,var(--gold),var(--orange));
+  border:0;
+  color:#111;
+  border-radius:10px;
+  padding:12px 15px;
+  font-weight:950;
+  cursor:pointer;
 }
 
 .hero{
-max-width:1240px;
-margin:auto;
-min-height:650px;
-padding:75px 20px 55px;
-display:grid;
-grid-template-columns:1.04fr .96fr;
-align-items:center;
-gap:45px;
-position:relative
+  max-width:1240px;
+  margin:auto;
+  min-height:650px;
+  padding:75px 20px 55px;
+  display:grid;
+  grid-template-columns:1.04fr .96fr;
+  align-items:center;
+  gap:45px;
+  position:relative;
 }
 
 .hero:after{
-content:"";
-position:absolute;
-width:450px;
-height:450px;
-right:2%;
-top:10%;
-background:#f7b51b12;
-filter:blur(65px);
-border-radius:50%;
-z-index:-1
+  content:"";
+  position:absolute;
+  width:450px;
+  height:450px;
+  right:2%;
+  top:10%;
+  background:#f7b51b12;
+  filter:blur(65px);
+  border-radius:50%;
+  z-index:-1;
 }
 
 .kicker{
-display:inline-block;
-border:1px solid #3b4350;
-background:#10151c;
-border-radius:999px;
-padding:9px 14px;
-color:#ffd86d;
-font-size:12px;
-font-weight:900;
-letter-spacing:.6px
+  display:inline-block;
+  border:1px solid #3b4350;
+  background:#10151c;
+  border-radius:999px;
+  padding:9px 14px;
+  color:#ffd86d;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.6px;
 }
 
 h1{
-font-size:clamp(44px,6.3vw,78px);
-line-height:.96;
-letter-spacing:-3px;
-margin:20px 0
+  font-size:clamp(44px,6.3vw,78px);
+  line-height:.96;
+  letter-spacing:-3px;
+  margin:20px 0;
 }
 
-.gold{color:var(--gold)}
+.gold{
+  color:var(--gold);
+}
 
 .hero p{
-color:var(--muted);
-font-size:18px;
-line-height:1.7;
-max-width:650px
+  color:var(--muted);
+  font-size:18px;
+  line-height:1.7;
+  max-width:650px;
 }
 
 .actions{
-display:flex;
-gap:12px;
-flex-wrap:wrap;
-margin:28px 0
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin:28px 0;
 }
 
 .primary{
-border:0;
-background:linear-gradient(135deg,var(--gold),var(--orange));
-color:#111;
-border-radius:12px;
-padding:14px 20px;
-font-weight:950;
-cursor:pointer
+  border:0;
+  background:linear-gradient(135deg,var(--gold),var(--orange));
+  color:#111;
+  border-radius:12px;
+  padding:14px 20px;
+  font-weight:950;
+  cursor:pointer;
 }
 
 .secondary{
-border:1px solid #3a424f;
-background:#0e131a;
-color:#fff;
-border-radius:12px;
-padding:14px 20px;
-font-weight:850;
-cursor:pointer
+  border:1px solid #3a424f;
+  background:#0e131a;
+  color:#fff;
+  border-radius:12px;
+  padding:14px 20px;
+  font-weight:850;
+  cursor:pointer;
 }
 
 .trust{
-display:flex;
-gap:22px;
-flex-wrap:wrap;
-color:#c7ced8;
-font-size:13px;
-font-weight:800
+  display:flex;
+  gap:22px;
+  flex-wrap:wrap;
+  color:#c7ced8;
+  font-size:13px;
+  font-weight:800;
 }
 
 .trust span{
-display:flex;
-gap:6px
+  display:flex;
+  gap:6px;
 }
 
 .heroCard{
-height:485px;
-border:1px solid #303744;
-border-radius:30px;
-background:radial-gradient(circle at 50% 30%,#302d23 0,#151920 40%,#090b10 75%);
-display:flex;
-align-items:center;
-justify-content:center;
-box-shadow:0 35px 100px #000;
-overflow:hidden
+  height:485px;
+  border:1px solid #303744;
+  border-radius:30px;
+  background:
+    radial-gradient(
+      circle at 50% 30%,
+      #302d23 0,
+      #151920 40%,
+      #090b10 75%
+    );
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 35px 100px #000;
+  overflow:hidden;
 }
 
 .circle{
-width:360px;
-height:360px;
-border:1px solid #555044;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-box-shadow:0 0 90px #f7b51b18
+  width:360px;
+  height:360px;
+  border:1px solid #555044;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 0 90px #f7b51b18;
 }
 
 .tub{
-width:210px;
-height:290px;
-border-radius:18px 18px 28px 28px;
-border:2px solid #555b66;
-background:linear-gradient(145deg,#262b34,#07080b);
-box-shadow:0 35px 65px #000;
-transform:rotate(-6deg);
-display:flex;
-align-items:center;
-justify-content:center;
-text-align:center;
-position:relative
+  width:210px;
+  height:290px;
+  border-radius:18px 18px 28px 28px;
+  border:2px solid #555b66;
+  background:linear-gradient(145deg,#262b34,#07080b);
+  box-shadow:0 35px 65px #000;
+  transform:rotate(-6deg);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  position:relative;
 }
 
 .tub:before{
-content:"SHIV\A SUPPLEMENTS";
-white-space:pre;
-color:var(--gold);
-font-size:28px;
-font-weight:950;
-line-height:1.02
+  content:"SHIV\A SUPPLEMENTS";
+  white-space:pre;
+  color:var(--gold);
+  font-size:28px;
+  font-weight:950;
+  line-height:1.02;
 }
 
 .tub:after{
-content:"SPORTS NUTRITION";
-position:absolute;
-bottom:35px;
-font-size:9px;
-letter-spacing:2px;
-color:#d9dde5;
-font-weight:900
+  content:"SPORTS NUTRITION";
+  position:absolute;
+  bottom:35px;
+  font-size:9px;
+  letter-spacing:2px;
+  color:#d9dde5;
+  font-weight:900;
 }
 
 section{
-max-width:1240px;
-margin:auto;
-padding:62px 20px
+  max-width:1240px;
+  margin:auto;
+  padding:62px 20px;
 }
 
 .head{
-display:flex;
-justify-content:space-between;
-align-items:end;
-gap:20px;
-margin-bottom:25px
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  gap:20px;
+  margin-bottom:25px;
 }
 
 .head h2{
-margin:0 0 7px;
-font-size:34px
+  margin:0 0 7px;
+  font-size:34px;
 }
 
 .head p{
-margin:0;
-color:var(--muted)
+  margin:0;
+  color:var(--muted);
 }
 
 .head a{
-color:#ffd45c;
-font-weight:900
+  color:#ffd45c;
+  font-weight:900;
 }
 
 .cats{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:15px
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
 }
 
 .cat{
-background:linear-gradient(145deg,#131820,#0b0f14);
-border:1px solid var(--line);
-border-radius:18px;
-padding:24px;
-transition:.2s
+  background:linear-gradient(145deg,#131820,#0b0f14);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:24px;
+  transition:.2s;
 }
 
 .cat:hover{
-transform:translateY(-4px);
-border-color:#4b5462
+  transform:translateY(-4px);
+  border-color:#4b5462;
 }
 
 .catIcon{
-font-size:35px
+  font-size:35px;
 }
 
 .cat h3{
-margin:15px 0 7px
+  margin:15px 0 7px;
 }
 
 .cat p{
-color:var(--muted);
-font-size:13px;
-line-height:1.5
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.5;
 }
 
 .products{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:16px
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
 }
 
 .product{
-background:var(--surface);
-border:1px solid var(--line);
-border-radius:18px;
-overflow:hidden;
-transition:.2s
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:18px;
+  overflow:hidden;
+  transition:.2s;
 }
 
 .product:hover{
-transform:translateY(-4px);
-border-color:#454e5b
+  transform:translateY(-4px);
+  border-color:#454e5b;
 }
 
 .pic{
-height:205px;
-background:linear-gradient(145deg,#20262f,#0b0e13);
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:55px
+  height:205px;
+  background:linear-gradient(145deg,#20262f,#0b0e13);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:55px;
 }
 
 .pbody{
-padding:18px
+  padding:18px;
 }
 
 .tag{
-font-size:10px;
-color:#ffd66c;
-letter-spacing:1px;
-font-weight:900
+  font-size:10px;
+  color:#ffd66c;
+  letter-spacing:1px;
+  font-weight:900;
 }
 
 .pbody h3{
-margin:8px 0 5px
+  margin:8px 0 5px;
 }
 
 .pbody p{
-color:var(--muted);
-font-size:13px;
-min-height:38px
+  color:var(--muted);
+  font-size:13px;
+  min-height:38px;
 }
 
 .price{
-font-size:21px;
-font-weight:950;
-margin:12px 0
+  font-size:21px;
+  font-weight:950;
+  margin:12px 0;
 }
 
 .buy{
-width:100%;
-border:0;
-background:linear-gradient(135deg,var(--gold),var(--orange));
-color:#111;
-border-radius:10px;
-padding:12px;
-font-weight:950;
-cursor:pointer
+  width:100%;
+  border:0;
+  background:linear-gradient(135deg,var(--gold),var(--orange));
+  color:#111;
+  border-radius:10px;
+  padding:12px;
+  font-weight:950;
+  cursor:pointer;
 }
 
 .deal{
-border:1px solid #594717;
-background:linear-gradient(135deg,#211a0b,#10141a);
-border-radius:24px;
-padding:32px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:20px
+  border:1px solid #594717;
+  background:linear-gradient(135deg,#211a0b,#10141a);
+  border-radius:24px;
+  padding:32px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
 }
 
 .deal h2{
-margin:0 0 8px
+  margin:0 0 8px;
 }
 
 .deal p{
-margin:0;
-color:var(--muted)
+  margin:0;
+  color:var(--muted);
 }
 
 .features{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:15px
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
 }
 
 .feature{
-background:var(--surface);
-border:1px solid var(--line);
-border-radius:18px;
-padding:22px
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:22px;
 }
 
 .feature b{
-display:block;
-margin:10px 0 5px
+  display:block;
+  margin:10px 0 5px;
 }
 
 .feature p{
-margin:0;
-color:var(--muted);
-font-size:13px;
-line-height:1.5
+  margin:0;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.5;
 }
 
 footer{
-border-top:1px solid var(--line);
-padding:35px 20px;
-color:var(--muted);
-text-align:center
+  border-top:1px solid var(--line);
+  padding:35px 20px;
+  color:var(--muted);
+  text-align:center;
 }
 
 .wa{
-position:fixed;
-right:18px;
-bottom:18px;
-background:var(--green);
-color:#071009;
-padding:15px 18px;
-border-radius:999px;
-font-weight:950;
-box-shadow:0 15px 45px #000;
-z-index:30
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  background:var(--green);
+  color:#071009;
+  padding:15px 18px;
+  border-radius:999px;
+  font-weight:950;
+  box-shadow:0 15px 45px #000;
+  z-index:30;
 }
 
 .overlay{
-display:none;
-position:fixed;
-inset:0;
-background:#000b;
-z-index:200;
-padding:18px;
-overflow:auto
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#000b;
+  z-index:200;
+  padding:18px;
+  overflow:auto;
 }
 
 .modal{
-max-width:590px;
-margin:4vh auto;
-background:#11161e;
-border:1px solid #353e4c;
-border-radius:22px;
-padding:24px;
-box-shadow:0 30px 100px #000
+  max-width:590px;
+  margin:4vh auto;
+  background:#11161e;
+  border:1px solid #353e4c;
+  border-radius:22px;
+  padding:24px;
+  box-shadow:0 30px 100px #000;
 }
 
 .close{
-float:right;
-border:0;
-background:none;
-color:#fff;
-font-size:28px;
-cursor:pointer
+  float:right;
+  border:0;
+  background:none;
+  color:#fff;
+  font-size:28px;
+  cursor:pointer;
 }
 
 .tabs{
-display:flex;
-gap:8px;
-margin-bottom:15px
+  display:flex;
+  gap:8px;
+  margin-bottom:15px;
 }
 
 .tab{
-flex:1;
-padding:11px;
-border-radius:9px;
-border:1px solid var(--line);
-background:#0b0f15;
-color:#fff;
-cursor:pointer
+  flex:1;
+  padding:11px;
+  border-radius:9px;
+  border:1px solid var(--line);
+  background:#0b0f15;
+  color:#fff;
+  cursor:pointer;
 }
 
 .tab.active{
-background:linear-gradient(135deg,var(--gold),var(--orange));
-color:#111;
-font-weight:900
+  background:linear-gradient(135deg,var(--gold),var(--orange));
+  color:#111;
+  font-weight:900;
 }
 
 .field{
-margin:9px 0
+  margin:9px 0;
 }
 
 .field label{
-display:block;
-color:#cbd2dd;
-font-size:13px;
-margin-bottom:6px
+  display:block;
+  color:#cbd2dd;
+  font-size:13px;
+  margin-bottom:6px;
 }
 
 .field input,
 .field textarea{
-width:100%;
-padding:12px;
-border-radius:10px;
-border:1px solid #343c49;
-background:#0a0e14;
-color:#fff;
-outline:none
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #343c49;
+  background:#0a0e14;
+  color:#fff;
+  outline:none;
+}
+
+.field input:focus,
+.field textarea:focus{
+  border-color:var(--gold);
 }
 
 .field textarea{
-min-height:85px;
-resize:vertical
+  min-height:85px;
+  resize:vertical;
 }
 
 .row{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
 }
 
 .cartItem{
-display:flex;
-justify-content:space-between;
-gap:15px;
-padding:13px 0;
-border-bottom:1px solid var(--line)
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  padding:13px 0;
+  border-bottom:1px solid var(--line);
 }
 
 .qty button{
-border:1px solid #39414d;
-background:#1a2029;
-color:#fff;
-border-radius:7px;
-padding:3px 9px;
-cursor:pointer
+  border:1px solid #39414d;
+  background:#1a2029;
+  color:#fff;
+  border-radius:7px;
+  padding:3px 9px;
+  cursor:pointer;
 }
 
 .total{
-font-size:22px;
-font-weight:950;
-margin:18px 0
+  font-size:22px;
+  font-weight:950;
+  margin:18px 0;
 }
 
 .qrBox{
-background:#fff;
-padding:12px;
-border-radius:15px;
-width:230px;
-margin:15px auto;
-text-align:center
+  text-align:center;
+  background:#080b10;
+  border:1px solid #303744;
+  border-radius:16px;
+  padding:18px;
+  margin:18px 0;
 }
 
 .qrBox img{
-width:100%;
-display:block
+  width:240px;
+  max-width:100%;
+  border-radius:8px;
+  background:#fff;
+  padding:8px;
 }
 
-.paymentNote{
-background:#151b24;
-border:1px solid #303946;
-padding:14px;
-border-radius:12px;
-font-size:13px;
-color:#cbd2dd;
-line-height:1.6;
-margin:15px 0
+.orderNote{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.6;
 }
 
 .successBox{
-background:#102218;
-border:1px solid #245a35;
-border-radius:12px;
-padding:15px;
-color:#b9f5c8;
-line-height:1.6
+  background:#102015;
+  border:1px solid #235d32;
+  border-radius:14px;
+  padding:18px;
+  color:#bdf5c8;
+}
+
+.errorBox{
+  background:#241112;
+  border:1px solid #6a2729;
+  border-radius:14px;
+  padding:18px;
+  color:#ffb8b8;
 }
 
 @media(max-width:900px){
-.links{display:none}
-.hero{
-grid-template-columns:1fr;
-padding-top:45px
-}
-.products{
-grid-template-columns:repeat(2,1fr)
-}
-.cats{
-grid-template-columns:repeat(2,1fr)
-}
+
+  .links{
+    display:none;
+  }
+
+  .hero{
+    grid-template-columns:1fr;
+    padding-top:45px;
+  }
+
+  .products{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .cats{
+    grid-template-columns:repeat(2,1fr);
+  }
 }
 
 @media(max-width:560px){
-.nav{
-padding:7px 13px
-}
 
-.brand img{
-width:56px;
-height:56px
-}
+  .nav{
+    padding:7px 13px;
+  }
 
-.hero{
-min-height:auto
-}
+  .brand img{
+    width:56px;
+    height:56px;
+  }
 
-.heroCard{
-height:370px
-}
+  .hero{
+    min-height:auto;
+  }
 
-.circle{
-width:270px;
-height:270px
-}
+  .heroCard{
+    height:370px;
+  }
 
-.tub{
-width:160px;
-height:230px
-}
+  .circle{
+    width:270px;
+    height:270px;
+  }
 
-.products,
-.cats,
-.features{
-grid-template-columns:1fr
-}
+  .tub{
+    width:160px;
+    height:230px;
+  }
 
-.row{
-grid-template-columns:1fr
-}
+  .products,
+  .cats,
+  .features{
+    grid-template-columns:1fr;
+  }
 
-.deal{
-display:block
-}
+  .row{
+    grid-template-columns:1fr;
+  }
 
-.deal .primary{
-margin-top:18px
-}
+  .deal{
+    display:block;
+  }
 
-.wa{
-right:12px;
-bottom:12px
-}
+  .deal .primary{
+    margin-top:18px;
+    display:inline-block;
+  }
+
+  .wa{
+    right:12px;
+    bottom:12px;
+  }
 }
 </style>
 </head>
@@ -707,8 +744,8 @@ Build your <span class="gold">stronger</span> self.
 
 <p>
 Shop premium sports nutrition for muscle gain, strength,
-recovery and performance — with a clean, professional
-online shopping experience.
+recovery and performance — with a clean, professional online
+shopping experience.
 </p>
 
 <div class="actions">
@@ -743,10 +780,12 @@ Create Account
 <section id="categories">
 
 <div class="head">
+
 <div>
 <h2>Shop by Category</h2>
 <p>Find the right products for your training.</p>
 </div>
+
 </div>
 
 <div class="cats">
@@ -776,6 +815,7 @@ Create Account
 </div>
 
 </div>
+
 </section>
 
 <section id="shop">
@@ -784,10 +824,11 @@ Create Account
 
 <div>
 <h2>Featured Supplements</h2>
-<p>Premium sports nutrition products.</p>
+<p>Sample catalog — replace with your actual inventory and prices.</p>
 </div>
 
-<a href="https://wa.me/918144989064?text=Hi%20Shiv%20Supplements,%20please%20send%20me%20the%20latest%20product%20list."
+<a
+href="https://wa.me/918144989064?text=Hi%20Shiv%20Supplements,%20please%20send%20me%20the%20latest%20product%20list."
 target="_blank">
 Get Full List →
 </a>
@@ -804,12 +845,11 @@ Get Full List →
 
 <div>
 <h2>🔥 Exclusive Store Offers</h2>
-<p>
-Ask us for today's prices, combo deals and available stock.
-</p>
+<p>Ask us for today's prices, combo deals and available stock.</p>
 </div>
 
-<a class="primary"
+<a
+class="primary"
 href="https://wa.me/918144989064?text=Hi%20Shiv%20Supplements,%20please%20send%20me%20today's%20offers."
 target="_blank">
 View Offers
@@ -868,27 +908,28 @@ Add products to cart, enter delivery details and place your order online.
 • +91 81449 89064
 </footer>
 
-<a class="wa"
+<a
+class="wa"
 href="https://wa.me/918144989064?text=Hi%20Shiv%20Supplements,%20I%20need%20help%20with%20an%20order."
 target="_blank">
 💬 WhatsApp
 </a>
 
-<!-- ACCOUNT -->
+
+<!-- ACCOUNT MODAL -->
 
 <div class="overlay" id="accountModal">
 
 <div class="modal">
 
-<button class="close"
-onclick="closeM('accountModal')">
+<button class="close" onclick="closeM('accountModal')">
 ×
 </button>
 
 <h2>Customer Account</h2>
 
 <p style="color:#99a3b3;margin-top:-8px">
-Login or create your account with your mobile number.
+Login or create your account.
 </p>
 
 <div id="accountArea"></div>
@@ -897,14 +938,14 @@ Login or create your account with your mobile number.
 
 </div>
 
-<!-- CART -->
+
+<!-- CART MODAL -->
 
 <div class="overlay" id="cartModal">
 
 <div class="modal">
 
-<button class="close"
-onclick="closeM('cartModal')">
+<button class="close" onclick="closeM('cartModal')">
 ×
 </button>
 
@@ -916,18 +957,18 @@ onclick="closeM('cartModal')">
 
 </div>
 
-<!-- CHECKOUT -->
+
+<!-- CHECKOUT MODAL -->
 
 <div class="overlay" id="checkoutModal">
 
 <div class="modal">
 
-<button class="close"
-onclick="closeM('checkoutModal')">
+<button class="close" onclick="closeM('checkoutModal')">
 ×
 </button>
 
-<h2>UPI Payment</h2>
+<h2>UPI Checkout</h2>
 
 <div id="checkoutArea"></div>
 
@@ -935,9 +976,10 @@ onclick="closeM('checkoutModal')">
 
 </div>
 
+
 <script>
 
-const products=[
+const products = [
 
 {
 id:1,
@@ -1013,29 +1055,50 @@ desc:"Available sizes and brands."
 
 ];
 
-let cart=JSON.parse(
-localStorage.getItem("shiv_cart")||"[]"
+
+let cart = JSON.parse(
+localStorage.getItem("shiv_cart") || "[]"
 );
 
-const money=n=>"₹"+Number(n).toLocaleString("en-IN");
 
-const total=()=>cart.reduce(
-(s,i)=>{
-const p=products.find(p=>p.id===i.id);
-return s+(p?p.price*i.qty:0)
-},0);
+const money = n =>
+"₹" + Number(n).toLocaleString("en-IN");
 
-const count=()=>cart.reduce(
-(s,i)=>s+i.qty,
+
+const total = () =>
+cart.reduce(
+(s,i) => {
+
+const product =
+products.find(p => p.id === i.id);
+
+return s +
+(product ? product.price * i.qty : 0);
+
+},
 0
 );
 
+
+const count = () =>
+cart.reduce((s,i) => s + i.qty,0);
+
+
 function go(id){
-document.getElementById(id)
-.scrollIntoView({behavior:"smooth"});
+
+const el = document.getElementById(id);
+
+if(el){
+el.scrollIntoView({
+behavior:"smooth"
+});
 }
 
+}
+
+
 function save(){
+
 localStorage.setItem(
 "shiv_cart",
 JSON.stringify(cart)
@@ -1043,14 +1106,17 @@ JSON.stringify(cart)
 
 renderProducts();
 renderCart();
+
 }
+
 
 function add(id){
 
-let x=cart.find(i=>i.id===id);
+const item =
+cart.find(i => i.id === id);
 
-if(x){
-x.qty++;
+if(item){
+item.qty++;
 }else{
 cart.push({
 id:id,
@@ -1059,27 +1125,40 @@ qty:1
 }
 
 save();
+
 }
+
 
 function change(id,d){
 
-let x=cart.find(i=>i.id===id);
+const item =
+cart.find(i => i.id === id);
 
-if(!x)return;
+if(!item) return;
 
-x.qty+=d;
+item.qty += d;
 
-if(x.qty<=0){
-cart=cart.filter(i=>i.id!==id);
+if(item.qty <= 0){
+
+cart =
+cart.filter(i => i.id !== id);
+
 }
 
 save();
+
 }
+
 
 function renderProducts(){
 
-document.getElementById("products").innerHTML=
-products.map(p=>`
+const box =
+document.getElementById("products");
+
+if(!box) return;
+
+box.innerHTML =
+products.map(p => `
 
 <article class="product">
 
@@ -1094,18 +1173,19 @@ ${p.tag}
 </span>
 
 <h3>
-${p.name}
+${esc(p.name)}
 </h3>
 
 <p>
-${p.desc}
+${esc(p.desc)}
 </p>
 
 <div class="price">
 ${money(p.price)}
 </div>
 
-<button class="buy"
+<button
+class="buy"
 onclick="add(${p.id})">
 Add to Cart
 </button>
@@ -1116,30 +1196,51 @@ Add to Cart
 
 `).join("");
 
-document.getElementById("cartCount").textContent=count();
+document.getElementById("cartCount")
+.textContent = count();
 
 }
+
 
 function renderCart(){
 
 document.getElementById("cartCount")
-.textContent=count();
+.textContent = count();
 
-document.getElementById("cartArea").innerHTML=
+const area =
+document.getElementById("cartArea");
 
-cart.length?
+if(!area) return;
 
-cart.map(i=>{
 
-let p=products.find(p=>p.id===i.id);
+if(!cart.length){
+
+area.innerHTML =
+"<p style='color:#99a3b3'>Your cart is empty.</p>";
+
+return;
+
+}
+
+
+area.innerHTML =
+
+cart.map(i => {
+
+const p =
+products.find(p => p.id === i.id);
+
+if(!p) return "";
 
 return `
 
 <div class="cartItem">
 
 <div>
+
 ${p.icon}
-<b>${p.name}</b>
+
+<b>${esc(p.name)}</b>
 
 <br>
 
@@ -1151,13 +1252,15 @@ ${money(p.price)} each
 
 <div class="qty">
 
-<button onclick="change(${p.id},-1)">
+<button
+onclick="change(${p.id},-1)">
 −
 </button>
 
 ${i.qty}
 
-<button onclick="change(${p.id},1)">
+<button
+onclick="change(${p.id},1)">
 +
 </button>
 
@@ -1167,9 +1270,7 @@ ${i.qty}
 
 `;
 
-}).join("")
-
-+
+}).join("") +
 
 `
 
@@ -1177,20 +1278,16 @@ ${i.qty}
 Total: ${money(total())}
 </div>
 
-<button class="primary"
+<button
+class="primary"
 onclick="startCheckout()">
-
-Proceed to Payment
-
+Proceed to Checkout
 </button>
 
-`
-
-:
-
-"<p style='color:#99a3b3'>Your cart is empty.</p>";
+`;
 
 }
+
 
 function openCart(){
 
@@ -1200,25 +1297,35 @@ show("cartModal");
 
 }
 
+
 async function me(){
 
 try{
 
-let r=await fetch("/api/me");
+const response =
+await fetch("/api/me",{
+credentials:"same-origin"
+});
 
-if(!r.ok)return null;
+if(!response.ok){
+return null;
+}
 
-let data=await r.json();
+const data =
+await response.json();
 
-return data.user||null;
+return data.user || null;
 
-}catch(e){
+}catch(error){
+
+console.error("ME ERROR:",error);
 
 return null;
 
 }
 
 }
+
 
 function openAccount(){
 
@@ -1228,39 +1335,40 @@ renderAccount();
 
 }
 
+
 async function renderAccount(){
 
-let u=await me();
+const user = await me();
 
-if(u){
+if(user){
 
 document.getElementById("accountText")
-.textContent="Account";
+.textContent = "Account";
 
-document.getElementById("accountArea").innerHTML=`
+document.getElementById("accountArea")
+.innerHTML = `
 
 <p>
-Welcome back, <b>${esc(u.name)}</b> 👋
+Welcome back,
+<b>${esc(user.name)}</b> 👋
 </p>
 
 <p style="color:#99a3b3">
-${esc(u.phone)}
+${esc(user.phone)}
 <br>
-${esc(u.email)}
+${esc(user.email)}
 </p>
 
-<button class="primary"
+<button
+class="primary"
 onclick="closeM('accountModal');openCart()">
-
 Cart & Checkout
-
 </button>
 
-<button class="secondary"
+<button
+class="secondary"
 onclick="logout()">
-
 Logout
-
 </button>
 
 `;
@@ -1269,24 +1377,28 @@ return;
 
 }
 
-document.getElementById("accountArea").innerHTML=`
+
+document.getElementById("accountText")
+.textContent = "Login";
+
+
+document.getElementById("accountArea")
+.innerHTML = `
 
 <div class="tabs">
 
-<button id="loginTab"
+<button
+id="loginTab"
 class="tab active"
 onclick="showLogin()">
-
 Login
-
 </button>
 
-<button id="regTab"
+<button
+id="regTab"
 class="tab"
 onclick="showRegister()">
-
 Registration
-
 </button>
 
 </div>
@@ -1298,6 +1410,7 @@ ${loginForm()}
 `;
 
 }
+
 
 function loginForm(){
 
@@ -1311,9 +1424,12 @@ Email or Mobile Number
 
 <input
 id="loginIdentifier"
-placeholder="Email or 10-digit mobile">
+type="text"
+placeholder="Email or 10-digit mobile number"
+autocomplete="username">
 
 </div>
+
 
 <div class="field">
 
@@ -1324,20 +1440,23 @@ Password
 <input
 id="loginPassword"
 type="password"
-placeholder="Password">
+placeholder="Password"
+autocomplete="current-password">
 
 </div>
 
-<button class="primary"
+
+<button
+class="primary"
 onclick="login()">
-
 Login
-
 </button>
+
 
 <p style="color:#99a3b3;font-size:12px;margin-top:14px">
 
 New customer?
+
 Tap <b>Registration</b> above.
 
 </p>
@@ -1345,6 +1464,7 @@ Tap <b>Registration</b> above.
 `;
 
 }
+
 
 function registerForm(){
 
@@ -1358,9 +1478,11 @@ Full Name *
 
 <input
 id="regName"
-placeholder="Your full name">
+placeholder="Your full name"
+autocomplete="name">
 
 </div>
+
 
 <div class="field">
 
@@ -1370,12 +1492,13 @@ Mobile Number *
 
 <input
 id="regPhone"
-name="phone"
 type="tel"
 maxlength="10"
-placeholder="10-digit mobile number">
+placeholder="10-digit mobile number"
+autocomplete="tel">
 
 </div>
+
 
 <div class="field">
 
@@ -1386,9 +1509,11 @@ Email Address *
 <input
 id="regEmail"
 type="email"
-placeholder="your@email.com">
+placeholder="your@email.com"
+autocomplete="email">
 
 </div>
+
 
 <div class="field">
 
@@ -1399,92 +1524,87 @@ Password *
 <input
 id="regPassword"
 type="password"
-placeholder="Minimum 6 characters">
+placeholder="Minimum 6 characters"
+autocomplete="new-password">
 
 </div>
 
-<button class="primary"
+
+<button
+class="primary"
 onclick="register()">
-
-Send OTP
-
+Create Account
 </button>
-
-<div id="otpArea"
-style="display:none;margin-top:12px">
-
-<div class="field">
-
-<label>
-Enter OTP *
-</label>
-
-<input
-id="regOtp"
-type="text"
-maxlength="6"
-placeholder="Enter 6-digit OTP">
-
-</div>
-
-<button class="primary"
-onclick="verifyRegistrationOTP()">
-
-Verify OTP & Create Account
-
-</button>
-
-</div>
 
 `;
 
 }
 
+
 function showLogin(){
 
 document.getElementById("loginTab")
-.className="tab active";
+.className = "tab active";
 
 document.getElementById("regTab")
-.className="tab";
+.className = "tab";
 
 document.getElementById("formArea")
-.innerHTML=loginForm();
+.innerHTML = loginForm();
 
 }
+
 
 function showRegister(){
 
 document.getElementById("regTab")
-.className="tab active";
+.className = "tab active";
 
 document.getElementById("loginTab")
-.className="tab";
+.className = "tab";
 
 document.getElementById("formArea")
-.innerHTML=registerForm();
+.innerHTML = registerForm();
 
 }
 
+
+/* =========================
+   FIXED LOGIN
+========================= */
+
 async function login(){
 
-const identifier=
-val("loginIdentifier");
+const identifier =
+document.getElementById("loginIdentifier")
+.value
+.trim();
 
-const password=
-val("loginPassword");
+const password =
+document.getElementById("loginPassword")
+.value;
 
-if(!identifier||!password){
+if(!identifier){
 
-alert("Email/mobile and password are required.");
+alert("Please enter your email or mobile number.");
 
 return;
 
 }
 
+if(!password){
+
+alert("Please enter your password.");
+
+return;
+
+}
+
+
 try{
 
-let r=await fetch("/api/login",{
+const response =
+await fetch("/api/login",{
 
 method:"POST",
 
@@ -1492,472 +1612,258 @@ headers:{
 "Content-Type":"application/json"
 },
 
+credentials:"same-origin",
+
 body:JSON.stringify({
 
 email:identifier,
+
 phone:identifier,
+
 password:password
 
 })
 
 });
 
-let x=await r.json();
 
-if(!r.ok){
+const data =
+await response.json();
 
-alert(x.message||x.error||"Login failed");
+
+if(!response.ok || !data.success){
+
+alert(
+data.message ||
+"Invalid login details."
+);
 
 return;
 
 }
 
-closeM("accountModal");
 
 document.getElementById("accountText")
-.textContent="Account";
+.textContent = "Account";
+
+
+closeM("accountModal");
+
 
 alert("Login successful!");
 
-}catch(e){
 
-console.error(e);
+}catch(error){
 
-alert("Login failed.");
+console.error("LOGIN ERROR:",error);
+
+alert(
+"Unable to connect to server. Please try again."
+);
 
 }
 
 }
+
+
+/* =========================
+   REGISTRATION
+========================= */
 
 async function register(){
 
-const name=val("regName");
+const name =
+document.getElementById("regName")
+.value
+.trim();
 
-const phone=val("regPhone");
+const phone =
+document.getElementById("regPhone")
+.value
+.trim();
 
-const email=val("regEmail");
+const email =
+document.getElementById("regEmail")
+.value
+.trim();
 
-const password=val("regPassword");
+const password =
+document.getElementById("regPassword")
+.value;
 
-if(!name||!phone||!email||!password){
 
-alert("Please fill all required fields.");
+if(!name || !phone || !email || !password){
+
+alert(
+"Please fill all required fields."
+);
 
 return;
 
 }
+
 
 if(!/^[6-9]\d{9}$/.test(phone)){
 
-alert("Enter a valid 10-digit mobile number.");
+alert(
+"Enter a valid 10-digit mobile number."
+);
 
 return;
 
 }
 
-if(password.length<6){
 
-alert("Password must be at least 6 characters.");
+if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+
+alert(
+"Enter a valid email address."
+);
 
 return;
 
 }
+
+
+if(password.length < 6){
+
+alert(
+"Password must contain at least 6 characters."
+);
+
+return;
+
+}
+
 
 try{
 
-const response=await fetch(
-"/api/send-otp",
-{
+const response =
+await fetch("/api/register",{
+
 method:"POST",
+
 headers:{
 "Content-Type":"application/json"
 },
+
+credentials:"same-origin",
+
 body:JSON.stringify({
-mobile:phone
-})
-}
-);
 
-const data=await response.json();
-
-if(!response.ok){
-
-alert(
-data.message||
-"Failed to send OTP"
-);
-
-return;
-
-}
-
-alert("OTP sent successfully!");
-
-document.getElementById("otpArea")
-.style.display="block";
-
-}catch(error){
-
-console.error(error);
-
-alert("Unable to send OTP.");
-
-}
-
-}
-
-async function verifyRegistrationOTP(){
-
-const name=val("regName");
-
-const phone=val("regPhone");
-
-const email=val("regEmail");
-
-const password=val("regPassword");
-
-const otp=val("regOtp");
-
-if(!otp){
-
-alert("Enter OTP.");
-
-return;
-
-}
-
-try{
-
-const verifyResponse=await fetch(
-"/api/verify-otp",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-mobile:phone,
-otp:otp
-})
-}
-);
-
-const verifyData=
-await verifyResponse.json();
-
-if(!verifyResponse.ok||
-!verifyData.success){
-
-alert(
-verifyData.message||
-"Invalid OTP"
-);
-
-return;
-
-}
-
-const registerResponse=
-await fetch(
-"/api/register",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
 name:name,
+
 phone:phone,
+
 email:email,
+
 password:password
+
 })
-}
-);
 
-const registerData=
-await registerResponse.json();
+});
 
-if(!registerResponse.ok){
+
+const data =
+await response.json();
+
+
+if(!response.ok || !data.success){
 
 alert(
-registerData.message||
-"Registration failed"
+data.message ||
+"Registration failed."
 );
 
 return;
 
 }
 
-alert("Account created successfully!");
+
+alert(
+"Account created successfully!"
+);
+
+
+document.getElementById("accountText")
+.textContent = "Account";
+
 
 closeM("accountModal");
 
-document.getElementById("accountText")
-.textContent="Account";
 
 }catch(error){
 
-console.error(error);
+console.error(
+"REGISTER ERROR:",
+error
+);
 
-alert("Registration failed.");
+alert(
+"Unable to create account. Please try again."
+);
 
 }
 
 }
+
+
+/* =========================
+   LOGOUT
+========================= */
 
 async function logout(){
 
-await fetch(
-"/api/logout",
-{
-method:"POST"
-}
-);
+try{
+
+const response =
+await fetch("/api/logout",{
+
+method:"POST",
+
+credentials:"same-origin"
+
+});
+
 
 document.getElementById("accountText")
-.textContent="Login";
+.textContent = "Login";
 
-renderAccount();
+await renderAccount();
 
-}
+}catch(error){
 
-async function startCheckout(){
-  let u = await me();
-
-  if(!u){
-    closeM("cartModal");
-    openAccount();
-    return;
-  }
-
-  if(!cart.length){
-    return alert("Your cart is empty.");
-  }
-
-  closeM("cartModal");
-
-  document.getElementById("checkoutArea").innerHTML = `
-    <p style="color:#99a3b3">
-      Logged in as ${esc(u.email)}
-    </p>
-
-    <div class="row">
-      <div class="field">
-        <label>Name</label>
-        <input id="cname" value="${esc(u.name)}">
-      </div>
-
-      <div class="field">
-        <label>Mobile</label>
-        <input id="cphone" value="${esc(u.phone)}">
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Email</label>
-      <input id="cemail" value="${esc(u.email)}">
-    </div>
-
-    <div class="field">
-      <label>Delivery Address *</label>
-      <textarea id="caddress"
-        placeholder="Full address with PIN code"></textarea>
-    </div>
-
-    <div class="total">
-      Payable: ${money(total())}
-    </div>
-
-    <div style="
-      background:#0a0e14;
-      border:1px solid #343c49;
-      border-radius:16px;
-      padding:18px;
-      text-align:center;
-      margin:18px 0;
-    ">
-      <h3 style="margin-top:0">Scan & Pay</h3>
-
-      <p style="color:#99a3b3;font-size:13px">
-        Scan this QR using PhonePe, Google Pay or another UPI app.
-      </p>
-
-      <img
-        src="qr.png"
-        alt="Shiv Supplements UPI QR"
-        style="
-          width:min(320px,85vw);
-          max-width:100%;
-          border-radius:12px;
-          background:#fff;
-          padding:8px;
-        "
-      >
-
-      <p style="color:#ffd66c;font-weight:900;margin-bottom:0">
-        Pay exactly ${money(total())}
-      </p>
-    </div>
-
-    <div class="field">
-      <label>UTR / Transaction ID *</label>
-      <input
-        id="utr"
-        maxlength="50"
-        placeholder="Enter UTR / transaction ID after payment"
-      >
-    </div>
-
-    <button class="primary" onclick="submitManualOrder()">
-      Submit Payment Details
-    </button>
-
-    <p style="color:#99a3b3;font-size:12px;line-height:1.5">
-      After payment, enter your UTR. Your order will remain
-      <b>Payment Pending</b> until the store admin verifies it.
-    </p>
-  `;
-
-  show("checkoutModal");
-}
-
-
-async function submitManualOrder(){
-
-  const name = val("cname");
-  const phone = val("cphone");
-  const email = val("cemail");
-  const address = val("caddress");
-  const utr = val("utr");
-
-  if(!name || !phone || !email || !address){
-    return alert("Please complete all delivery details.");
-  }
-
-  if(!utr){
-    return alert("Please enter the UTR / Transaction ID.");
-  }
-
-  if(!cart.length){
-    return alert("Your cart is empty.");
-  }
-
-  try{
-
-    /*
-      STEP 1:
-      Create the order first.
-      This gives us the localOrderId required by server.js.
-    */
-
-    const createResponse = await fetch("/api/create-order", {
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({
-        name,
-        phone,
-        email,
-        address,
-        items:cart,
-        amount:total()
-      })
-    });
-
-    const createResult = await createResponse.json();
-
-    if(!createResponse.ok){
-      return alert(
-        createResult.message ||
-        createResult.error ||
-        "Could not create order."
-      );
-    }
-
-    const localOrderId =
-      createResult.order?.localOrderId ||
-      createResult.order?.id;
-
-    if(!localOrderId){
-      console.error("CREATE ORDER RESPONSE:", createResult);
-      return alert("Order ID was not generated.");
-    }
-
-    /*
-      STEP 2:
-      Submit UTR together with Order ID.
-    */
-
-    const paymentResponse = await fetch("/api/manual-order", {
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({
-        localOrderId:localOrderId,
-        utr:utr
-      })
-    });
-
-    const paymentResult = await paymentResponse.json();
-
-    if(!paymentResponse.ok){
-      return alert(
-        paymentResult.message ||
-        "Could not submit payment details."
-      );
-    }
-
-    console.log("ORDER SUBMITTED:", paymentResult);
-
-    cart = [];
-    save();
-
-    closeM("checkoutModal");
-
-    alert(
-      "Order submitted successfully!\\n\\n" +
-      "Order ID: " + localOrderId +
-      "\\n\\n" +
-      "Payment is pending verification."
-    );
-
-    renderCart();
-
-  }catch(error){
-
-    console.error("MANUAL ORDER ERROR:",error);
-
-    alert(
-      "Could not submit the order. " +
-      "Please check your internet connection and try again."
-    );
-  }
-}
-if(!data.name||
-!data.phone||
-!data.email||
-!data.address||
-!data.utr){
-
-alert(
-"Please complete all delivery details and enter UTR."
+console.error(
+"LOGOUT ERROR:",
+error
 );
 
+}
+
+}
+
+
+/* =========================
+   MANUAL UPI CHECKOUT
+========================= */
+
+async function startCheckout(){
+
+const user = await me();
+
+
+if(!user){
+
+closeM("cartModal");
+
+openAccount();
+
 return;
 
 }
 
-if(!/^[6-9]\d{9}$/.test(data.phone)){
 
-alert("Enter a valid 10-digit mobile number.");
-
-return;
-
-}
-
-if(!data.items.length){
+if(!cart.length){
 
 alert("Your cart is empty.");
 
@@ -1965,39 +1871,258 @@ return;
 
 }
 
-try{
 
-const response=await fetch(
-"/api/manual-order",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify(data)
+closeM("cartModal");
+
+
+document.getElementById("checkoutArea")
+.innerHTML = `
+
+<p style="color:#99a3b3">
+
+Logged in as
+<b>${esc(user.email)}</b>
+
+</p>
+
+
+<div class="row">
+
+<div class="field">
+
+<label>
+Name
+</label>
+
+<input
+id="cname"
+value="${esc(user.name)}">
+
+</div>
+
+
+<div class="field">
+
+<label>
+Mobile
+</label>
+
+<input
+id="cphone"
+value="${esc(user.phone)}">
+
+</div>
+
+</div>
+
+
+<div class="field">
+
+<label>
+Email
+</label>
+
+<input
+id="cemail"
+value="${esc(user.email)}">
+
+</div>
+
+
+<div class="field">
+
+<label>
+Delivery Address *
+</label>
+
+<textarea
+id="caddress"
+placeholder="Full address with PIN code"></textarea>
+
+</div>
+
+
+<div class="total">
+Payable: ${money(total())}
+</div>
+
+
+<div class="qrBox">
+
+<h3>
+Scan & Pay Using Any UPI App
+</h3>
+
+<img
+src="qr.png"
+alt="Shiv Supplements UPI QR">
+
+<p class="orderNote">
+
+Scan the QR code and pay exactly
+<b>${money(total())}</b>.
+
+</p>
+
+</div>
+
+
+<div class="field">
+
+<label>
+UPI Transaction ID / UTR *
+</label>
+
+<input
+id="utr"
+type="text"
+maxlength="100"
+placeholder="Enter your UTR / Transaction ID">
+
+</div>
+
+
+<button
+class="primary"
+style="width:100%"
+onclick="submitManualOrder()">
+
+Submit Payment Details
+
+</button>
+
+
+<p class="orderNote">
+
+After you submit the UTR, the order remains
+<b>Payment Pending</b> until the store admin
+verifies the payment.
+
+</p>
+
+`;
+
+
+show("checkoutModal");
+
 }
+
+
+/* =========================
+   SUBMIT MANUAL ORDER
+========================= */
+
+async function submitManualOrder(){
+
+const name =
+val("cname");
+
+const phone =
+val("cphone");
+
+const email =
+val("cemail");
+
+const address =
+val("caddress");
+
+const utr =
+val("utr");
+
+
+if(!name ||
+!phone ||
+!email ||
+!address ||
+!utr){
+
+alert(
+"Order ID and UTR are required"
 );
-
-const result=
-await response.json();
-
-if(!response.ok){
-
-if(response.status===401){
-
-closeM("checkoutModal");
-
-openAccount();
-
-alert("Please login first.");
 
 return;
 
 }
 
+
+if(!/^[6-9]\d{9}$/.test(phone)){
+
 alert(
-result.message||
-result.error||
+"Enter a valid 10-digit mobile number."
+);
+
+return;
+
+}
+
+
+if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+
+alert(
+"Enter a valid email address."
+);
+
+return;
+
+}
+
+
+if(!cart.length){
+
+alert(
+"Your cart is empty."
+);
+
+return;
+
+}
+
+
+const payload = {
+
+name:name,
+
+phone:phone,
+
+email:email,
+
+address:address,
+
+items:cart,
+
+amount:total(),
+
+utr:utr
+
+};
+
+
+try{
+
+const response =
+await fetch("/api/manual-order",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+credentials:"same-origin",
+
+body:JSON.stringify(payload)
+
+});
+
+
+const data =
+await response.json();
+
+
+if(!response.ok || !data.success){
+
+alert(
+data.message ||
 "Could not submit order."
 );
 
@@ -2005,64 +2130,69 @@ return;
 
 }
 
-if(result.success){
 
-const orderId=
-result.order?.id||"Generated";
+/* Clear cart */
 
-cart=[];
+cart = [];
 
 save();
 
+
 document.getElementById("checkoutArea")
-.innerHTML=`
+.innerHTML = `
 
 <div class="successBox">
 
-<b>✅ Order Submitted Successfully!</b>
+<h3>
+✅ Order Submitted Successfully
+</h3>
 
-<br><br>
+<p>
+Your payment details have been submitted.
+</p>
 
-Your order has been received.
-
-<br>
-
+<p>
 Order ID:
-<b>#${esc(orderId)}</b>
+<b>#${esc(
+String(data.order?.id || "")
+)}</b>
+</p>
 
-<br>
-
-Payment Status:
-<b>Pending Verification</b>
-
-<br>
-
+<p>
 UTR:
-<b>${esc(data.utr)}</b>
+<b>${esc(utr)}</b>
+</p>
 
-<br><br>
+<p>
+Status:
+<b>Payment Pending</b>
+</p>
 
-Our store admin will verify your UPI payment
-and update the order status.
+<p>
+The store admin will verify your payment
+and update your order status.
+</p>
 
 </div>
 
-<br>
-
-<button class="primary"
+<button
+class="primary"
+style="margin-top:15px"
 onclick="closeM('checkoutModal')">
 
-Continue Shopping
+Done
 
 </button>
 
 `;
 
-}
 
 }catch(error){
 
-console.error("MANUAL ORDER ERROR:",error);
+console.error(
+"MANUAL ORDER ERROR:",
+error
+);
 
 alert(
 "Unable to submit order. Please try again."
@@ -2072,56 +2202,85 @@ alert(
 
 }
 
+
+/* =========================
+   HELPERS
+========================= */
+
 function val(id){
 
-const el=document.getElementById(id);
+const element =
+document.getElementById(id);
 
-return el?
-el.value.trim():
-"";
+if(!element) return "";
+
+return element.value.trim();
 
 }
 
-function esc(s){
 
-return String(s)
+function esc(value){
+
+return String(value ?? "")
 .replace(
 /[&<>"']/g,
-m=>({
+m => ({
+
 "&":"&amp;",
 "<":"&lt;",
 ">":"&gt;",
 '"':"&quot;",
 "'":"&#39;"
+
 }[m])
 );
 
 }
 
+
 function show(id){
 
-document.getElementById(id)
-.style.display="block";
+const element =
+document.getElementById(id);
+
+if(element){
+
+element.style.display = "block";
 
 }
+
+}
+
 
 function closeM(id){
 
-document.getElementById(id)
-.style.display="none";
+const element =
+document.getElementById(id);
+
+if(element){
+
+element.style.display = "none";
 
 }
+
+}
+
+
+/* =========================
+   INITIALIZE
+========================= */
 
 renderProducts();
 
 renderCart();
 
-me().then(u=>{
 
-if(u){
+me().then(user => {
+
+if(user){
 
 document.getElementById("accountText")
-.textContent="Account";
+.textContent = "Account";
 
 }
 
