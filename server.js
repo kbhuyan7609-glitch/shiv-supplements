@@ -669,7 +669,7 @@ app.get("/api/admin/orders", (req, res) => {
    VERIFY RAZORPAY PAYMENT
 ========================= */
 
-app.post("/api/verify-payment", (req, res) => {
+app.post("/api/verify-payment", async (req, res) => {
   try {
     const {
       razorpay_order_id,
