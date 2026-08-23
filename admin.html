@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Shiv Supplements - Admin Dashboard</title>
 
 <style>
+
 *{
   box-sizing:border-box;
   margin:0;
@@ -18,6 +20,8 @@ body{
   color:#fff;
   min-height:100vh;
 }
+
+/* HEADER */
 
 .header{
   background:#11151d;
@@ -42,6 +46,8 @@ body{
   font-size:14px;
 }
 
+/* CONTAINER */
+
 .container{
   width:92%;
   max-width:1400px;
@@ -56,6 +62,8 @@ body{
 .title span{
   color:#ffb000;
 }
+
+/* STATS */
 
 .stats{
   display:grid;
@@ -82,6 +90,8 @@ body{
   font-weight:bold;
 }
 
+/* CONTROLS */
+
 .controls{
   display:flex;
   gap:12px;
@@ -104,12 +114,20 @@ button{
   padding:13px 20px;
   font-weight:bold;
   cursor:pointer;
+  transition:.2s;
+}
+
+button:hover{
+  transform:translateY(-1px);
+  opacity:.9;
 }
 
 .refresh{
   background:#ffb000;
   color:#111;
 }
+
+/* ORDERS */
 
 .orders{
   background:#111722;
@@ -155,7 +173,8 @@ button{
 .product{
   display:flex;
   justify-content:space-between;
-  padding:7px 0;
+  gap:15px;
+  padding:9px 0;
   border-bottom:1px solid #202a38;
 }
 
@@ -169,6 +188,8 @@ button{
   font-weight:bold;
   color:#ffb000;
 }
+
+/* STATUS */
 
 .status{
   display:inline-block;
@@ -188,6 +209,11 @@ button{
   color:#37e69a;
 }
 
+.processing{
+  background:#26365b;
+  color:#7db4ff;
+}
+
 .shipped{
   background:#073b58;
   color:#55c7ff;
@@ -203,6 +229,57 @@ button{
   color:#ff6b6b;
 }
 
+/* ACTIONS */
+
+.actions{
+  margin-top:20px;
+  padding-top:18px;
+  border-top:1px solid #263447;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.action-title{
+  width:100%;
+  color:#aaa;
+  font-size:13px;
+  margin-bottom:3px;
+}
+
+.approve-btn{
+  background:#ffb000;
+  color:#111;
+}
+
+.reject-btn{
+  background:#4a1111;
+  color:#ff6b6b;
+  border:1px solid #ff6b6b;
+}
+
+.processing-btn{
+  background:#26365b;
+  color:#7db4ff;
+}
+
+.ship-btn{
+  background:#073b58;
+  color:#55c7ff;
+}
+
+.deliver-btn{
+  background:#233b12;
+  color:#9cff50;
+}
+
+.disabled-btn{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+/* EMPTY / LOADING */
+
 .empty{
   text-align:center;
   padding:60px 20px;
@@ -215,13 +292,39 @@ button{
   color:#aaa;
 }
 
+/* TOAST */
+
+.toast{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  z-index:9999;
+  background:#151c27;
+  border:1px solid #ffb000;
+  color:white;
+  padding:15px 20px;
+  border-radius:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,.5);
+  display:none;
+  max-width:350px;
+}
+
+.toast.show{
+  display:block;
+}
+
+/* MOBILE */
+
 @media(max-width:900px){
+
   .stats{
     grid-template-columns:repeat(2,1fr);
   }
+
 }
 
 @media(max-width:600px){
+
   .stats{
     grid-template-columns:1fr;
   }
@@ -233,24 +336,46 @@ button{
   .title{
     font-size:25px;
   }
+
+  .header{
+    gap:10px;
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .actions button{
+    flex:1;
+  }
+
 }
+
 </style>
+
 </head>
 
 <body>
 
 <header class="header">
+
   <div class="logo">
     SHIV <span>SUPPLEMENTS</span>
   </div>
-  <div class="admin">ADMIN DASHBOARD</div>
+
+  <div class="admin">
+    ADMIN DASHBOARD
+  </div>
+
 </header>
+
 
 <div class="container">
 
   <h1 class="title">
     📦 Admin <span>Orders</span>
   </h1>
+
+
+  <!-- STATS -->
 
   <div class="stats">
 
@@ -276,7 +401,11 @@ button{
 
   </div>
 
+
+  <!-- SEARCH -->
+
   <div class="controls">
+
     <input
       type="text"
       id="search"
@@ -284,26 +413,61 @@ button{
       oninput="renderOrders()"
     >
 
-    <button class="refresh" onclick="loadOrders()">
+    <button
+      class="refresh"
+      onclick="loadOrders()"
+    >
       🔄 Refresh Orders
     </button>
+
   </div>
 
+
+  <!-- ORDERS -->
+
   <div class="orders" id="orders">
+
     <div class="loading">
       Loading orders...
     </div>
+
   </div>
 
 </div>
+
+
+<!-- TOAST -->
+
+<div id="toast" class="toast"></div>
+
 
 <script>
 
 let allOrders = [];
 
-/* =========================
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+function showToast(message){
+
+  const toast = document.getElementById("toast");
+
+  toast.textContent = message;
+
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 3000);
+
+}
+
+
+/* =====================================================
    LOAD ORDERS
-========================= */
+===================================================== */
 
 async function loadOrders(){
 
@@ -325,20 +489,19 @@ async function loadOrders(){
 
     const data = await response.json();
 
-    /*
-      API can return:
-      {success:true, orders:[...]}
-      OR directly [...]
-    */
-
     if(Array.isArray(data)){
+
       allOrders = data;
+
     }
     else{
+
       allOrders = data.orders || [];
+
     }
 
     updateStats();
+
     renderOrders();
 
   }
@@ -348,22 +511,25 @@ async function loadOrders(){
 
     box.innerHTML = `
       <div class="empty">
-        ❌ Could not load orders.<br><br>
+        ❌ Could not load orders.
+        <br><br>
         Please refresh the page.
       </div>
     `;
 
   }
+
 }
 
 
-/* =========================
+/* =====================================================
    STATS
-========================= */
+===================================================== */
 
 function updateStats(){
 
   const total = allOrders.length;
+
 
   const pending = allOrders.filter(o => {
 
@@ -377,6 +543,7 @@ function updateStats(){
 
   }).length;
 
+
   const paid = allOrders.filter(o => {
 
     const s = String(
@@ -389,7 +556,9 @@ function updateStats(){
 
   }).length;
 
+
   let sales = 0;
+
 
   allOrders.forEach(o => {
 
@@ -406,11 +575,18 @@ function updateStats(){
 
   });
 
-  document.getElementById("totalOrders").textContent = total;
 
-  document.getElementById("pendingOrders").textContent = pending;
+  document.getElementById("totalOrders").textContent =
+    total;
 
-  document.getElementById("paidOrders").textContent = paid;
+
+  document.getElementById("pendingOrders").textContent =
+    pending;
+
+
+  document.getElementById("paidOrders").textContent =
+    paid;
+
 
   document.getElementById("totalSales").textContent =
     "₹" + sales.toLocaleString("en-IN");
@@ -418,13 +594,14 @@ function updateStats(){
 }
 
 
-/* =========================
+/* =====================================================
    RENDER ORDERS
-========================= */
+===================================================== */
 
 function renderOrders(){
 
   const box = document.getElementById("orders");
+
 
   const search =
     document.getElementById("search")
@@ -432,13 +609,17 @@ function renderOrders(){
     .toLowerCase()
     .trim();
 
+
   const filtered = allOrders.filter(order => {
 
-    const text = JSON.stringify(order).toLowerCase();
+    const text =
+      JSON.stringify(order)
+      .toLowerCase();
 
     return text.includes(search);
 
   });
+
 
   if(filtered.length === 0){
 
@@ -449,9 +630,14 @@ function renderOrders(){
     `;
 
     return;
+
   }
 
+
   box.innerHTML = filtered.map((order,index) => {
+
+
+    /* ORDER ID */
 
     const orderId =
       order.order_id ||
@@ -459,11 +645,15 @@ function renderOrders(){
       order._id ||
       ("ORDER-" + (index + 1));
 
+
+    /* CUSTOMER */
+
     const name =
       order.name ||
       order.customer_name ||
       order.customerName ||
       "Customer";
+
 
     const phone =
       order.phone ||
@@ -471,15 +661,20 @@ function renderOrders(){
       order.customer_phone ||
       "-";
 
+
     const email =
       order.email ||
       order.customer_email ||
       "-";
 
+
     const address =
       order.address ||
       order.delivery_address ||
       "-";
+
+
+    /* STATUS */
 
     const status =
       String(
@@ -487,6 +682,9 @@ function renderOrders(){
         order.payment_status ||
         "pending"
       ).toLowerCase();
+
+
+    /* AMOUNT */
 
     const amount =
       Number(
@@ -497,16 +695,22 @@ function renderOrders(){
         0
       );
 
+
+    /* PRODUCTS */
+
     const products =
       order.items ||
       order.products ||
       [];
 
+
     let productHTML = "";
+
 
     if(Array.isArray(products) && products.length){
 
       productHTML = products.map(p => {
+
 
         const pname =
           p.name ||
@@ -514,10 +718,12 @@ function renderOrders(){
           p.product_name ||
           "Product";
 
+
         const qty =
           p.qty ||
           p.quantity ||
           1;
+
 
         const price =
           Number(
@@ -526,17 +732,22 @@ function renderOrders(){
             0
           );
 
+
         return `
+
           <div class="product">
+
             <span>
               ${escapeHTML(pname)}
-              × ${qty}
+              × ${escapeHTML(String(qty))}
             </span>
 
             <span>
               ₹${price.toLocaleString("en-IN")}
             </span>
+
           </div>
+
         `;
 
       }).join("");
@@ -545,63 +756,310 @@ function renderOrders(){
     else{
 
       productHTML = `
+
         <div class="product">
-          <span>Order items</span>
-          <span>View order data</span>
+
+          <span>
+            Order items
+          </span>
+
+          <span>
+            View order data
+          </span>
+
         </div>
+
       `;
 
     }
+
+
+    /* ACTION BUTTONS */
+
+    let actionHTML = "";
+
+
+    if(status === "pending"){
+
+      actionHTML = `
+
+        <div class="actions">
+
+          <div class="action-title">
+            💳 Payment Action
+          </div>
+
+          <button
+            class="approve-btn"
+            onclick="updateOrderStatus('${escapeJS(String(orderId))}','paid')"
+          >
+            ✅ Approve Payment
+          </button>
+
+          <button
+            class="reject-btn"
+            onclick="updateOrderStatus('${escapeJS(String(orderId))}','cancelled')"
+          >
+            ❌ Reject
+          </button>
+
+        </div>
+
+      `;
+
+    }
+
+
+    else if(status === "paid"){
+
+      actionHTML = `
+
+        <div class="actions">
+
+          <div class="action-title">
+            📦 Order Processing
+          </div>
+
+          <button
+            class="processing-btn"
+            onclick="updateOrderStatus('${escapeJS(String(orderId))}','processing')"
+          >
+            ⚙️ Mark Processing
+          </button>
+
+          <button
+            class="ship-btn"
+            onclick="updateOrderStatus('${escapeJS(String(orderId))}','shipped')"
+          >
+            🚚 Mark Shipped
+          </button>
+
+          <button
+            class="reject-btn"
+            onclick="updateOrderStatus('${escapeJS(String(orderId))}','cancelled')"
+          >
+            ❌ Cancel
+          </button>
+
+        </div>
+
+      `;
+
+    }
+
+
+    else if(status === "processing"){
+
+      actionHTML = `
+
+        <div class="actions">
+
+          <div class="action-title">
+            📦 Order Processing
+          </div>
+
+          <button
+            class="ship-btn"
+            onclick="updateOrderStatus('${escapeJS(String(orderId))}','shipped')"
+          >
+            🚚 Mark Shipped
+          </button>
+
+          <button
+            class="reject-btn"
+            onclick="updateOrderStatus('${escapeJS(String(orderId))}','cancelled')"
+          >
+            ❌ Cancel
+          </button>
+
+        </div>
+
+      `;
+
+    }
+
+
+    else if(status === "shipped"){
+
+      actionHTML = `
+
+        <div class="actions">
+
+          <div class="action-title">
+            🚚 Delivery
+          </div>
+
+          <button
+            class="deliver-btn"
+            onclick="updateOrderStatus('${escapeJS(String(orderId))}','delivered')"
+          >
+            ✅ Mark Delivered
+          </button>
+
+        </div>
+
+      `;
+
+    }
+
+
+    else if(status === "delivered"){
+
+      actionHTML = `
+
+        <div class="actions">
+
+          <div class="action-title">
+            ✅ Order Completed
+          </div>
+
+          <button
+            class="deliver-btn disabled-btn"
+            disabled
+          >
+            ✓ Delivered
+          </button>
+
+        </div>
+
+      `;
+
+    }
+
+
+    else if(
+      status === "cancelled" ||
+      status === "canceled"
+    ){
+
+      actionHTML = `
+
+        <div class="actions">
+
+          <div class="action-title">
+            ❌ Order Cancelled
+          </div>
+
+          <button
+            class="reject-btn disabled-btn"
+            disabled
+          >
+            Cancelled
+          </button>
+
+        </div>
+
+      `;
+
+    }
+
 
     return `
 
       <div class="order">
 
+
+        <!-- TOP -->
+
         <div class="order-top">
 
           <div>
+
             <div class="order-id">
-              ${escapeHTML(String(orderId))}
+
+              Order #${escapeHTML(String(orderId))}
+
             </div>
 
-            <div style="color:#777;margin-top:5px">
-              ${formatDate(order.created_at || order.createdAt || order.date)}
+
+            <div
+              style="color:#777;margin-top:5px"
+            >
+
+              ${formatDate(
+                order.created_at ||
+                order.createdAt ||
+                order.date
+              )}
+
             </div>
+
           </div>
 
+
           <div>
-            <span class="status ${statusClass(status)}">
-              ${status.toUpperCase()}
+
+            <span
+              class="status ${statusClass(status)}"
+            >
+
+              ${escapeHTML(status.toUpperCase())}
+
             </span>
+
           </div>
 
         </div>
+
+
+        <!-- CUSTOMER -->
 
         <div class="customer">
 
-          👤 <b>${escapeHTML(String(name))}</b><br>
+          👤
+          <b>
+            ${escapeHTML(String(name))}
+          </b>
 
-          📱 ${escapeHTML(String(phone))}<br>
+          <br>
 
-          📧 ${escapeHTML(String(email))}<br>
+          📱
+          ${escapeHTML(String(phone))}
 
-          📍 ${escapeHTML(String(address))}
+          <br>
+
+          📧
+          ${escapeHTML(String(email))}
+
+          <br>
+
+          📍
+          ${escapeHTML(String(address))}
 
         </div>
 
+
+        <!-- PRODUCTS -->
+
         <div class="products">
 
-          <b>🛒 Products</b>
+          <b>
+            🛒 Products
+          </b>
 
           <div style="margin-top:10px">
+
             ${productHTML}
+
           </div>
 
         </div>
 
+
+        <!-- AMOUNT -->
+
         <div class="amount">
-          Total: ₹${amount.toLocaleString("en-IN")}
+
+          Total:
+          ₹${amount.toLocaleString("en-IN")}
+
         </div>
+
+
+        <!-- ACTIONS -->
+
+        ${actionHTML}
+
 
       </div>
 
@@ -612,61 +1070,248 @@ function renderOrders(){
 }
 
 
-/* =========================
-   HELPERS
-========================= */
+/* =====================================================
+   UPDATE ORDER STATUS
+===================================================== */
+
+async function updateOrderStatus(orderId,status){
+
+  let message = "";
+
+
+  if(status === "paid"){
+
+    message =
+      "Approve this payment?\n\n" +
+      "The order will be marked as PAID.";
+
+  }
+
+  else if(status === "cancelled"){
+
+    message =
+      "Reject/cancel this order?";
+
+  }
+
+  else if(status === "processing"){
+
+    message =
+      "Mark this order as PROCESSING?";
+
+  }
+
+  else if(status === "shipped"){
+
+    message =
+      "Mark this order as SHIPPED?";
+
+  }
+
+  else if(status === "delivered"){
+
+    message =
+      "Mark this order as DELIVERED?";
+
+  }
+
+
+  if(!confirm(message)){
+
+    return;
+
+  }
+
+
+  try{
+
+
+    showToast("Updating order...");
+
+
+    const response =
+      await fetch(
+        "/api/admin/orders/" +
+        encodeURIComponent(orderId),
+        {
+          method:"PATCH",
+
+          headers:{
+            "Content-Type":"application/json"
+          },
+
+          body:JSON.stringify({
+            status:status
+          })
+
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if(!response.ok){
+
+      throw new Error(
+        data.message ||
+        "Could not update order"
+      );
+
+    }
+
+
+    if(data.success === false){
+
+      throw new Error(
+        data.message ||
+        "Could not update order"
+      );
+
+    }
+
+
+    if(status === "paid"){
+
+      showToast(
+        "✅ Payment approved successfully!"
+      );
+
+    }
+
+    else if(status === "cancelled"){
+
+      showToast(
+        "❌ Order cancelled."
+      );
+
+    }
+
+    else if(status === "processing"){
+
+      showToast(
+        "⚙️ Order marked as processing."
+      );
+
+    }
+
+    else if(status === "shipped"){
+
+      showToast(
+        "🚚 Order marked as shipped."
+      );
+
+    }
+
+    else if(status === "delivered"){
+
+      showToast(
+        "✅ Order marked as delivered."
+      );
+
+    }
+
+
+    /* RELOAD */
+
+    await loadOrders();
+
+
+  }
+  catch(error){
+
+    console.error(
+      "UPDATE ORDER ERROR:",
+      error
+    );
+
+
+    alert(
+      "❌ Update failed.\n\n" +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   STATUS CLASS
+===================================================== */
 
 function statusClass(status){
 
-  if(
-    status === "paid"
-  ) return "paid";
+  if(status === "paid")
+    return "paid";
 
-  if(
-    status === "shipped"
-  ) return "shipped";
 
-  if(
-    status === "delivered"
-  ) return "delivered";
+  if(status === "processing")
+    return "processing";
+
+
+  if(status === "shipped")
+    return "shipped";
+
+
+  if(status === "delivered")
+    return "delivered";
+
 
   if(
     status === "cancelled" ||
     status === "canceled"
-  ) return "cancelled";
+  )
+    return "cancelled";
+
 
   return "pending";
 
 }
 
 
+/* =====================================================
+   FORMAT DATE
+===================================================== */
+
 function formatDate(value){
 
   if(!value){
+
     return "";
+
   }
+
 
   try{
 
-    return new Date(value).toLocaleString(
-      "en-IN",
-      {
-        dateStyle:"medium",
-        timeStyle:"short"
-      }
-    );
+    return new Date(value)
+      .toLocaleString(
+        "en-IN",
+        {
+          dateStyle:"medium",
+          timeStyle:"short"
+        }
+      );
 
   }
   catch{
+
     return String(value);
+
   }
 
 }
 
 
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
 function escapeHTML(value){
 
-  return value
+  return String(value)
     .replace(/&/g,"&amp;")
     .replace(/</g,"&lt;")
     .replace(/>/g,"&gt;")
@@ -676,9 +1321,25 @@ function escapeHTML(value){
 }
 
 
-/* =========================
+/* =====================================================
+   ESCAPE JAVASCRIPT
+===================================================== */
+
+function escapeJS(value){
+
+  return String(value)
+    .replace(/\\/g,"\\\\")
+    .replace(/'/g,"\\'")
+    .replace(/"/g,'\\"')
+    .replace(/\n/g,"\\n")
+    .replace(/\r/g,"\\r");
+
+}
+
+
+/* =====================================================
    START
-========================= */
+===================================================== */
 
 loadOrders();
 
