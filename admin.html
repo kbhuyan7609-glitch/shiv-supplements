@@ -21,7 +21,9 @@ body{
   min-height:100vh;
 }
 
-/* HEADER */
+/* =========================
+   HEADER
+========================= */
 
 .header{
   background:#11151d;
@@ -41,12 +43,26 @@ body{
   color:#ffb000;
 }
 
-.admin{
+.admin-area{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.admin-label{
   color:#aaa;
   font-size:14px;
 }
 
-/* CONTAINER */
+.logout-btn{
+  background:#4a1111;
+  color:#ff7777;
+  border:1px solid #ff5555;
+}
+
+/* =========================
+   CONTAINER
+========================= */
 
 .container{
   width:92%;
@@ -63,7 +79,70 @@ body{
   color:#ffb000;
 }
 
-/* STATS */
+/* =========================
+   LOGIN
+========================= */
+
+.login-screen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.login-box{
+  width:100%;
+  max-width:430px;
+  background:#151c27;
+  border:1px solid #33445b;
+  border-radius:18px;
+  padding:35px;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+
+.login-logo{
+  text-align:center;
+  font-size:28px;
+  font-weight:900;
+  margin-bottom:8px;
+}
+
+.login-logo span{
+  color:#ffb000;
+}
+
+.login-title{
+  text-align:center;
+  color:#aaa;
+  margin-bottom:30px;
+}
+
+.login-box input{
+  width:100%;
+  margin-bottom:15px;
+}
+
+.login-btn{
+  width:100%;
+  background:#ffb000;
+  color:#111;
+  font-size:16px;
+}
+
+.login-error{
+  display:none;
+  background:#4a1111;
+  color:#ff7777;
+  border:1px solid #ff5555;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:15px;
+}
+
+/* =========================
+   STATS
+========================= */
 
 .stats{
   display:grid;
@@ -90,7 +169,9 @@ body{
   font-weight:bold;
 }
 
-/* CONTROLS */
+/* =========================
+   CONTROLS
+========================= */
 
 .controls{
   display:flex;
@@ -106,6 +187,10 @@ input{
   padding:14px;
   border-radius:10px;
   outline:none;
+}
+
+input:focus{
+  border-color:#ffb000;
 }
 
 button{
@@ -127,7 +212,9 @@ button:hover{
   color:#111;
 }
 
-/* ORDERS */
+/* =========================
+   ORDERS
+========================= */
 
 .orders{
   background:#111722;
@@ -155,6 +242,7 @@ button:hover{
 .order-id{
   font-weight:bold;
   color:#ffb000;
+  font-size:18px;
 }
 
 .customer{
@@ -189,7 +277,29 @@ button:hover{
   color:#ffb000;
 }
 
-/* STATUS */
+.payment{
+  margin-top:15px;
+  background:#151c27;
+  border:1px solid #263447;
+  border-radius:10px;
+  padding:14px;
+}
+
+.payment-title{
+  color:#aaa;
+  font-size:13px;
+  margin-bottom:7px;
+}
+
+.payment-ref{
+  color:#fff;
+  font-weight:bold;
+  word-break:break-all;
+}
+
+/* =========================
+   STATUS
+========================= */
 
 .status{
   display:inline-block;
@@ -229,7 +339,9 @@ button:hover{
   color:#ff6b6b;
 }
 
-/* ACTIONS */
+/* =========================
+   ACTIONS
+========================= */
 
 .actions{
   margin-top:20px;
@@ -278,7 +390,9 @@ button:hover{
   cursor:not-allowed;
 }
 
-/* EMPTY / LOADING */
+/* =========================
+   LOADING / EMPTY
+========================= */
 
 .empty{
   text-align:center;
@@ -292,7 +406,26 @@ button:hover{
   color:#aaa;
 }
 
-/* TOAST */
+/* =========================
+   ERROR
+========================= */
+
+.server-error{
+  margin:20px;
+  padding:18px;
+  background:#4a1111;
+  border:1px solid #ff5555;
+  border-radius:12px;
+  color:#ff9999;
+}
+
+.server-error b{
+  color:#fff;
+}
+
+/* =========================
+   TOAST
+========================= */
 
 .toast{
   position:fixed;
@@ -313,7 +446,17 @@ button:hover{
   display:block;
 }
 
-/* MOBILE */
+/* =========================
+   HIDDEN
+========================= */
+
+.hidden{
+  display:none !important;
+}
+
+/* =========================
+   MOBILE
+========================= */
 
 @media(max-width:900px){
 
@@ -343,17 +486,75 @@ button:hover{
     align-items:flex-start;
   }
 
+  .admin-area{
+    width:100%;
+    justify-content:space-between;
+  }
+
   .actions button{
     flex:1;
+  }
+
+  .login-box{
+    padding:25px;
   }
 
 }
 
 </style>
-
 </head>
 
 <body>
+
+<!-- =====================================================
+     LOGIN SCREEN
+===================================================== -->
+
+<div id="loginScreen" class="login-screen">
+
+  <div class="login-box">
+
+    <div class="login-logo">
+      SHIV <span>SUPPLEMENTS</span>
+    </div>
+
+    <div class="login-title">
+      Admin Dashboard Login
+    </div>
+
+    <div id="loginError" class="login-error"></div>
+
+    <input
+      type="text"
+      id="username"
+      placeholder="Admin Username"
+      autocomplete="username"
+    >
+
+    <input
+      type="password"
+      id="password"
+      placeholder="Admin Password"
+      autocomplete="current-password"
+    >
+
+    <button
+      class="login-btn"
+      onclick="adminLogin()"
+    >
+      🔐 Login
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     ADMIN DASHBOARD
+===================================================== -->
+
+<div id="dashboard" class="hidden">
 
 <header class="header">
 
@@ -361,8 +562,19 @@ button:hover{
     SHIV <span>SUPPLEMENTS</span>
   </div>
 
-  <div class="admin">
-    ADMIN DASHBOARD
+  <div class="admin-area">
+
+    <div class="admin-label">
+      ADMIN DASHBOARD
+    </div>
+
+    <button
+      class="logout-btn"
+      onclick="adminLogout()"
+    >
+      Logout
+    </button>
+
   </div>
 
 </header>
@@ -381,22 +593,42 @@ button:hover{
 
     <div class="card">
       <h3>Total Orders</h3>
-      <div class="number" id="totalOrders">0</div>
+      <div
+        class="number"
+        id="totalOrders"
+      >
+        0
+      </div>
     </div>
 
     <div class="card">
       <h3>Pending</h3>
-      <div class="number" id="pendingOrders">0</div>
+      <div
+        class="number"
+        id="pendingOrders"
+      >
+        0
+      </div>
     </div>
 
     <div class="card">
       <h3>Paid</h3>
-      <div class="number" id="paidOrders">0</div>
+      <div
+        class="number"
+        id="paidOrders"
+      >
+        0
+      </div>
     </div>
 
     <div class="card">
       <h3>Total Sales</h3>
-      <div class="number" id="totalSales">₹0</div>
+      <div
+        class="number"
+        id="totalSales"
+      >
+        ₹0
+      </div>
     </div>
 
   </div>
@@ -425,7 +657,10 @@ button:hover{
 
   <!-- ORDERS -->
 
-  <div class="orders" id="orders">
+  <div
+    class="orders"
+    id="orders"
+  >
 
     <div class="loading">
       Loading orders...
@@ -435,10 +670,15 @@ button:hover{
 
 </div>
 
+</div>
+
 
 <!-- TOAST -->
 
-<div id="toast" class="toast"></div>
+<div
+  id="toast"
+  class="toast"
+></div>
 
 
 <script>
@@ -452,15 +692,224 @@ let allOrders = [];
 
 function showToast(message){
 
-  const toast = document.getElementById("toast");
+  const toast =
+    document.getElementById("toast");
 
   toast.textContent = message;
 
   toast.classList.add("show");
 
   setTimeout(() => {
+
     toast.classList.remove("show");
-  }, 3000);
+
+  },3000);
+
+}
+
+
+/* =====================================================
+   LOGIN ERROR
+===================================================== */
+
+function showLoginError(message){
+
+  const box =
+    document.getElementById("loginError");
+
+  box.textContent = message;
+
+  box.style.display = "block";
+
+}
+
+
+/* =====================================================
+   ADMIN LOGIN
+===================================================== */
+
+async function adminLogin(){
+
+  const username =
+    document.getElementById("username").value.trim();
+
+  const password =
+    document.getElementById("password").value;
+
+  const errorBox =
+    document.getElementById("loginError");
+
+  errorBox.style.display = "none";
+
+  if(!username || !password){
+
+    showLoginError(
+      "Username and password are required."
+    );
+
+    return;
+  }
+
+  try{
+
+    const response =
+      await fetch(
+        "/api/admin/login",
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          credentials:"same-origin",
+
+          body:JSON.stringify({
+            username,
+            password
+          })
+        }
+      );
+
+    const data =
+      await response.json();
+
+    if(!response.ok || data.success === false){
+
+      throw new Error(
+        data.message ||
+        "Login failed"
+      );
+
+    }
+
+    document
+      .getElementById("loginScreen")
+      .classList.add("hidden");
+
+    document
+      .getElementById("dashboard")
+      .classList.remove("hidden");
+
+    await loadOrders();
+
+  }
+  catch(error){
+
+    console.error(
+      "LOGIN ERROR:",
+      error
+    );
+
+    showLoginError(
+      error.message ||
+      "Login failed"
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+async function adminLogout(){
+
+  try{
+
+    await fetch(
+      "/api/admin/logout",
+      {
+        method:"POST",
+        credentials:"same-origin"
+      }
+    );
+
+  }
+  catch(error){
+
+    console.error(error);
+
+  }
+
+  document
+    .getElementById("dashboard")
+    .classList.add("hidden");
+
+  document
+    .getElementById("loginScreen")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("username")
+    .value = "";
+
+  document
+    .getElementById("password")
+    .value = "";
+
+}
+
+
+/* =====================================================
+   CHECK ADMIN SESSION
+===================================================== */
+
+async function checkAdminSession(){
+
+  try{
+
+    const response =
+      await fetch(
+        "/api/admin/me",
+        {
+          credentials:"same-origin"
+        }
+      );
+
+    const data =
+      await response.json();
+
+    if(
+      data.success &&
+      data.loggedIn
+    ){
+
+      document
+        .getElementById("loginScreen")
+        .classList.add("hidden");
+
+      document
+        .getElementById("dashboard")
+        .classList.remove("hidden");
+
+      await loadOrders();
+
+    }
+    else{
+
+      document
+        .getElementById("loginScreen")
+        .classList.remove("hidden");
+
+    }
+
+  }
+  catch(error){
+
+    console.error(
+      "SESSION CHECK ERROR:",
+      error
+    );
+
+    document
+      .getElementById("loginScreen")
+      .classList.remove("hidden");
+
+  }
 
 }
 
@@ -471,7 +920,8 @@ function showToast(message){
 
 async function loadOrders(){
 
-  const box = document.getElementById("orders");
+  const box =
+    document.getElementById("orders");
 
   box.innerHTML = `
     <div class="loading">
@@ -481,13 +931,71 @@ async function loadOrders(){
 
   try{
 
-    const response = await fetch("/api/admin/orders");
+    const response =
+      await fetch(
+        "/api/admin/orders",
+        {
+          credentials:"same-origin",
+          cache:"no-store"
+        }
+      );
 
-    if(!response.ok){
-      throw new Error("Server error");
+
+    /* SESSION EXPIRED */
+
+    if(response.status === 401){
+
+      document
+        .getElementById("dashboard")
+        .classList.add("hidden");
+
+      document
+        .getElementById("loginScreen")
+        .classList.remove("hidden");
+
+      throw new Error(
+        "Admin login required. Please login again."
+      );
+
     }
 
-    const data = await response.json();
+
+    let data;
+
+    try{
+
+      data =
+        await response.json();
+
+    }
+    catch(jsonError){
+
+      throw new Error(
+        "Server returned an invalid response."
+      );
+
+    }
+
+
+    if(!response.ok){
+
+      throw new Error(
+        data.message ||
+        "Could not load orders."
+      );
+
+    }
+
+
+    if(data.success === false){
+
+      throw new Error(
+        data.message ||
+        "Could not load orders."
+      );
+
+    }
+
 
     if(Array.isArray(data)){
 
@@ -496,9 +1004,13 @@ async function loadOrders(){
     }
     else{
 
-      allOrders = data.orders || [];
+      allOrders =
+        Array.isArray(data.orders)
+          ? data.orders
+          : [];
 
     }
+
 
     updateStats();
 
@@ -507,14 +1019,35 @@ async function loadOrders(){
   }
   catch(error){
 
-    console.error(error);
+    console.error(
+      "LOAD ORDERS ERROR:",
+      error
+    );
 
     box.innerHTML = `
-      <div class="empty">
-        ❌ Could not load orders.
+
+      <div class="server-error">
+
+        ❌ <b>Could not load orders.</b>
+
         <br><br>
-        Please refresh the page.
+
+        ${escapeHTML(
+          error.message ||
+          "Unknown server error"
+        )}
+
+        <br><br>
+
+        <button
+          class="refresh"
+          onclick="loadOrders()"
+        >
+          🔄 Try Again
+        </button>
+
       </div>
+
     `;
 
   }
@@ -523,73 +1056,114 @@ async function loadOrders(){
 
 
 /* =====================================================
-   STATS
+   UPDATE STATS
 ===================================================== */
 
 function updateStats(){
 
-  const total = allOrders.length;
+  const total =
+    allOrders.length;
 
 
-  const pending = allOrders.filter(o => {
+  const pending =
+    allOrders.filter(order => {
 
-    const s = String(
-      o.status ||
-      o.payment_status ||
-      ""
-    ).toLowerCase();
+      const status =
+        String(
+          order.status ||
+          order.payment_status ||
+          "pending"
+        ).toLowerCase();
 
-    return s === "pending";
+      return status === "pending";
 
-  }).length;
+    }).length;
 
 
-  const paid = allOrders.filter(o => {
+  const paid =
+    allOrders.filter(order => {
 
-    const s = String(
-      o.status ||
-      o.payment_status ||
-      ""
-    ).toLowerCase();
+      const status =
+        String(
+          order.status ||
+          order.payment_status ||
+          ""
+        ).toLowerCase();
 
-    return s === "paid";
+      return status === "paid";
 
-  }).length;
+    }).length;
 
 
   let sales = 0;
 
 
-  allOrders.forEach(o => {
+  allOrders.forEach(order => {
 
-    const amount =
-      Number(
-        o.total ||
-        o.amount ||
-        o.total_amount ||
-        o.price ||
-        0
-      );
+    let amount =
+      Number(order.amount);
 
-    sales += amount;
+
+    if(!Number.isFinite(amount)){
+
+      amount =
+        Number(order.total);
+
+    }
+
+
+    if(!Number.isFinite(amount)){
+
+      amount =
+        Number(order.total_amount);
+
+    }
+
+
+    if(!Number.isFinite(amount)){
+
+      const paise =
+        Number(order.amount_paise);
+
+      if(Number.isFinite(paise)){
+
+        amount =
+          paise / 100;
+
+      }
+
+    }
+
+
+    if(Number.isFinite(amount)){
+
+      sales += amount;
+
+    }
 
   });
 
 
-  document.getElementById("totalOrders").textContent =
-    total;
+  document
+    .getElementById("totalOrders")
+    .textContent = total;
 
 
-  document.getElementById("pendingOrders").textContent =
-    pending;
+  document
+    .getElementById("pendingOrders")
+    .textContent = pending;
 
 
-  document.getElementById("paidOrders").textContent =
-    paid;
+  document
+    .getElementById("paidOrders")
+    .textContent = paid;
 
 
-  document.getElementById("totalSales").textContent =
-    "₹" + sales.toLocaleString("en-IN");
+  document
+    .getElementById("totalSales")
+    .textContent =
+      "₹" +
+      sales.toLocaleString("en-IN");
 
 }
 
@@ -600,33 +1174,40 @@ function updateStats(){
 
 function renderOrders(){
 
-  const box = document.getElementById("orders");
+  const box =
+    document.getElementById("orders");
 
 
   const search =
-    document.getElementById("search")
-    .value
-    .toLowerCase()
-    .trim();
+    document
+      .getElementById("search")
+      .value
+      .toLowerCase()
+      .trim();
 
 
-  const filtered = allOrders.filter(order => {
+  const filtered =
+    allOrders.filter(order => {
 
-    const text =
-      JSON.stringify(order)
-      .toLowerCase();
+      const text =
+        JSON.stringify(order)
+          .toLowerCase();
 
-    return text.includes(search);
+      return text.includes(search);
 
-  });
+    });
 
 
   if(filtered.length === 0){
 
     box.innerHTML = `
+
       <div class="empty">
+
         📭 No orders found.
+
       </div>
+
     `;
 
     return;
@@ -634,438 +1215,687 @@ function renderOrders(){
   }
 
 
-  box.innerHTML = filtered.map((order,index) => {
+  box.innerHTML =
+    filtered
+      .map(
+        (order,index) =>
+          renderSingleOrder(
+            order,
+            index
+          )
+      )
+      .join("");
+
+}
 
 
-    /* ORDER ID */
+/* =====================================================
+   SINGLE ORDER
+===================================================== */
 
-    const orderId =
-      order.order_id ||
-      order.id ||
-      order._id ||
-      ("ORDER-" + (index + 1));
+function renderSingleOrder(
+  order,
+  index
+){
 
-
-    /* CUSTOMER */
-
-    const name =
-      order.name ||
-      order.customer_name ||
-      order.customerName ||
-      "Customer";
+  const orderId =
+    order.id ||
+    order.order_id ||
+    order._id ||
+    ("ORDER-" + (index + 1));
 
 
-    const phone =
-      order.phone ||
-      order.mobile ||
-      order.customer_phone ||
-      "-";
+  const name =
+    order.name ||
+    order.customer_name ||
+    order.customerName ||
+    "Customer";
 
 
-    const email =
-      order.email ||
-      order.customer_email ||
-      "-";
+  const phone =
+    order.phone ||
+    order.mobile ||
+    order.customer_phone ||
+    "-";
 
 
-    const address =
-      order.address ||
-      order.delivery_address ||
-      "-";
+  const email =
+    order.email ||
+    order.customer_email ||
+    "-";
 
 
-    /* STATUS */
-
-    const status =
-      String(
-        order.status ||
-        order.payment_status ||
-        "pending"
-      ).toLowerCase();
+  const address =
+    order.address ||
+    order.delivery_address ||
+    "-";
 
 
-    /* AMOUNT */
+  const status =
+    String(
+      order.status ||
+      order.payment_status ||
+      "pending"
+    ).toLowerCase();
 
-    const amount =
-      Number(
-        order.total ||
-        order.amount ||
-        order.total_amount ||
-        order.price ||
-        0
+
+  let amount =
+    Number(order.amount);
+
+
+  if(!Number.isFinite(amount)){
+
+    const paise =
+      Number(order.amount_paise);
+
+    if(Number.isFinite(paise)){
+
+      amount =
+        paise / 100;
+
+    }
+
+  }
+
+
+  if(!Number.isFinite(amount)){
+
+    amount =
+      Number(order.total) || 0;
+
+  }
+
+
+  const products =
+    Array.isArray(order.items)
+      ? order.items
+      : (
+        Array.isArray(order.products)
+          ? order.products
+          : []
       );
 
 
-    /* PRODUCTS */
+  let productHTML = "";
 
-    const products =
-      order.items ||
-      order.products ||
-      [];
 
+  if(products.length){
 
-    let productHTML = "";
+    productHTML =
+      products
+        .map(product => {
 
+          const productName =
+            product.name ||
+            product.title ||
+            product.product_name ||
+            "Product";
 
-    if(Array.isArray(products) && products.length){
 
-      productHTML = products.map(p => {
+          const quantity =
+            Number(
+              product.qty ||
+              product.quantity ||
+              1
+            );
 
 
-        const pname =
-          p.name ||
-          p.title ||
-          p.product_name ||
-          "Product";
+          const price =
+            Number(
+              product.price ||
+              product.amount ||
+              0
+            );
 
 
-        const qty =
-          p.qty ||
-          p.quantity ||
-          1;
+          return `
 
+            <div class="product">
 
-        const price =
-          Number(
-            p.price ||
-            p.amount ||
-            0
-          );
+              <span>
 
+                ${escapeHTML(
+                  productName
+                )}
 
-        return `
+                ×
 
-          <div class="product">
+                ${escapeHTML(
+                  String(quantity)
+                )}
 
-            <span>
-              ${escapeHTML(pname)}
-              × ${escapeHTML(String(qty))}
-            </span>
+              </span>
 
-            <span>
-              ₹${price.toLocaleString("en-IN")}
-            </span>
+              <span>
 
-          </div>
+                ₹${price.toLocaleString(
+                  "en-IN"
+                )}
 
-        `;
-
-      }).join("");
-
-    }
-    else{
-
-      productHTML = `
-
-        <div class="product">
-
-          <span>
-            Order items
-          </span>
-
-          <span>
-            View order data
-          </span>
-
-        </div>
-
-      `;
-
-    }
-
-
-    /* ACTION BUTTONS */
-
-    let actionHTML = "";
-
-
-    if(status === "pending"){
-
-      actionHTML = `
-
-        <div class="actions">
-
-          <div class="action-title">
-            💳 Payment Action
-          </div>
-
-          <button
-            class="approve-btn"
-            onclick="updateOrderStatus('${escapeJS(String(orderId))}','paid')"
-          >
-            ✅ Approve Payment
-          </button>
-
-          <button
-            class="reject-btn"
-            onclick="updateOrderStatus('${escapeJS(String(orderId))}','cancelled')"
-          >
-            ❌ Reject
-          </button>
-
-        </div>
-
-      `;
-
-    }
-
-
-    else if(status === "paid"){
-
-      actionHTML = `
-
-        <div class="actions">
-
-          <div class="action-title">
-            📦 Order Processing
-          </div>
-
-          <button
-            class="processing-btn"
-            onclick="updateOrderStatus('${escapeJS(String(orderId))}','processing')"
-          >
-            ⚙️ Mark Processing
-          </button>
-
-          <button
-            class="ship-btn"
-            onclick="updateOrderStatus('${escapeJS(String(orderId))}','shipped')"
-          >
-            🚚 Mark Shipped
-          </button>
-
-          <button
-            class="reject-btn"
-            onclick="updateOrderStatus('${escapeJS(String(orderId))}','cancelled')"
-          >
-            ❌ Cancel
-          </button>
-
-        </div>
-
-      `;
-
-    }
-
-
-    else if(status === "processing"){
-
-      actionHTML = `
-
-        <div class="actions">
-
-          <div class="action-title">
-            📦 Order Processing
-          </div>
-
-          <button
-            class="ship-btn"
-            onclick="updateOrderStatus('${escapeJS(String(orderId))}','shipped')"
-          >
-            🚚 Mark Shipped
-          </button>
-
-          <button
-            class="reject-btn"
-            onclick="updateOrderStatus('${escapeJS(String(orderId))}','cancelled')"
-          >
-            ❌ Cancel
-          </button>
-
-        </div>
-
-      `;
-
-    }
-
-
-    else if(status === "shipped"){
-
-      actionHTML = `
-
-        <div class="actions">
-
-          <div class="action-title">
-            🚚 Delivery
-          </div>
-
-          <button
-            class="deliver-btn"
-            onclick="updateOrderStatus('${escapeJS(String(orderId))}','delivered')"
-          >
-            ✅ Mark Delivered
-          </button>
-
-        </div>
-
-      `;
-
-    }
-
-
-    else if(status === "delivered"){
-
-      actionHTML = `
-
-        <div class="actions">
-
-          <div class="action-title">
-            ✅ Order Completed
-          </div>
-
-          <button
-            class="deliver-btn disabled-btn"
-            disabled
-          >
-            ✓ Delivered
-          </button>
-
-        </div>
-
-      `;
-
-    }
-
-
-    else if(
-      status === "cancelled" ||
-      status === "canceled"
-    ){
-
-      actionHTML = `
-
-        <div class="actions">
-
-          <div class="action-title">
-            ❌ Order Cancelled
-          </div>
-
-          <button
-            class="reject-btn disabled-btn"
-            disabled
-          >
-            Cancelled
-          </button>
-
-        </div>
-
-      `;
-
-    }
-
-
-    return `
-
-      <div class="order">
-
-
-        <!-- TOP -->
-
-        <div class="order-top">
-
-          <div>
-
-            <div class="order-id">
-
-              Order #${escapeHTML(String(orderId))}
+              </span>
 
             </div>
 
+          `;
 
-            <div
-              style="color:#777;margin-top:5px"
-            >
+        })
+        .join("");
 
-              ${formatDate(
-                order.created_at ||
-                order.createdAt ||
-                order.date
-              )}
+  }
+  else{
 
-            </div>
+    productHTML = `
 
-          </div>
+      <div class="product">
 
+        <span>
+          Order items
+        </span>
 
-          <div>
-
-            <span
-              class="status ${statusClass(status)}"
-            >
-
-              ${escapeHTML(status.toUpperCase())}
-
-            </span>
-
-          </div>
-
-        </div>
-
-
-        <!-- CUSTOMER -->
-
-        <div class="customer">
-
-          👤
-          <b>
-            ${escapeHTML(String(name))}
-          </b>
-
-          <br>
-
-          📱
-          ${escapeHTML(String(phone))}
-
-          <br>
-
-          📧
-          ${escapeHTML(String(email))}
-
-          <br>
-
-          📍
-          ${escapeHTML(String(address))}
-
-        </div>
-
-
-        <!-- PRODUCTS -->
-
-        <div class="products">
-
-          <b>
-            🛒 Products
-          </b>
-
-          <div style="margin-top:10px">
-
-            ${productHTML}
-
-          </div>
-
-        </div>
-
-
-        <!-- AMOUNT -->
-
-        <div class="amount">
-
-          Total:
-          ₹${amount.toLocaleString("en-IN")}
-
-        </div>
-
-
-        <!-- ACTIONS -->
-
-        ${actionHTML}
-
+        <span>
+          —
+        </span>
 
       </div>
 
     `;
 
-  }).join("");
+  }
+
+
+  let paymentHTML = "";
+
+
+  const paymentRef =
+    order.payment_ref ||
+    order.utr ||
+    order.payment_reference ||
+    "";
+
+
+  const paymentMethod =
+    order.payment_method ||
+    "UPI";
+
+
+  if(paymentRef){
+
+    paymentHTML = `
+
+      <div class="payment">
+
+        <div class="payment-title">
+          Payment Method
+        </div>
+
+        <div>
+          ${escapeHTML(
+            String(paymentMethod)
+          )}
+        </div>
+
+        <br>
+
+        <div class="payment-title">
+          UTR / Payment Reference
+        </div>
+
+        <div class="payment-ref">
+          ${escapeHTML(
+            String(paymentRef)
+          )}
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  let actionHTML = "";
+
+
+  /* PENDING */
+
+  if(status === "pending"){
+
+    actionHTML = `
+
+      <div class="actions">
+
+        <div class="action-title">
+          💳 Payment Action
+        </div>
+
+        <button
+          class="approve-btn"
+          onclick="approvePayment('${escapeJS(
+            String(orderId)
+          )}')"
+        >
+          ✅ Approve Payment
+        </button>
+
+        <button
+          class="reject-btn"
+          onclick="updateOrderStatus(
+            '${escapeJS(String(orderId))}',
+            'cancelled'
+          )"
+        >
+          ❌ Reject
+        </button>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /* PAID */
+
+  else if(status === "paid"){
+
+    actionHTML = `
+
+      <div class="actions">
+
+        <div class="action-title">
+          📦 Order Processing
+        </div>
+
+        <button
+          class="processing-btn"
+          onclick="updateOrderStatus(
+            '${escapeJS(String(orderId))}',
+            'processing'
+          )"
+        >
+          ⚙️ Mark Processing
+        </button>
+
+        <button
+          class="ship-btn"
+          onclick="updateOrderStatus(
+            '${escapeJS(String(orderId))}',
+            'shipped'
+          )"
+        >
+          🚚 Mark Shipped
+        </button>
+
+        <button
+          class="reject-btn"
+          onclick="updateOrderStatus(
+            '${escapeJS(String(orderId))}',
+            'cancelled'
+          )"
+        >
+          ❌ Cancel
+        </button>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /* PROCESSING */
+
+  else if(status === "processing"){
+
+    actionHTML = `
+
+      <div class="actions">
+
+        <div class="action-title">
+          📦 Order Processing
+        </div>
+
+        <button
+          class="ship-btn"
+          onclick="updateOrderStatus(
+            '${escapeJS(String(orderId))}',
+            'shipped'
+          )"
+        >
+          🚚 Mark Shipped
+        </button>
+
+        <button
+          class="reject-btn"
+          onclick="updateOrderStatus(
+            '${escapeJS(String(orderId))}',
+            'cancelled'
+          )"
+        >
+          ❌ Cancel
+        </button>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /* SHIPPED */
+
+  else if(status === "shipped"){
+
+    actionHTML = `
+
+      <div class="actions">
+
+        <div class="action-title">
+          🚚 Delivery
+        </div>
+
+        <button
+          class="deliver-btn"
+          onclick="updateOrderStatus(
+            '${escapeJS(String(orderId))}',
+            'delivered'
+          )"
+        >
+          ✅ Mark Delivered
+        </button>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /* DELIVERED */
+
+  else if(status === "delivered"){
+
+    actionHTML = `
+
+      <div class="actions">
+
+        <div class="action-title">
+          ✅ Order Completed
+        </div>
+
+        <button
+          class="deliver-btn disabled-btn"
+          disabled
+        >
+          ✓ Delivered
+        </button>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /* CANCELLED */
+
+  else if(
+    status === "cancelled" ||
+    status === "canceled"
+  ){
+
+    actionHTML = `
+
+      <div class="actions">
+
+        <div class="action-title">
+          ❌ Order Cancelled
+        </div>
+
+        <button
+          class="reject-btn disabled-btn"
+          disabled
+        >
+          Cancelled
+        </button>
+
+      </div>
+
+    `;
+
+  }
+
+
+  return `
+
+    <div class="order">
+
+      <div class="order-top">
+
+        <div>
+
+          <div class="order-id">
+
+            Order #${escapeHTML(
+              String(orderId)
+            )}
+
+          </div>
+
+          <div
+            style="
+              color:#777;
+              margin-top:5px;
+            "
+          >
+
+            ${formatDate(
+              order.created_at ||
+              order.createdAt ||
+              order.date
+            )}
+
+          </div>
+
+        </div>
+
+
+        <div>
+
+          <span
+            class="status ${statusClass(status)}"
+          >
+
+            ${escapeHTML(
+              status.toUpperCase()
+            )}
+
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- CUSTOMER -->
+
+      <div class="customer">
+
+        👤
+        <b>
+          ${escapeHTML(
+            String(name)
+          )}
+        </b>
+
+        <br>
+
+        📱
+        ${escapeHTML(
+          String(phone)
+        )}
+
+        <br>
+
+        📧
+        ${escapeHTML(
+          String(email)
+        )}
+
+        <br>
+
+        📍
+        ${escapeHTML(
+          String(address)
+        )}
+
+      </div>
+
+
+      <!-- PRODUCTS -->
+
+      <div class="products">
+
+        <b>
+          🛒 Products
+        </b>
+
+        <div
+          style="margin-top:10px"
+        >
+
+          ${productHTML}
+
+        </div>
+
+      </div>
+
+
+      <!-- PAYMENT -->
+
+      ${paymentHTML}
+
+
+      <!-- AMOUNT -->
+
+      <div class="amount">
+
+        Total:
+
+        ₹${amount.toLocaleString(
+          "en-IN"
+        )}
+
+      </div>
+
+
+      <!-- ACTIONS -->
+
+      ${actionHTML}
+
+    </div>
+
+  `;
+
+}
+
+
+/* =====================================================
+   APPROVE PAYMENT
+===================================================== */
+
+async function approvePayment(orderId){
+
+  if(
+    !confirm(
+      "Approve this payment?\n\n" +
+      "The order will be marked as PAID."
+    )
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    showToast(
+      "Approving payment..."
+    );
+
+
+    const response =
+      await fetch(
+        "/api/admin/orders/" +
+        encodeURIComponent(orderId) +
+        "/approve-payment",
+        {
+          method:"PATCH",
+
+          credentials:"same-origin",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          }
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if(
+      response.status === 401
+    ){
+
+      alert(
+        "Admin login expired. Please login again."
+      );
+
+      adminLogout();
+
+      return;
+
+    }
+
+
+    if(
+      !response.ok ||
+      data.success === false
+    ){
+
+      throw new Error(
+        data.message ||
+        "Could not approve payment"
+      );
+
+    }
+
+
+    showToast(
+      "✅ Payment approved successfully!"
+    );
+
+
+    await loadOrders();
+
+  }
+  catch(error){
+
+    console.error(
+      "APPROVE PAYMENT ERROR:",
+      error
+    );
+
+    alert(
+      "❌ Payment approval failed.\n\n" +
+      error.message
+    );
+
+  }
 
 }
 
@@ -1074,20 +1904,16 @@ function renderOrders(){
    UPDATE ORDER STATUS
 ===================================================== */
 
-async function updateOrderStatus(orderId,status){
+async function updateOrderStatus(
+  orderId,
+  status
+){
 
-  let message = "";
+  let message =
+    "Update order status?";
 
 
-  if(status === "paid"){
-
-    message =
-      "Approve this payment?\n\n" +
-      "The order will be marked as PAID.";
-
-  }
-
-  else if(status === "cancelled"){
+  if(status === "cancelled"){
 
     message =
       "Reject/cancel this order?";
@@ -1125,8 +1951,9 @@ async function updateOrderStatus(orderId,status){
 
   try{
 
-
-    showToast("Updating order...");
+    showToast(
+      "Updating order..."
+    );
 
 
     const response =
@@ -1136,14 +1963,16 @@ async function updateOrderStatus(orderId,status){
         {
           method:"PATCH",
 
+          credentials:"same-origin",
+
           headers:{
-            "Content-Type":"application/json"
+            "Content-Type":
+              "application/json"
           },
 
           body:JSON.stringify({
             status:status
           })
-
         }
       );
 
@@ -1152,7 +1981,25 @@ async function updateOrderStatus(orderId,status){
       await response.json();
 
 
-    if(!response.ok){
+    if(
+      response.status === 401
+    ){
+
+      alert(
+        "Admin login expired. Please login again."
+      );
+
+      adminLogout();
+
+      return;
+
+    }
+
+
+    if(
+      !response.ok ||
+      data.success === false
+    ){
 
       throw new Error(
         data.message ||
@@ -1162,61 +2009,12 @@ async function updateOrderStatus(orderId,status){
     }
 
 
-    if(data.success === false){
+    showToast(
+      "✅ Order updated successfully!"
+    );
 
-      throw new Error(
-        data.message ||
-        "Could not update order"
-      );
-
-    }
-
-
-    if(status === "paid"){
-
-      showToast(
-        "✅ Payment approved successfully!"
-      );
-
-    }
-
-    else if(status === "cancelled"){
-
-      showToast(
-        "❌ Order cancelled."
-      );
-
-    }
-
-    else if(status === "processing"){
-
-      showToast(
-        "⚙️ Order marked as processing."
-      );
-
-    }
-
-    else if(status === "shipped"){
-
-      showToast(
-        "🚚 Order marked as shipped."
-      );
-
-    }
-
-    else if(status === "delivered"){
-
-      showToast(
-        "✅ Order marked as delivered."
-      );
-
-    }
-
-
-    /* RELOAD */
 
     await loadOrders();
-
 
   }
   catch(error){
@@ -1225,7 +2023,6 @@ async function updateOrderStatus(orderId,status){
       "UPDATE ORDER ERROR:",
       error
     );
-
 
     alert(
       "❌ Update failed.\n\n" +
@@ -1246,25 +2043,20 @@ function statusClass(status){
   if(status === "paid")
     return "paid";
 
-
   if(status === "processing")
     return "processing";
-
 
   if(status === "shipped")
     return "shipped";
 
-
   if(status === "delivered")
     return "delivered";
-
 
   if(
     status === "cancelled" ||
     status === "canceled"
   )
     return "cancelled";
-
 
   return "pending";
 
@@ -1286,14 +2078,28 @@ function formatDate(value){
 
   try{
 
-    return new Date(value)
-      .toLocaleString(
-        "en-IN",
-        {
-          dateStyle:"medium",
-          timeStyle:"short"
-        }
-      );
+    const date =
+      new Date(value);
+
+
+    if(
+      Number.isNaN(
+        date.getTime()
+      )
+    ){
+
+      return String(value);
+
+    }
+
+
+    return date.toLocaleString(
+      "en-IN",
+      {
+        dateStyle:"medium",
+        timeStyle:"short"
+      }
+    );
 
   }
   catch{
@@ -1312,11 +2118,26 @@ function formatDate(value){
 function escapeHTML(value){
 
   return String(value)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
 
 }
 
@@ -1328,20 +2149,57 @@ function escapeHTML(value){
 function escapeJS(value){
 
   return String(value)
-    .replace(/\\/g,"\\\\")
-    .replace(/'/g,"\\'")
-    .replace(/"/g,'\\"')
-    .replace(/\n/g,"\\n")
-    .replace(/\r/g,"\\r");
+    .replace(
+      /\\/g,
+      "\\\\"
+    )
+    .replace(
+      /'/g,
+      "\\'"
+    )
+    .replace(
+      /"/g,
+      '\\"'
+    )
+    .replace(
+      /\n/g,
+      "\\n"
+    )
+    .replace(
+      /\r/g,
+      "\\r"
+    );
 
 }
+
+
+/* =====================================================
+   ENTER KEY LOGIN
+===================================================== */
+
+document
+  .getElementById("password")
+  .addEventListener(
+    "keydown",
+    function(event){
+
+      if(
+        event.key === "Enter"
+      ){
+
+        adminLogin();
+
+      }
+
+    }
+  );
 
 
 /* =====================================================
    START
 ===================================================== */
 
-loadOrders();
+checkAdminSession();
 
 </script>
 
