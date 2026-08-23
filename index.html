@@ -4,7 +4,6 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Shiv Supplements | Premium Sports Nutrition</title>
 <meta name="description" content="Shiv Supplements — premium sports nutrition store for protein, creatine, mass gainers and performance products.">
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
 :root{--bg:#07090d;--surface:#0e1218;--surface2:#151a22;--text:#f7f8fb;--muted:#99a3b3;--line:#252d38;--gold:#f7b51b;--orange:#ff7417;--green:#25d366}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}a{text-decoration:none;color:inherit}button,input,textarea,select{font:inherit}
@@ -38,7 +37,7 @@ footer{border-top:1px solid var(--line);padding:35px 20px;color:var(--muted);tex
 <h1>Build your <span class="gold">stronger</span> self.</h1>
 <p>Shop premium sports nutrition for muscle gain, strength, recovery and performance — with a clean, professional online shopping experience.</p>
 <div class="actions"><button class="primary" onclick="go('shop')">Shop Supplements</button><button class="secondary" onclick="openAccount()">Create Account</button></div>
-<div class="trust"><span>✓ Secure Checkout</span><span>✓ Online Payments</span><span>✓ Customer Accounts</span><span>✓ WhatsApp Support</span></div>
+<div class="trust"><span>✓ Secure Checkout</span><span>✓ UPI / QR Payments</span><span>✓ Customer Accounts</span><span>✓ WhatsApp Support</span></div>
 </div><div class="heroCard"><div class="circle"><div class="tub"></div></div></div></header>
 
 <section id="categories"><div class="head"><div><h2>Shop by Category</h2><p>Find the right products for your training.</p></div></div>
@@ -55,7 +54,7 @@ footer{border-top:1px solid var(--line);padding:35px 20px;color:var(--muted);tex
 <section id="offers"><div class="deal"><div><h2>🔥 Exclusive Store Offers</h2><p>Ask us for today's prices, combo deals and available stock.</p></div><a class="primary" href="https://wa.me/918144989064?text=Hi%20Shiv%20Supplements,%20please%20send%20me%20today's%20offers." target="_blank">View Offers</a></div></section>
 
 <section id="why"><div class="head"><div><h2>Why Shop With Us?</h2><p>Designed like a professional supplement storefront.</p></div></div>
-<div class="features"><div class="feature">🛡️<b>Secure Customer Accounts</b><p>Register with name, mobile number, email and password.</p></div><div class="feature">💳<b>Razorpay Checkout</b><p>Online payment flow is prepared for Razorpay server-side order creation and verification.</p></div><div class="feature">📦<b>Simple Online Ordering</b><p>Add products to cart, enter delivery details and place your order online.</p></div></div></section>
+<div class="features"><div class="feature">🛡️<b>Secure Customer Accounts</b><p>Register with name, mobile number, email and password.</p></div><div class="feature">📲<b>UPI / QR Payment</b><p>Pay using PhonePe, Google Pay or another UPI app, then submit your UTR for manual verification.</p></div><div class="feature">📦<b>Simple Online Ordering</b><p>Add products to cart, enter delivery details and place your order online.</p></div></div></section>
 
 <footer>© 2026 Shiv Supplements • Sports Nutrition Store • <a href="https://instagram.com/shivsupplements" target="_blank">@shivsupplements</a> • +91 81449 89064</footer>
 <a class="wa" href="https://wa.me/918144989064?text=Hi%20Shiv%20Supplements,%20I%20need%20help%20with%20an%20order." target="_blank">💬 WhatsApp</a>
@@ -111,31 +110,14 @@ function loginForm(){
  <p style="color:#99a3b3;font-size:12px;margin-top:14px">New customer? Tap <b>Registration</b> above.</p>`;
 }
 function registerForm() {
-  return `<div class="row">
-    <div class="field">
-      <label>Full Name *</label>
-      <input id="name" placeholder="Your full name">
-    </div>
-
-    <div class="field">
-      <label>Mobile Number *</label>
-      <input id="regPhone" type="tel" maxlength="10" placeholder="10-digit mobile number">
-    </div>
-
-    <div class="field">
-      <label>Email Address *</label>
-      <input id="email" type="email" placeholder="your@email.com">
-    </div>
-
-    <div class="field">
-      <label>Password *</label>
-      <input id="password" type="password" placeholder="Minimum 6 characters">
-    </div>
-  </div>
-
-  <button class="primary" onclick="register()">
-    Create Account
-  </button>`;
+  return `
+    <div class="row">
+      <div class="field"><label>Full Name *</label><input id="name" placeholder="Your full name"></div>
+      <div class="field"><label>Mobile Number *</label><input id="regPhone" type="tel" maxlength="10" placeholder="10-digit mobile number"></div>
+      <div class="field"><label>Email Address *</label><input id="email" type="email" placeholder="your@email.com"></div>
+      <div class="field"><label>Password *</label><input id="password" type="password" placeholder="Minimum 6 characters"></div>
+      <button class="primary" onclick="register()">Create Account</button>
+    </div>`;
 }
 function showLogin(){
  document.getElementById("loginTab").className="tab active";
@@ -147,51 +129,67 @@ function showRegister(){
  document.getElementById("loginTab").className="tab";
  document.getElementById("formArea").innerHTML=registerForm();
 }
-async function login(){let r=await fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:val("email"),password:val("password")})});let x=await r.json();if(!r.ok)return alert(x.error);closeM("accountModal");document.getElementById("accountText").textContent="Account"}
-async function register(){
-  const name=val("name");
-  const phone=val("regPhone");
-  const email=val("email");
-  const password=val("password");
-
-  if(!name||!phone||!email||!password)
-    return alert("Please fill all required fields.");
-
-  if(!/^[6-9]\d{9}$/.test(phone))
-    return alert("Enter a valid 10-digit mobile number.");
-
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-    return alert("Enter a valid email address.");
-
-  if(password.length<6)
-    return alert("Password must contain at least 6 characters.");
-
-  try{
-    const r=await fetch("/api/register",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({name,phone,email,password})
-    });
-
-    const x=await r.json();
-
-    if(!r.ok)
-      return alert(x.message||"Registration failed.");
-
-    alert("Account created successfully!");
-    closeM("accountModal");
-    document.getElementById("accountText").textContent="Account";
-  }catch(e){
-    console.error("REGISTER ERROR:",e);
-    alert("Unable to create account. Please try again.");
-  }
+async function login(){
+  const r=await fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:val("email"),password:val("password")})});
+  const x=await r.json();
+  if(!r.ok)return alert(x.message||x.error||"Login failed.");
+  closeM("accountModal");document.getElementById("accountText").textContent="Account";
 }
+
+async function register(){
+  const name=val("name"),phone=val("regPhone"),email=val("email"),password=val("password");
+  if(!name||!phone||!email||!password)return alert("Please fill all required fields.");
+  if(!/^[6-9]\d{9}$/.test(phone))return alert("Enter a valid 10-digit mobile number.");
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return alert("Enter a valid email address.");
+  if(password.length<6)return alert("Password must be at least 6 characters.");
+  try{
+    const r=await fetch("/api/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name,phone,email,password})});
+    const x=await r.json();
+    if(!r.ok)return alert(x.message||"Registration failed.");
+    alert("Account created successfully!");closeM("accountModal");document.getElementById("accountText").textContent="Account";
+  }catch(e){console.error("REGISTER ERROR:",e);alert("Unable to create account. Please try again.");}
+}
+
 async function logout(){await fetch("/api/logout",{method:"POST"});document.getElementById("accountText").textContent="Login";renderAccount()}
-async function startCheckout(){let u=await me();if(!u){closeM("cartModal");openAccount();return}closeM("cartModal");document.getElementById("checkoutArea").innerHTML=`<p style="color:#99a3b3">Logged in as ${esc(u.email)}</p><div class="row"><div class="field"><label>Name</label><input id="cname" value="${esc(u.name)}"></div><div class="field"><label>Mobile</label><input id="cphone" value="${esc(u.phone)}"></div></div><div class="field"><label>Email</label><input id="cemail" value="${esc(u.email)}"></div><div class="field"><label>Delivery Address</label><textarea id="caddress" placeholder="Full address with PIN code"></textarea></div><div class="total">Payable: ${money(total())}</div><button class="primary" onclick="pay()">Pay Securely with Razorpay</button><p style="color:#99a3b3;font-size:12px">Razorpay will show the payment methods enabled on your merchant account.</p>`;show("checkoutModal")}
-async function pay(){const data={name:val("cname"),phone:val("cphone"),email:val("cemail"),address:val("caddress"),items:cart,total:total()};if(!data.name||!data.phone||!data.email||!data.address)return alert("Please complete delivery details.");let r=await fetch("/api/create-order",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});let x=await r.json();if(!r.ok)return alert(x.error);const options={key:x.keyId,amount:Math.round(data.total*100),currency:"INR",name:"Shiv Supplements",description:"Sports nutrition order",order_id:x.razorpayOrderId,prefill:{name:data.name,email:data.email,contact:data.phone},theme:{color:"#f7b51b"},handler:async(resp)=>{let v=await fetch("/api/verify-payment",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({localOrderId:x.localOrderId,razorpayPaymentId:resp.razorpay_payment_id,razorpayOrderId:resp.razorpay_order_id,razorpaySignature:resp.razorpay_signature})});let z=await v.json();if(!z.ok)return alert(z.error||"Payment verification failed.");cart=[];save();closeM("checkoutModal");alert("Payment successful! Your order has been placed.")}};new Razorpay(options).open()}
+
+async function startCheckout(){
+  let u=await me();
+  if(!u){closeM("cartModal");openAccount();return}
+  closeM("cartModal");
+  document.getElementById("checkoutArea").innerHTML=`
+    <p style="color:#99a3b3">Logged in as ${esc(u.email)}</p>
+    <div class="row"><div class="field"><label>Name</label><input id="cname" value="${esc(u.name)}"></div><div class="field"><label>Mobile</label><input id="cphone" value="${esc(u.phone)}"></div></div>
+    <div class="field"><label>Email</label><input id="cemail" value="${esc(u.email)}"></div>
+    <div class="field"><label>Delivery Address *</label><textarea id="caddress" placeholder="Full address with PIN code"></textarea></div>
+    <div class="total">Payable: ${money(total())}</div>
+    <div style="background:#0a0e14;border:1px solid #343c49;border-radius:16px;padding:18px;text-align:center;margin:18px 0">
+      <h3 style="margin-top:0">Scan & Pay</h3>
+      <p style="color:#99a3b3;font-size:13px">Scan this QR using PhonePe, Google Pay or another UPI app.</p>
+      <img src="1000268498.png" alt="Shiv Supplements UPI QR" style="width:min(320px,85vw);max-width:100%;border-radius:12px;background:#fff;padding:8px">
+      <p style="color:#ffd66c;font-weight:900;margin-bottom:0">Pay exactly ${money(total())}</p>
+    </div>
+    <div class="field"><label>UTR / Transaction ID *</label><input id="utr" maxlength="50" placeholder="Enter UTR / transaction ID after payment"></div>
+    <button class="primary" onclick="submitManualOrder()">Submit Payment Details</button>
+    <p style="color:#99a3b3;font-size:12px;line-height:1.5">After you submit the UTR, the order remains <b>Payment Pending</b> until the store admin verifies the payment.</p>`;
+  show("checkoutModal");
+}
+
+async function submitManualOrder(){
+  const data={name:val("cname"),phone:val("cphone"),email:val("cemail"),address:val("caddress"),items:cart,amount:total(),utr:val("utr")};
+  if(!data.name||!data.phone||!data.email||!data.address)return alert("Please complete all delivery details.");
+  if(!data.utr)return alert("Please enter the UTR / Transaction ID.");
+  if(!cart.length)return alert("Your cart is empty.");
+  try{
+    const response=await fetch("/api/manual-order",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+    const result=await response.json();
+    if(!response.ok)return alert(result.message||"Could not submit the order.");
+    cart=[];save();closeM("checkoutModal");
+    alert("Order submitted successfully!\n\nYour payment is pending manual verification. We will confirm your order after checking the UTR.");
+  }catch(error){console.error("MANUAL ORDER ERROR:",error);alert("Could not submit the order. Please try again.");}
+}
+
 function val(id){return document.getElementById(id).value.trim()}function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
 function show(id){document.getElementById(id).style.display="block"}function closeM(id){document.getElementById(id).style.display="none"}
 renderProducts();renderCart();me().then(u=>{if(u)document.getElementById("accountText").textContent="Account"});
-
-</script>
+ </script>
 </body></html>
