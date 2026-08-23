@@ -10,227 +10,228 @@
   box-sizing:border-box;
   margin:0;
   padding:0;
+  font-family:Arial,Helvetica,sans-serif;
 }
 
 body{
-  font-family:Arial,Helvetica,sans-serif;
-  background:#0b0f14;
+  background:#090b10;
   color:#fff;
+  min-height:100vh;
 }
 
-header{
-  background:#111821;
-  border-bottom:1px solid #263342;
-  padding:18px 25px;
+.header{
+  background:#11151d;
+  border-bottom:2px solid #ffb000;
+  padding:18px 5%;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  position:sticky;
-  top:0;
-  z-index:10;
 }
 
 .logo{
-  font-size:24px;
+  font-size:25px;
   font-weight:900;
 }
 
 .logo span{
-  color:#f7b51b;
+  color:#ffb000;
 }
 
-.refresh{
-  background:#f7b51b;
-  border:0;
-  padding:10px 18px;
-  border-radius:8px;
-  font-weight:800;
-  cursor:pointer;
+.admin{
+  color:#aaa;
+  font-size:14px;
 }
 
 .container{
+  width:92%;
   max-width:1400px;
-  margin:auto;
-  padding:25px;
+  margin:30px auto;
 }
 
-h1{
-  margin-bottom:20px;
+.title{
+  font-size:32px;
+  margin-bottom:25px;
+}
+
+.title span{
+  color:#ffb000;
 }
 
 .stats{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:15px;
-  margin-bottom:25px;
+  gap:18px;
+  margin-bottom:30px;
 }
 
-.stat{
-  background:#121a23;
-  border:1px solid #263342;
-  border-radius:12px;
-  padding:20px;
+.card{
+  background:#151c27;
+  border:1px solid #263447;
+  border-radius:16px;
+  padding:24px;
 }
 
-.stat small{
-  color:#8e9aaa;
+.card h3{
+  color:#aaa;
+  font-size:15px;
+  margin-bottom:12px;
 }
 
-.stat strong{
-  display:block;
-  font-size:28px;
-  margin-top:8px;
+.card .number{
+  font-size:30px;
+  font-weight:bold;
+}
+
+.controls{
+  display:flex;
+  gap:12px;
+  margin-bottom:20px;
+}
+
+input{
+  flex:1;
+  background:#111722;
+  color:white;
+  border:1px solid #33445b;
+  padding:14px;
+  border-radius:10px;
+  outline:none;
+}
+
+button{
+  border:none;
+  border-radius:10px;
+  padding:13px 20px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.refresh{
+  background:#ffb000;
+  color:#111;
 }
 
 .orders{
-  display:flex;
-  flex-direction:column;
-  gap:15px;
+  background:#111722;
+  border:1px solid #263447;
+  border-radius:16px;
+  overflow:hidden;
 }
 
 .order{
-  background:#121a23;
-  border:1px solid #263342;
-  border-radius:14px;
-  padding:20px;
+  padding:22px;
+  border-bottom:1px solid #263447;
+}
+
+.order:last-child{
+  border-bottom:none;
 }
 
 .order-top{
   display:flex;
   justify-content:space-between;
   gap:15px;
-  align-items:center;
-  margin-bottom:15px;
+  flex-wrap:wrap;
 }
 
 .order-id{
-  font-size:20px;
-  font-weight:900;
+  font-weight:bold;
+  color:#ffb000;
 }
-
-.status{
-  padding:7px 12px;
-  border-radius:20px;
-  font-size:12px;
-  font-weight:900;
-  text-transform:uppercase;
-}
-
-.pending{background:#5b4500;color:#ffd84d}
-.paid{background:#063d24;color:#4dff9a}
-.processing{background:#123b62;color:#64b7ff}
-.shipped{background:#392066;color:#c59cff}
-.delivered{background:#164d30;color:#7dffad}
-.cancelled{background:#551b1b;color:#ff7777}
 
 .customer{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:8px;
-  color:#cbd5e1;
-  margin-bottom:15px;
+  margin-top:15px;
+  line-height:1.8;
+  color:#ddd;
 }
 
-.customer div{
-  background:#0d131a;
-  padding:10px;
-  border-radius:7px;
-}
-
-.items{
-  background:#0d131a;
+.products{
+  margin-top:15px;
   padding:15px;
-  border-radius:9px;
-  margin-bottom:15px;
+  background:#0b0f16;
+  border-radius:10px;
 }
 
-.item{
+.product{
   display:flex;
   justify-content:space-between;
   padding:7px 0;
-  border-bottom:1px solid #202a35;
+  border-bottom:1px solid #202a38;
 }
 
-.item:last-child{
-  border-bottom:0;
+.product:last-child{
+  border-bottom:none;
 }
 
 .amount{
-  font-size:22px;
-  font-weight:900;
-  color:#f7b51b;
-  margin:12px 0;
+  margin-top:15px;
+  font-size:20px;
+  font-weight:bold;
+  color:#ffb000;
 }
 
-.utr{
-  background:#1a2029;
-  padding:12px;
-  border-radius:8px;
-  margin-bottom:15px;
-  word-break:break-all;
+.status{
+  display:inline-block;
+  padding:7px 12px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:bold;
 }
 
-select{
-  width:100%;
-  background:#0b0f14;
-  color:#fff;
-  border:1px solid #394757;
-  padding:12px;
-  border-radius:8px;
-  font-size:15px;
+.pending{
+  background:#4b3500;
+  color:#ffc400;
 }
 
-.update{
-  margin-top:10px;
-  width:100%;
-  padding:12px;
-  border:0;
-  border-radius:8px;
-  background:#f7b51b;
-  font-weight:900;
-  cursor:pointer;
+.paid{
+  background:#063d27;
+  color:#37e69a;
+}
+
+.shipped{
+  background:#073b58;
+  color:#55c7ff;
+}
+
+.delivered{
+  background:#233b12;
+  color:#9cff50;
+}
+
+.cancelled{
+  background:#4a1111;
+  color:#ff6b6b;
 }
 
 .empty{
   text-align:center;
-  padding:50px;
-  color:#8e9aaa;
+  padding:60px 20px;
+  color:#888;
 }
 
-.error{
-  background:#551b1b;
-  color:#ff9999;
-  padding:15px;
-  border-radius:10px;
-  margin-bottom:20px;
+.loading{
+  text-align:center;
+  padding:40px;
+  color:#aaa;
 }
 
-@media(max-width:800px){
+@media(max-width:900px){
   .stats{
     grid-template-columns:repeat(2,1fr);
   }
-
-  .customer{
-    grid-template-columns:1fr;
-  }
 }
 
-@media(max-width:500px){
-  header{
-    padding:15px;
-  }
-
-  .container{
-    padding:15px;
-  }
-
+@media(max-width:600px){
   .stats{
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:1fr;
   }
 
-  .order-top{
+  .controls{
     flex-direction:column;
-    align-items:flex-start;
+  }
+
+  .title{
+    font-size:25px;
   }
 }
 </style>
@@ -238,46 +239,58 @@ select{
 
 <body>
 
-<header>
+<header class="header">
   <div class="logo">
     SHIV <span>SUPPLEMENTS</span>
   </div>
-
-  <button class="refresh" onclick="loadOrders()">
-    🔄 Refresh Orders
-  </button>
+  <div class="admin">ADMIN DASHBOARD</div>
 </header>
 
 <div class="container">
 
-  <h1>📦 Admin Orders</h1>
-
-  <div id="error"></div>
+  <h1 class="title">
+    📦 Admin <span>Orders</span>
+  </h1>
 
   <div class="stats">
-    <div class="stat">
-      <small>Total Orders</small>
-      <strong id="totalOrders">0</strong>
+
+    <div class="card">
+      <h3>Total Orders</h3>
+      <div class="number" id="totalOrders">0</div>
     </div>
 
-    <div class="stat">
-      <small>Pending</small>
-      <strong id="pendingOrders">0</strong>
+    <div class="card">
+      <h3>Pending</h3>
+      <div class="number" id="pendingOrders">0</div>
     </div>
 
-    <div class="stat">
-      <small>Paid</small>
-      <strong id="paidOrders">0</strong>
+    <div class="card">
+      <h3>Paid</h3>
+      <div class="number" id="paidOrders">0</div>
     </div>
 
-    <div class="stat">
-      <small>Total Sales</small>
-      <strong id="totalSales">₹0</strong>
+    <div class="card">
+      <h3>Total Sales</h3>
+      <div class="number" id="totalSales">₹0</div>
     </div>
+
   </div>
 
-  <div id="orders" class="orders">
-    <div class="empty">
+  <div class="controls">
+    <input
+      type="text"
+      id="search"
+      placeholder="Search customer, phone, email or order ID..."
+      oninput="renderOrders()"
+    >
+
+    <button class="refresh" onclick="loadOrders()">
+      🔄 Refresh Orders
+    </button>
+  </div>
+
+  <div class="orders" id="orders">
+    <div class="loading">
       Loading orders...
     </div>
   </div>
@@ -288,15 +301,16 @@ select{
 
 let allOrders = [];
 
+/* =========================
+   LOAD ORDERS
+========================= */
+
 async function loadOrders(){
 
-  const ordersBox = document.getElementById("orders");
-  const errorBox = document.getElementById("error");
+  const box = document.getElementById("orders");
 
-  errorBox.innerHTML = "";
-
-  ordersBox.innerHTML = `
-    <div class="empty">
+  box.innerHTML = `
+    <div class="loading">
       Loading orders...
     </div>
   `;
@@ -305,114 +319,239 @@ async function loadOrders(){
 
     const response = await fetch("/api/admin/orders");
 
-    const data = await response.json();
-
-    if(!response.ok || !data.success){
-      throw new Error(data.message || "Could not load orders");
+    if(!response.ok){
+      throw new Error("Server error");
     }
 
-    allOrders = data.orders || [];
+    const data = await response.json();
+
+    /*
+      API can return:
+      {success:true, orders:[...]}
+      OR directly [...]
+    */
+
+    if(Array.isArray(data)){
+      allOrders = data;
+    }
+    else{
+      allOrders = data.orders || [];
+    }
 
     updateStats();
-
     renderOrders();
 
-  }catch(error){
+  }
+  catch(error){
 
     console.error(error);
 
-    errorBox.innerHTML = `
-      <div class="error">
-        ❌ ${escapeHTML(error.message)}
+    box.innerHTML = `
+      <div class="empty">
+        ❌ Could not load orders.<br><br>
+        Please refresh the page.
       </div>
     `;
 
-    ordersBox.innerHTML = `
-      <div class="empty">
-        Could not load orders.
-      </div>
-    `;
   }
 }
 
 
+/* =========================
+   STATS
+========================= */
+
 function updateStats(){
 
-  document.getElementById("totalOrders").textContent =
-    allOrders.length;
+  const total = allOrders.length;
 
-  document.getElementById("pendingOrders").textContent =
-    allOrders.filter(o => o.status === "pending").length;
+  const pending = allOrders.filter(o => {
 
-  document.getElementById("paidOrders").textContent =
-    allOrders.filter(o => o.status === "paid").length;
+    const s = String(
+      o.status ||
+      o.payment_status ||
+      ""
+    ).toLowerCase();
 
-  const sales = allOrders
-    .filter(o => o.status !== "cancelled")
-    .reduce((sum,o) => sum + Number(o.amount || 0),0);
+    return s === "pending";
+
+  }).length;
+
+  const paid = allOrders.filter(o => {
+
+    const s = String(
+      o.status ||
+      o.payment_status ||
+      ""
+    ).toLowerCase();
+
+    return s === "paid";
+
+  }).length;
+
+  let sales = 0;
+
+  allOrders.forEach(o => {
+
+    const amount =
+      Number(
+        o.total ||
+        o.amount ||
+        o.total_amount ||
+        o.price ||
+        0
+      );
+
+    sales += amount;
+
+  });
+
+  document.getElementById("totalOrders").textContent = total;
+
+  document.getElementById("pendingOrders").textContent = pending;
+
+  document.getElementById("paidOrders").textContent = paid;
 
   document.getElementById("totalSales").textContent =
     "₹" + sales.toLocaleString("en-IN");
+
 }
 
+
+/* =========================
+   RENDER ORDERS
+========================= */
 
 function renderOrders(){
 
   const box = document.getElementById("orders");
 
-  if(!allOrders.length){
+  const search =
+    document.getElementById("search")
+    .value
+    .toLowerCase()
+    .trim();
+
+  const filtered = allOrders.filter(order => {
+
+    const text = JSON.stringify(order).toLowerCase();
+
+    return text.includes(search);
+
+  });
+
+  if(filtered.length === 0){
 
     box.innerHTML = `
       <div class="empty">
-        No orders found.
+        📭 No orders found.
       </div>
     `;
 
     return;
   }
 
-  box.innerHTML = allOrders.map(order => {
+  box.innerHTML = filtered.map((order,index) => {
 
-    const items = Array.isArray(order.items)
-      ? order.items
-      : [];
+    const orderId =
+      order.order_id ||
+      order.id ||
+      order._id ||
+      ("ORDER-" + (index + 1));
 
-    const itemHTML = items.map(item => {
+    const name =
+      order.name ||
+      order.customer_name ||
+      order.customerName ||
+      "Customer";
 
-      const name =
-        item.name ||
-        item.title ||
-        item.product ||
-        "Product";
+    const phone =
+      order.phone ||
+      order.mobile ||
+      order.customer_phone ||
+      "-";
 
-      const qty =
-        item.qty ||
-        item.quantity ||
-        1;
+    const email =
+      order.email ||
+      order.customer_email ||
+      "-";
 
-      const price =
-        item.price ||
-        0;
+    const address =
+      order.address ||
+      order.delivery_address ||
+      "-";
 
-      return `
-        <div class="item">
-          <span>
-            ${escapeHTML(name)}
-            × ${qty}
-          </span>
+    const status =
+      String(
+        order.status ||
+        order.payment_status ||
+        "pending"
+      ).toLowerCase();
 
-          <span>
-            ₹${Number(price * qty).toLocaleString("en-IN")}
-          </span>
+    const amount =
+      Number(
+        order.total ||
+        order.amount ||
+        order.total_amount ||
+        order.price ||
+        0
+      );
+
+    const products =
+      order.items ||
+      order.products ||
+      [];
+
+    let productHTML = "";
+
+    if(Array.isArray(products) && products.length){
+
+      productHTML = products.map(p => {
+
+        const pname =
+          p.name ||
+          p.title ||
+          p.product_name ||
+          "Product";
+
+        const qty =
+          p.qty ||
+          p.quantity ||
+          1;
+
+        const price =
+          Number(
+            p.price ||
+            p.amount ||
+            0
+          );
+
+        return `
+          <div class="product">
+            <span>
+              ${escapeHTML(pname)}
+              × ${qty}
+            </span>
+
+            <span>
+              ₹${price.toLocaleString("en-IN")}
+            </span>
+          </div>
+        `;
+
+      }).join("");
+
+    }
+    else{
+
+      productHTML = `
+        <div class="product">
+          <span>Order items</span>
+          <span>View order data</span>
         </div>
       `;
 
-    }).join("");
-
-    const paymentId =
-      order.razorpay_payment_id ||
-      order.utr ||
-      "Not available";
+    }
 
     return `
 
@@ -420,174 +559,106 @@ function renderOrders(){
 
         <div class="order-top">
 
-          <div class="order-id">
-            Order #${order.id}
+          <div>
+            <div class="order-id">
+              ${escapeHTML(String(orderId))}
+            </div>
+
+            <div style="color:#777;margin-top:5px">
+              ${formatDate(order.created_at || order.createdAt || order.date)}
+            </div>
           </div>
 
-          <div class="status ${escapeHTML(order.status || "pending")}">
-            ${escapeHTML(order.status || "pending")}
+          <div>
+            <span class="status ${statusClass(status)}">
+              ${status.toUpperCase()}
+            </span>
           </div>
 
         </div>
-
 
         <div class="customer">
 
-          <div>
-            👤 <b>Name:</b>
-            ${escapeHTML(order.name || "-")}
-          </div>
+          👤 <b>${escapeHTML(String(name))}</b><br>
 
-          <div>
-            📞 <b>Phone:</b>
-            ${escapeHTML(order.phone || "-")}
-          </div>
+          📱 ${escapeHTML(String(phone))}<br>
 
-          <div>
-            📧 <b>Email:</b>
-            ${escapeHTML(order.email || "-")}
-          </div>
+          📧 ${escapeHTML(String(email))}<br>
 
-          <div>
-            📅 <b>Date:</b>
-            ${escapeHTML(order.created_at || "-")}
-          </div>
-
-          <div style="grid-column:1/-1">
-            📍 <b>Address:</b>
-            ${escapeHTML(order.address || "-")}
-          </div>
+          📍 ${escapeHTML(String(address))}
 
         </div>
 
+        <div class="products">
 
-        <div class="items">
-
-          <b>🛍 Products</b>
+          <b>🛒 Products</b>
 
           <div style="margin-top:10px">
-            ${itemHTML || "<div>No product details</div>"}
+            ${productHTML}
           </div>
 
         </div>
 
-
         <div class="amount">
-          Payable: ₹${Number(order.amount || 0).toLocaleString("en-IN")}
+          Total: ₹${amount.toLocaleString("en-IN")}
         </div>
-
-
-        <div class="utr">
-
-          <b>💳 Payment / UTR:</b><br>
-
-          ${escapeHTML(paymentId)}
-
-        </div>
-
-
-        <label>
-          <b>Order Status</b>
-        </label>
-
-        <select id="status-${order.id}">
-
-          ${statusOption("pending",order.status)}
-          ${statusOption("paid",order.status)}
-          ${statusOption("processing",order.status)}
-          ${statusOption("shipped",order.status)}
-          ${statusOption("delivered",order.status)}
-          ${statusOption("cancelled",order.status)}
-
-        </select>
-
-
-        <button
-          class="update"
-          onclick="updateStatus(${order.id})">
-
-          ✅ Update Order Status
-
-        </button>
 
       </div>
 
     `;
 
   }).join("");
+
 }
 
 
-function statusOption(value,current){
+/* =========================
+   HELPERS
+========================= */
 
-  return `
-    <option
-      value="${value}"
-      ${value === current ? "selected" : ""}>
-      ${value.toUpperCase()}
-    </option>
-  `;
+function statusClass(status){
+
+  if(
+    status === "paid"
+  ) return "paid";
+
+  if(
+    status === "shipped"
+  ) return "shipped";
+
+  if(
+    status === "delivered"
+  ) return "delivered";
+
+  if(
+    status === "cancelled" ||
+    status === "canceled"
+  ) return "cancelled";
+
+  return "pending";
+
 }
 
 
-async function updateStatus(id){
+function formatDate(value){
 
-  const select =
-    document.getElementById("status-" + id);
-
-  const status = select.value;
-
-  if(!confirm(
-    "Change Order #" + id +
-    " status to " + status + "?"
-  )){
-    return;
+  if(!value){
+    return "";
   }
 
   try{
 
-    const response = await fetch(
-      "/api/admin/orders/" + id,
+    return new Date(value).toLocaleString(
+      "en-IN",
       {
-        method:"PATCH",
-
-        headers:{
-          "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-          status:status
-        })
+        dateStyle:"medium",
+        timeStyle:"short"
       }
     );
 
-    const data = await response.json();
-
-    if(!response.ok || !data.success){
-
-      throw new Error(
-        data.message ||
-        "Could not update order"
-      );
-
-    }
-
-    alert(
-      "✅ Order #" +
-      id +
-      " updated to " +
-      status
-    );
-
-    await loadOrders();
-
-  }catch(error){
-
-    alert(
-      "❌ " +
-      error.message
-    );
-
+  }
+  catch{
+    return String(value);
   }
 
 }
@@ -595,7 +666,7 @@ async function updateStatus(id){
 
 function escapeHTML(value){
 
-  return String(value ?? "")
+  return value
     .replace(/&/g,"&amp;")
     .replace(/</g,"&lt;")
     .replace(/>/g,"&gt;")
@@ -604,6 +675,10 @@ function escapeHTML(value){
 
 }
 
+
+/* =========================
+   START
+========================= */
 
 loadOrders();
 
