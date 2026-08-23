@@ -369,6 +369,77 @@ button:hover{
 @media(max-width:1000px){.productGrid{grid-template-columns:repeat(2,1fr)}.productForm{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.productGrid,.productForm{grid-template-columns:1fr}.productForm .full{grid-column:auto}}
 
+
+/* ADMIN LOGIN */
+#adminLoginScreen{
+  position:fixed;
+  inset:0;
+  z-index:100000;
+  background:#070b10;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+.adminLoginBox{
+  width:min(420px,100%);
+  background:#111722;
+  border:1px solid #34445b;
+  border-radius:20px;
+  padding:30px;
+  box-shadow:0 20px 70px rgba(0,0,0,.55);
+}
+.adminLoginLogo{
+  text-align:center;
+  font-size:26px;
+  font-weight:1000;
+  letter-spacing:2px;
+  margin-bottom:6px;
+}
+.adminLoginLogo span{color:#ffb000}
+.adminLoginSub{
+  text-align:center;
+  color:#8e9aaa;
+  font-size:13px;
+  margin-bottom:24px;
+}
+.adminLoginBox label{
+  display:block;
+  color:#c8d0dc;
+  font-size:13px;
+  margin:12px 0 7px;
+}
+.adminLoginBox input{
+  width:100%;
+  background:#0b1017;
+  color:#fff;
+  border:1px solid #33445b;
+  padding:13px;
+  border-radius:10px;
+  outline:none;
+}
+.adminLoginBox input:focus{border-color:#ffb000}
+.adminLoginBtn{
+  width:100%;
+  margin-top:18px;
+  background:#ffb000;
+  color:#111;
+  border:0;
+  padding:13px;
+  border-radius:10px;
+  font-weight:900;
+  cursor:pointer;
+}
+.adminLoginBtn:disabled{opacity:.6;cursor:wait}
+#adminLoginError{
+  display:none;
+  margin-top:12px;
+  color:#ff8d8d;
+  font-size:13px;
+  text-align:center;
+}
+#adminApp{display:none}
+
 /* MOBILE */
 
 @media(max-width:900px){
@@ -409,7 +480,30 @@ button:hover{
 
 </head>
 
+
 <body>
+
+<div id="adminLoginScreen">
+  <div class="adminLoginBox">
+    <div class="adminLoginLogo">SHIV <span>SUPPLEMENTS</span></div>
+    <div class="adminLoginSub">🔐 Secure Admin Dashboard</div>
+
+    <label>Admin Username</label>
+    <input id="adminUsername" type="text" autocomplete="username" placeholder="Enter admin username">
+
+    <label>Admin Password</label>
+    <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Enter admin password">
+
+    <button class="adminLoginBtn" id="adminLoginBtn" onclick="adminLogin()">
+      🔐 Login to Admin
+    </button>
+
+    <div id="adminLoginError"></div>
+  </div>
+</div>
+
+<div id="adminApp">
+
 
 <header class="header">
 
@@ -419,6 +513,9 @@ button:hover{
 
   <div class="admin">
     ADMIN DASHBOARD
+    <button id="adminLogoutBtn" onclick="adminLogout()" style="margin-left:12px;background:#35151a;color:#ff9b9b;border:1px solid #6b252c;border-radius:8px;padding:7px 10px;cursor:pointer">
+      Logout
+    </button>
   </div>
 
 </header>
@@ -535,6 +632,115 @@ button:hover{
 
 let allOrders = [];
 
+
+
+
+/* =====================================================
+   ADMIN AUTHENTICATION
+===================================================== */
+async function checkAdminSession(){
+  try{
+    const response = await fetch("/api/admin/me", {cache:"no-store"});
+    const data = await response.json();
+    if(data.loggedIn){
+      showAdminApp();
+    }else{
+      showAdminLogin();
+    }
+  }catch(error){
+    console.error("ADMIN SESSION ERROR:", error);
+    showAdminLogin();
+  }
+}
+
+function showAdminLogin(){
+  const login=document.getElementById("adminLoginScreen");
+  const app=document.getElementById("adminApp");
+  if(login) login.style.display="flex";
+  if(app) app.style.display="none";
+}
+
+function showAdminApp(){
+  const login=document.getElementById("adminLoginScreen");
+  const app=document.getElementById("adminApp");
+  if(login) login.style.display="none";
+  if(app) app.style.display="block";
+  loadProducts();
+  loadOrders();
+}
+
+async function adminLogin(){
+  const username=(document.getElementById("adminUsername")?.value||"").trim();
+  const password=document.getElementById("adminPassword")?.value||"";
+  const btn=document.getElementById("adminLoginBtn");
+  const error=document.getElementById("adminLoginError");
+
+  if(!username || !password){
+    if(error){
+      error.textContent="Please enter both username and password.";
+      error.style.display="block";
+    }
+    return;
+  }
+
+  if(btn){
+    btn.disabled=true;
+    btn.textContent="Logging in...";
+  }
+  if(error) error.style.display="none";
+
+  try{
+    const response=await fetch("/api/admin/login",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      credentials:"same-origin",
+      body:JSON.stringify({username,password})
+    });
+    const data=await response.json();
+
+    if(!response.ok || data.success===false){
+      throw new Error(data.message||"Invalid admin credentials");
+    }
+
+    document.getElementById("adminPassword").value="";
+    showAdminApp();
+  }catch(err){
+    console.error("ADMIN LOGIN ERROR:",err);
+    if(error){
+      error.textContent=err.message||"Admin login failed.";
+      error.style.display="block";
+    }
+  }finally{
+    if(btn){
+      btn.disabled=false;
+      btn.textContent="🔐 Login to Admin";
+    }
+  }
+}
+
+async function adminLogout(){
+  try{
+    await fetch("/api/admin/logout",{
+      method:"POST",
+      credentials:"same-origin"
+    });
+  }catch(error){
+    console.error(error);
+  }
+  showAdminLogin();
+  document.getElementById("adminUsername").value="";
+  document.getElementById("adminPassword").value="";
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  const pass=document.getElementById("adminPassword");
+  if(pass){
+    pass.addEventListener("keydown",(event)=>{
+      if(event.key==="Enter") adminLogin();
+    });
+  }
+  checkAdminSession();
+});
 
 
 /* =====================================================
@@ -1473,7 +1679,6 @@ async function updateOrderStatus(orderId,status){
     /* RELOAD */
 
     await loadProducts();
-loadOrders();
 
 
   }
@@ -1602,6 +1807,8 @@ function escapeJS(value){
 loadOrders();
 
 </script>
+
+</div>
 
 </body>
 </html>
