@@ -211,13 +211,14 @@ app.post('/api/create-order',requireLogin,(req,res)=>{
 
 app.post('/api/manual-order',requireLogin,(req,res)=>{
   try{
-    const orderId=Number(req.body.orderId||req.body.localOrderId), utr=String(req.body.utr||req.body.paymentRef||'').trim().slice(0,100);
+    const orderId=Number(req.body.orderId||req.body.localOrderId||req.body.id), utr=String(req.body.utr||req.body.paymentRef||'').trim().slice(0,100);
     if(!Number.isInteger(orderId)||orderId<=0||utr.length<6) return res.status(400).json({success:false,message:'Order ID and UTR are required'});
     const order=db.prepare('SELECT * FROM orders WHERE id=? AND user_id=?').get(orderId,req.session.user.id);
     if(!order) return res.status(404).json({success:false,message:'Order not found'});
     if(order.status!=='pending') return res.status(400).json({success:false,message:'This order is no longer pending'});
-    db.prepare('UPDATE orders SET payment_ref=?,payment_method="UPI" WHERE id=?').run(utr,orderId);
-    res.json({success:true,message:'UTR submitted. Your payment will be verified by the admin.',order:{id:orderId,status:'pending',paymentRef:utr}});
+    db.prepare('UPDATE orders SET payment_ref=?, payment_method=? WHERE id=?').run(utr,'UPI',orderId);
+    const updated=db.prepare('SELECT id,status,payment_method,payment_ref FROM orders WHERE id=?').get(orderId);
+     res.json({success:true,message:'UTR submitted. Your payment will be verified by the admin.',order:{id:updated.id,status:updated.status,paymentMethod:updated.payment_method,paymentRef:updated.payment_ref}});
   }catch(e){console.error(e);res.status(500).json({success:false,message:'Could not submit payment details'});}
 });
 
