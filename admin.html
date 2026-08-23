@@ -21,9 +21,7 @@ body{
   min-height:100vh;
 }
 
-/* =========================
-   HEADER
-========================= */
+/* HEADER */
 
 .header{
   background:#11151d;
@@ -43,26 +41,12 @@ body{
   color:#ffb000;
 }
 
-.admin-area{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.admin-label{
+.admin{
   color:#aaa;
   font-size:14px;
 }
 
-.logout-btn{
-  background:#4a1111;
-  color:#ff7777;
-  border:1px solid #ff5555;
-}
-
-/* =========================
-   CONTAINER
-========================= */
+/* CONTAINER */
 
 .container{
   width:92%;
@@ -79,70 +63,7 @@ body{
   color:#ffb000;
 }
 
-/* =========================
-   LOGIN
-========================= */
-
-.login-screen{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-}
-
-.login-box{
-  width:100%;
-  max-width:430px;
-  background:#151c27;
-  border:1px solid #33445b;
-  border-radius:18px;
-  padding:35px;
-  box-shadow:0 20px 60px rgba(0,0,0,.5);
-}
-
-.login-logo{
-  text-align:center;
-  font-size:28px;
-  font-weight:900;
-  margin-bottom:8px;
-}
-
-.login-logo span{
-  color:#ffb000;
-}
-
-.login-title{
-  text-align:center;
-  color:#aaa;
-  margin-bottom:30px;
-}
-
-.login-box input{
-  width:100%;
-  margin-bottom:15px;
-}
-
-.login-btn{
-  width:100%;
-  background:#ffb000;
-  color:#111;
-  font-size:16px;
-}
-
-.login-error{
-  display:none;
-  background:#4a1111;
-  color:#ff7777;
-  border:1px solid #ff5555;
-  padding:12px;
-  border-radius:10px;
-  margin-bottom:15px;
-}
-
-/* =========================
-   STATS
-========================= */
+/* STATS */
 
 .stats{
   display:grid;
@@ -169,9 +90,7 @@ body{
   font-weight:bold;
 }
 
-/* =========================
-   CONTROLS
-========================= */
+/* CONTROLS */
 
 .controls{
   display:flex;
@@ -187,10 +106,6 @@ input{
   padding:14px;
   border-radius:10px;
   outline:none;
-}
-
-input:focus{
-  border-color:#ffb000;
 }
 
 button{
@@ -212,9 +127,7 @@ button:hover{
   color:#111;
 }
 
-/* =========================
-   ORDERS
-========================= */
+/* ORDERS */
 
 .orders{
   background:#111722;
@@ -242,7 +155,6 @@ button:hover{
 .order-id{
   font-weight:bold;
   color:#ffb000;
-  font-size:18px;
 }
 
 .customer{
@@ -277,29 +189,7 @@ button:hover{
   color:#ffb000;
 }
 
-.payment{
-  margin-top:15px;
-  background:#151c27;
-  border:1px solid #263447;
-  border-radius:10px;
-  padding:14px;
-}
-
-.payment-title{
-  color:#aaa;
-  font-size:13px;
-  margin-bottom:7px;
-}
-
-.payment-ref{
-  color:#fff;
-  font-weight:bold;
-  word-break:break-all;
-}
-
-/* =========================
-   STATUS
-========================= */
+/* STATUS */
 
 .status{
   display:inline-block;
@@ -339,9 +229,7 @@ button:hover{
   color:#ff6b6b;
 }
 
-/* =========================
-   ACTIONS
-========================= */
+/* ACTIONS */
 
 .actions{
   margin-top:20px;
@@ -390,9 +278,7 @@ button:hover{
   cursor:not-allowed;
 }
 
-/* =========================
-   LOADING / EMPTY
-========================= */
+/* EMPTY / LOADING */
 
 .empty{
   text-align:center;
@@ -406,26 +292,7 @@ button:hover{
   color:#aaa;
 }
 
-/* =========================
-   ERROR
-========================= */
-
-.server-error{
-  margin:20px;
-  padding:18px;
-  background:#4a1111;
-  border:1px solid #ff5555;
-  border-radius:12px;
-  color:#ff9999;
-}
-
-.server-error b{
-  color:#fff;
-}
-
-/* =========================
-   TOAST
-========================= */
+/* TOAST */
 
 .toast{
   position:fixed;
@@ -446,17 +313,63 @@ button:hover{
   display:block;
 }
 
-/* =========================
-   HIDDEN
-========================= */
 
-.hidden{
-  display:none !important;
+/* PRODUCTS / INVENTORY */
+.productPanel{
+  background:#111722;
+  border:1px solid #263447;
+  border-radius:16px;
+  padding:22px;
+  margin-bottom:30px;
 }
+.productPanel h2{margin-bottom:16px}
+.productForm{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+.productForm .full{grid-column:1/-1}
+.productForm input,.productForm select,.productForm textarea{
+  width:100%;
+  background:#0b1017;
+  color:#fff;
+  border:1px solid #33445b;
+  padding:12px;
+  border-radius:10px;
+  outline:none;
+}
+.productForm textarea{min-height:80px;resize:vertical}
+.productActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.addProductBtn{background:#ffb000;color:#111}
+.cancelProductBtn{background:#263447;color:#fff}
+.productGrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+  margin-top:18px;
+}
+.productAdminCard{
+  background:#0b1017;
+  border:1px solid #263447;
+  border-radius:14px;
+  padding:15px;
+}
+.productAdminTop{display:flex;gap:12px}
+.productAdminImage{
+  width:72px;height:72px;border-radius:10px;object-fit:cover;
+  background:#151c27;border:1px solid #303b4d;
+}
+.productAdminName{font-weight:900}
+.productAdminBrand{color:#ffcf52;font-size:12px;margin-top:4px}
+.productMeta{color:#aab4c3;font-size:12px;line-height:1.6;margin-top:10px}
+.stockGood{color:#53e39a}.stockLow{color:#ffd15c}.stockOut{color:#ff777f}
+.smallBtn{padding:8px 11px;font-size:12px;background:#202b3b;color:#fff}
+.deleteBtn{background:#4a1111;color:#ff8a8a}
+.editing{border-color:#ffb000}
+@media(max-width:1000px){.productGrid{grid-template-columns:repeat(2,1fr)}.productForm{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.productGrid,.productForm{grid-template-columns:1fr}.productForm .full{grid-column:auto}}
 
-/* =========================
-   MOBILE
-========================= */
+/* MOBILE */
 
 @media(max-width:900px){
 
@@ -486,75 +399,17 @@ button:hover{
     align-items:flex-start;
   }
 
-  .admin-area{
-    width:100%;
-    justify-content:space-between;
-  }
-
   .actions button{
     flex:1;
-  }
-
-  .login-box{
-    padding:25px;
   }
 
 }
 
 </style>
+
 </head>
 
 <body>
-
-<!-- =====================================================
-     LOGIN SCREEN
-===================================================== -->
-
-<div id="loginScreen" class="login-screen">
-
-  <div class="login-box">
-
-    <div class="login-logo">
-      SHIV <span>SUPPLEMENTS</span>
-    </div>
-
-    <div class="login-title">
-      Admin Dashboard Login
-    </div>
-
-    <div id="loginError" class="login-error"></div>
-
-    <input
-      type="text"
-      id="username"
-      placeholder="Admin Username"
-      autocomplete="username"
-    >
-
-    <input
-      type="password"
-      id="password"
-      placeholder="Admin Password"
-      autocomplete="current-password"
-    >
-
-    <button
-      class="login-btn"
-      onclick="adminLogin()"
-    >
-      🔐 Login
-    </button>
-
-  </div>
-
-</div>
-
-
-<!-- =====================================================
-     ADMIN DASHBOARD
-===================================================== -->
-
-<div id="dashboard" class="hidden">
 
 <header class="header">
 
@@ -562,19 +417,8 @@ button:hover{
     SHIV <span>SUPPLEMENTS</span>
   </div>
 
-  <div class="admin-area">
-
-    <div class="admin-label">
-      ADMIN DASHBOARD
-    </div>
-
-    <button
-      class="logout-btn"
-      onclick="adminLogout()"
-    >
-      Logout
-    </button>
-
+  <div class="admin">
+    ADMIN DASHBOARD
   </div>
 
 </header>
@@ -587,48 +431,62 @@ button:hover{
   </h1>
 
 
+  <section class="productPanel">
+    <h2>🛍️ Products & <span style="color:#ffb000">Inventory</span></h2>
+    <div class="productForm" id="productForm">
+      <input id="pBrand" placeholder="Brand e.g. MuscleBlaze">
+      <input id="pName" placeholder="Product name">
+      <select id="pCategory">
+        <option value="Whey Protein">Whey Protein</option>
+        <option value="Creatine">Creatine</option>
+        <option value="Mass Gainer">Mass Gainer</option>
+        <option value="Pre-Workout">Pre-Workout</option>
+        <option value="Vitamins">Vitamins</option>
+        <option value="Omega">Omega</option>
+        <option value="Other">Other</option>
+      </select>
+      <input id="pFlavor" placeholder="Flavour">
+      <input id="pSize" placeholder="Size e.g. 1 kg / 250 g">
+      <input id="pMrp" type="number" min="0" step="0.01" placeholder="MRP ₹">
+      <input id="pPrice" type="number" min="0" step="0.01" placeholder="Selling Price ₹">
+      <input id="pStock" type="number" min="0" step="1" placeholder="Stock quantity">
+      <input id="pImage" placeholder="Product image URL (optional)">
+      <textarea id="pDescription" class="full" placeholder="Short product description"></textarea>
+    </div>
+    <div class="productActions">
+      <button class="addProductBtn" id="saveProductBtn" onclick="saveProduct()">➕ Add Product</button>
+      <button class="cancelProductBtn" id="cancelEditBtn" onclick="cancelProductEdit()" style="display:none">Cancel Edit</button>
+    </div>
+    <div id="productMsg" style="margin-top:10px;color:#aaa"></div>
+    <div class="productGrid" id="productGrid">
+      <div class="loading">Loading products...</div>
+    </div>
+  </section>
+
+
+
   <!-- STATS -->
 
   <div class="stats">
 
     <div class="card">
       <h3>Total Orders</h3>
-      <div
-        class="number"
-        id="totalOrders"
-      >
-        0
-      </div>
+      <div class="number" id="totalOrders">0</div>
     </div>
 
     <div class="card">
       <h3>Pending</h3>
-      <div
-        class="number"
-        id="pendingOrders"
-      >
-        0
-      </div>
+      <div class="number" id="pendingOrders">0</div>
     </div>
 
     <div class="card">
       <h3>Paid</h3>
-      <div
-        class="number"
-        id="paidOrders"
-      >
-        0
-      </div>
+      <div class="number" id="paidOrders">0</div>
     </div>
 
     <div class="card">
       <h3>Total Sales</h3>
-      <div
-        class="number"
-        id="totalSales"
-      >
-        ₹0
-      </div>
+      <div class="number" id="totalSales">₹0</div>
     </div>
 
   </div>
@@ -657,10 +515,7 @@ button:hover{
 
   <!-- ORDERS -->
 
-  <div
-    class="orders"
-    id="orders"
-  >
+  <div class="orders" id="orders">
 
     <div class="loading">
       Loading orders...
@@ -670,20 +525,182 @@ button:hover{
 
 </div>
 
-</div>
-
 
 <!-- TOAST -->
 
-<div
-  id="toast"
-  class="toast"
-></div>
+<div id="toast" class="toast"></div>
 
 
 <script>
 
 let allOrders = [];
+
+
+
+/* =====================================================
+   PRODUCTS / INVENTORY
+===================================================== */
+let allProducts = [];
+let editingProductId = null;
+
+function productVal(id){ return (document.getElementById(id)?.value || "").trim(); }
+function setProductVal(id,value){ const el=document.getElementById(id); if(el) el.value=value ?? ""; }
+
+async function loadProducts(){
+  const grid=document.getElementById("productGrid");
+  if(grid) grid.innerHTML='<div class="loading">Loading products...</div>';
+  try{
+    const response=await fetch("/api/admin/products",{cache:"no-store"});
+    const data=await response.json();
+    if(!response.ok) throw new Error(data.message||"Could not load products");
+    allProducts=Array.isArray(data.products)?data.products:[];
+    renderProductsAdmin();
+  }catch(error){
+    console.error("PRODUCT LOAD ERROR:",error);
+    if(grid) grid.innerHTML='<div class="empty">❌ Could not load products.<br><small>'+escapeHTML(error.message)+'</small></div>';
+  }
+}
+
+function renderProductsAdmin(){
+  const grid=document.getElementById("productGrid");
+  if(!grid)return;
+  if(!allProducts.length){
+    grid.innerHTML='<div class="empty">No products yet. Add your first supplement above.</div>';
+    return;
+  }
+  grid.innerHTML=allProducts.map(p=>{
+    const stock=Number(p.stock||0);
+    const stockClass=stock<=0?"stockOut":stock<=5?"stockLow":"stockGood";
+    const img=p.image?`<img class="productAdminImage" src="${escapeHTML(p.image)}" alt="" onerror="this.style.display='none'">`:`<div class="productAdminImage"></div>`;
+    return `
+      <div class="productAdminCard ${editingProductId===p.id?'editing':''}">
+        <div class="productAdminTop">
+          ${img}
+          <div>
+            <div class="productAdminBrand">${escapeHTML(p.brand)}</div>
+            <div class="productAdminName">${escapeHTML(p.name)}</div>
+            <div style="color:#aaa;font-size:12px">${escapeHTML(p.size||"")} ${p.flavor?"• "+escapeHTML(p.flavor):""}</div>
+          </div>
+        </div>
+        <div class="productMeta">
+          Category: ${escapeHTML(p.category)}<br>
+          MRP: ₹${Number(p.mrp).toLocaleString("en-IN")} &nbsp; Selling: <b style="color:#ffcf52">₹${Number(p.price).toLocaleString("en-IN")}</b><br>
+          Discount: <b>${Number(p.discount||0)}%</b> &nbsp; Stock: <b class="${stockClass}">${stock}</b>
+        </div>
+        <div class="productActions">
+          <button class="smallBtn" onclick="editProduct(${p.id})">✏️ Edit</button>
+          <button class="smallBtn" onclick="toggleProduct(${p.id})">${p.active?"🙈 Hide":"👁️ Show"}</button>
+          <button class="smallBtn deleteBtn" onclick="deleteProduct(${p.id})">🗑️ Delete</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+async function saveProduct(){
+  const payload={
+    brand:productVal("pBrand"),
+    name:productVal("pName"),
+    category:productVal("pCategory"),
+    flavor:productVal("pFlavor"),
+    size:productVal("pSize"),
+    mrp:Number(productVal("pMrp")),
+    price:Number(productVal("pPrice")),
+    stock:Number(productVal("pStock")),
+    image:productVal("pImage"),
+    description:productVal("pDescription")
+  };
+  if(!payload.brand||!payload.name||!payload.category){
+    alert("Brand, product name and category are required.");
+    return;
+  }
+  if(!Number.isFinite(payload.mrp)||!Number.isFinite(payload.price)||payload.mrp<0||payload.price<0){
+    alert("Enter valid MRP and selling price.");
+    return;
+  }
+  if(payload.price>payload.mrp && payload.mrp>0){
+    alert("Selling price cannot be greater than MRP.");
+    return;
+  }
+  if(!Number.isFinite(payload.stock)||payload.stock<0){
+    alert("Enter a valid stock quantity.");
+    return;
+  }
+
+  const btn=document.getElementById("saveProductBtn");
+  btn.disabled=true;
+  try{
+    const url=editingProductId?"/api/admin/products/"+encodeURIComponent(editingProductId):"/api/admin/products";
+    const method=editingProductId?"PATCH":"POST";
+    const response=await fetch(url,{method,headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    const data=await response.json();
+    if(!response.ok) throw new Error(data.message||"Could not save product");
+    showToast(editingProductId?"✅ Product updated":"✅ Product added");
+    cancelProductEdit();
+    await loadProducts();
+  }catch(error){
+    console.error(error);
+    alert("❌ "+error.message);
+  }finally{
+    btn.disabled=false;
+  }
+}
+
+function editProduct(id){
+  const p=allProducts.find(x=>Number(x.id)===Number(id));
+  if(!p)return;
+  editingProductId=Number(id);
+  setProductVal("pBrand",p.brand);
+  setProductVal("pName",p.name);
+  setProductVal("pCategory",p.category);
+  setProductVal("pFlavor",p.flavor);
+  setProductVal("pSize",p.size);
+  setProductVal("pMrp",p.mrp);
+  setProductVal("pPrice",p.price);
+  setProductVal("pStock",p.stock);
+  setProductVal("pImage",p.image);
+  setProductVal("pDescription",p.description);
+  document.getElementById("saveProductBtn").textContent="💾 Update Product";
+  document.getElementById("cancelEditBtn").style.display="inline-block";
+  document.getElementById("productForm").scrollIntoView({behavior:"smooth",block:"center"});
+  renderProductsAdmin();
+}
+
+function cancelProductEdit(){
+  editingProductId=null;
+  ["pBrand","pName","pFlavor","pSize","pMrp","pPrice","pStock","pImage","pDescription"].forEach(id=>setProductVal(id,""));
+  setProductVal("pCategory","Whey Protein");
+  const btn=document.getElementById("saveProductBtn");
+  if(btn)btn.textContent="➕ Add Product";
+  const cancel=document.getElementById("cancelEditBtn");
+  if(cancel)cancel.style.display="none";
+  renderProductsAdmin();
+}
+
+async function toggleProduct(id){
+  const p=allProducts.find(x=>Number(x.id)===Number(id));
+  if(!p)return;
+  try{
+    const response=await fetch("/api/admin/products/"+encodeURIComponent(id),{
+      method:"PATCH",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({...p,active:!p.active})
+    });
+    const data=await response.json();
+    if(!response.ok)throw new Error(data.message||"Could not update product");
+    await loadProducts();
+  }catch(error){alert("❌ "+error.message);}
+}
+
+async function deleteProduct(id){
+  if(!confirm("Delete this product? Existing orders will remain unchanged."))return;
+  try{
+    const response=await fetch("/api/admin/products/"+encodeURIComponent(id),{method:"DELETE"});
+    const data=await response.json();
+    if(!response.ok)throw new Error(data.message||"Could not delete product");
+    showToast("🗑️ Product deleted");
+    await loadProducts();
+  }catch(error){alert("❌ "+error.message);}
+}
 
 
 /* =====================================================
@@ -692,224 +709,15 @@ let allOrders = [];
 
 function showToast(message){
 
-  const toast =
-    document.getElementById("toast");
+  const toast = document.getElementById("toast");
 
   toast.textContent = message;
 
   toast.classList.add("show");
 
   setTimeout(() => {
-
     toast.classList.remove("show");
-
-  },3000);
-
-}
-
-
-/* =====================================================
-   LOGIN ERROR
-===================================================== */
-
-function showLoginError(message){
-
-  const box =
-    document.getElementById("loginError");
-
-  box.textContent = message;
-
-  box.style.display = "block";
-
-}
-
-
-/* =====================================================
-   ADMIN LOGIN
-===================================================== */
-
-async function adminLogin(){
-
-  const username =
-    document.getElementById("username").value.trim();
-
-  const password =
-    document.getElementById("password").value;
-
-  const errorBox =
-    document.getElementById("loginError");
-
-  errorBox.style.display = "none";
-
-  if(!username || !password){
-
-    showLoginError(
-      "Username and password are required."
-    );
-
-    return;
-  }
-
-  try{
-
-    const response =
-      await fetch(
-        "/api/admin/login",
-        {
-          method:"POST",
-
-          headers:{
-            "Content-Type":
-              "application/json"
-          },
-
-          credentials:"same-origin",
-
-          body:JSON.stringify({
-            username,
-            password
-          })
-        }
-      );
-
-    const data =
-      await response.json();
-
-    if(!response.ok || data.success === false){
-
-      throw new Error(
-        data.message ||
-        "Login failed"
-      );
-
-    }
-
-    document
-      .getElementById("loginScreen")
-      .classList.add("hidden");
-
-    document
-      .getElementById("dashboard")
-      .classList.remove("hidden");
-
-    await loadOrders();
-
-  }
-  catch(error){
-
-    console.error(
-      "LOGIN ERROR:",
-      error
-    );
-
-    showLoginError(
-      error.message ||
-      "Login failed"
-    );
-
-  }
-
-}
-
-
-/* =====================================================
-   LOGOUT
-===================================================== */
-
-async function adminLogout(){
-
-  try{
-
-    await fetch(
-      "/api/admin/logout",
-      {
-        method:"POST",
-        credentials:"same-origin"
-      }
-    );
-
-  }
-  catch(error){
-
-    console.error(error);
-
-  }
-
-  document
-    .getElementById("dashboard")
-    .classList.add("hidden");
-
-  document
-    .getElementById("loginScreen")
-    .classList.remove("hidden");
-
-  document
-    .getElementById("username")
-    .value = "";
-
-  document
-    .getElementById("password")
-    .value = "";
-
-}
-
-
-/* =====================================================
-   CHECK ADMIN SESSION
-===================================================== */
-
-async function checkAdminSession(){
-
-  try{
-
-    const response =
-      await fetch(
-        "/api/admin/me",
-        {
-          credentials:"same-origin"
-        }
-      );
-
-    const data =
-      await response.json();
-
-    if(
-      data.success &&
-      data.loggedIn
-    ){
-
-      document
-        .getElementById("loginScreen")
-        .classList.add("hidden");
-
-      document
-        .getElementById("dashboard")
-        .classList.remove("hidden");
-
-      await loadOrders();
-
-    }
-    else{
-
-      document
-        .getElementById("loginScreen")
-        .classList.remove("hidden");
-
-    }
-
-  }
-  catch(error){
-
-    console.error(
-      "SESSION CHECK ERROR:",
-      error
-    );
-
-    document
-      .getElementById("loginScreen")
-      .classList.remove("hidden");
-
-  }
+  }, 3000);
 
 }
 
@@ -920,8 +728,7 @@ async function checkAdminSession(){
 
 async function loadOrders(){
 
-  const box =
-    document.getElementById("orders");
+  const box = document.getElementById("orders");
 
   box.innerHTML = `
     <div class="loading">
@@ -931,71 +738,13 @@ async function loadOrders(){
 
   try{
 
-    const response =
-      await fetch(
-        "/api/admin/orders",
-        {
-          credentials:"same-origin",
-          cache:"no-store"
-        }
-      );
-
-
-    /* SESSION EXPIRED */
-
-    if(response.status === 401){
-
-      document
-        .getElementById("dashboard")
-        .classList.add("hidden");
-
-      document
-        .getElementById("loginScreen")
-        .classList.remove("hidden");
-
-      throw new Error(
-        "Admin login required. Please login again."
-      );
-
-    }
-
-
-    let data;
-
-    try{
-
-      data =
-        await response.json();
-
-    }
-    catch(jsonError){
-
-      throw new Error(
-        "Server returned an invalid response."
-      );
-
-    }
-
+    const response = await fetch("/api/admin/orders");
 
     if(!response.ok){
-
-      throw new Error(
-        data.message ||
-        "Could not load orders."
-      );
-
+      throw new Error("Server error");
     }
 
-
-    if(data.success === false){
-
-      throw new Error(
-        data.message ||
-        "Could not load orders."
-      );
-
-    }
-
+    const data = await response.json();
 
     if(Array.isArray(data)){
 
@@ -1004,13 +753,9 @@ async function loadOrders(){
     }
     else{
 
-      allOrders =
-        Array.isArray(data.orders)
-          ? data.orders
-          : [];
+      allOrders = data.orders || [];
 
     }
-
 
     updateStats();
 
@@ -1019,35 +764,14 @@ async function loadOrders(){
   }
   catch(error){
 
-    console.error(
-      "LOAD ORDERS ERROR:",
-      error
-    );
+    console.error(error);
 
     box.innerHTML = `
-
-      <div class="server-error">
-
-        ❌ <b>Could not load orders.</b>
-
+      <div class="empty">
+        ❌ Could not load orders.
         <br><br>
-
-        ${escapeHTML(
-          error.message ||
-          "Unknown server error"
-        )}
-
-        <br><br>
-
-        <button
-          class="refresh"
-          onclick="loadOrders()"
-        >
-          🔄 Try Again
-        </button>
-
+        Please refresh the page.
       </div>
-
     `;
 
   }
@@ -1056,114 +780,73 @@ async function loadOrders(){
 
 
 /* =====================================================
-   UPDATE STATS
+   STATS
 ===================================================== */
 
 function updateStats(){
 
-  const total =
-    allOrders.length;
+  const total = allOrders.length;
 
 
-  const pending =
-    allOrders.filter(order => {
+  const pending = allOrders.filter(o => {
 
-      const status =
-        String(
-          order.status ||
-          order.payment_status ||
-          "pending"
-        ).toLowerCase();
+    const s = String(
+      o.status ||
+      o.payment_status ||
+      ""
+    ).toLowerCase();
 
-      return status === "pending";
+    return s === "pending";
 
-    }).length;
+  }).length;
 
 
-  const paid =
-    allOrders.filter(order => {
+  const paid = allOrders.filter(o => {
 
-      const status =
-        String(
-          order.status ||
-          order.payment_status ||
-          ""
-        ).toLowerCase();
+    const s = String(
+      o.status ||
+      o.payment_status ||
+      ""
+    ).toLowerCase();
 
-      return status === "paid";
+    return s === "paid";
 
-    }).length;
+  }).length;
 
 
   let sales = 0;
 
 
-  allOrders.forEach(order => {
+  allOrders.forEach(o => {
 
-    let amount =
-      Number(order.amount);
+    const amount =
+      Number(
+        o.total ||
+        o.amount ||
+        o.total_amount ||
+        o.price ||
+        0
+      );
 
-
-    if(!Number.isFinite(amount)){
-
-      amount =
-        Number(order.total);
-
-    }
-
-
-    if(!Number.isFinite(amount)){
-
-      amount =
-        Number(order.total_amount);
-
-    }
-
-
-    if(!Number.isFinite(amount)){
-
-      const paise =
-        Number(order.amount_paise);
-
-      if(Number.isFinite(paise)){
-
-        amount =
-          paise / 100;
-
-      }
-
-    }
-
-
-    if(Number.isFinite(amount)){
-
-      sales += amount;
-
-    }
+    sales += amount;
 
   });
 
 
-  document
-    .getElementById("totalOrders")
-    .textContent = total;
+  document.getElementById("totalOrders").textContent =
+    total;
 
 
-  document
-    .getElementById("pendingOrders")
-    .textContent = pending;
+  document.getElementById("pendingOrders").textContent =
+    pending;
 
 
-  document
-    .getElementById("paidOrders")
-    .textContent = paid;
+  document.getElementById("paidOrders").textContent =
+    paid;
 
 
-  document
-    .getElementById("totalSales")
-    .textContent =
-      "₹" +
-      sales.toLocaleString("en-IN");
+  document.getElementById("totalSales").textContent =
+    "₹" + sales.toLocaleString("en-IN");
 
 }
 
@@ -1174,40 +857,33 @@ function updateStats(){
 
 function renderOrders(){
 
-  const box =
-    document.getElementById("orders");
+  const box = document.getElementById("orders");
 
 
   const search =
-    document
-      .getElementById("search")
-      .value
-      .toLowerCase()
-      .trim();
+    document.getElementById("search")
+    .value
+    .toLowerCase()
+    .trim();
 
 
-  const filtered =
-    allOrders.filter(order => {
+  const filtered = allOrders.filter(order => {
 
-      const text =
-        JSON.stringify(order)
-          .toLowerCase();
+    const text =
+      JSON.stringify(order)
+      .toLowerCase();
 
-      return text.includes(search);
+    return text.includes(search);
 
-    });
+  });
 
 
   if(filtered.length === 0){
 
     box.innerHTML = `
-
       <div class="empty">
-
         📭 No orders found.
-
       </div>
-
     `;
 
     return;
@@ -1215,687 +891,438 @@ function renderOrders(){
   }
 
 
-  box.innerHTML =
-    filtered
-      .map(
-        (order,index) =>
-          renderSingleOrder(
-            order,
-            index
-          )
-      )
-      .join("");
-
-}
+  box.innerHTML = filtered.map((order,index) => {
 
 
-/* =====================================================
-   SINGLE ORDER
-===================================================== */
+    /* ORDER ID */
 
-function renderSingleOrder(
-  order,
-  index
-){
-
-  const orderId =
-    order.id ||
-    order.order_id ||
-    order._id ||
-    ("ORDER-" + (index + 1));
+    const orderId =
+      order.order_id ||
+      order.id ||
+      order._id ||
+      ("ORDER-" + (index + 1));
 
 
-  const name =
-    order.name ||
-    order.customer_name ||
-    order.customerName ||
-    "Customer";
+    /* CUSTOMER */
+
+    const name =
+      order.name ||
+      order.customer_name ||
+      order.customerName ||
+      "Customer";
 
 
-  const phone =
-    order.phone ||
-    order.mobile ||
-    order.customer_phone ||
-    "-";
+    const phone =
+      order.phone ||
+      order.mobile ||
+      order.customer_phone ||
+      "-";
 
 
-  const email =
-    order.email ||
-    order.customer_email ||
-    "-";
+    const email =
+      order.email ||
+      order.customer_email ||
+      "-";
 
 
-  const address =
-    order.address ||
-    order.delivery_address ||
-    "-";
+    const address =
+      order.address ||
+      order.delivery_address ||
+      "-";
 
 
-  const status =
-    String(
-      order.status ||
-      order.payment_status ||
-      "pending"
-    ).toLowerCase();
+    /* STATUS */
+
+    const status =
+      String(
+        order.status ||
+        order.payment_status ||
+        "pending"
+      ).toLowerCase();
 
 
-  let amount =
-    Number(order.amount);
+    /* AMOUNT */
 
-
-  if(!Number.isFinite(amount)){
-
-    const paise =
-      Number(order.amount_paise);
-
-    if(Number.isFinite(paise)){
-
-      amount =
-        paise / 100;
-
-    }
-
-  }
-
-
-  if(!Number.isFinite(amount)){
-
-    amount =
-      Number(order.total) || 0;
-
-  }
-
-
-  const products =
-    Array.isArray(order.items)
-      ? order.items
-      : (
-        Array.isArray(order.products)
-          ? order.products
-          : []
+    const amount =
+      Number(
+        order.total ||
+        order.amount ||
+        order.total_amount ||
+        order.price ||
+        0
       );
 
 
-  let productHTML = "";
+    /* PRODUCTS */
 
+    const products =
+      order.items ||
+      order.products ||
+      [];
 
-  if(products.length){
 
-    productHTML =
-      products
-        .map(product => {
+    let productHTML = "";
 
-          const productName =
-            product.name ||
-            product.title ||
-            product.product_name ||
-            "Product";
 
+    if(Array.isArray(products) && products.length){
 
-          const quantity =
-            Number(
-              product.qty ||
-              product.quantity ||
-              1
-            );
+      productHTML = products.map(p => {
 
 
-          const price =
-            Number(
-              product.price ||
-              product.amount ||
-              0
-            );
+        const pname =
+          p.name ||
+          p.title ||
+          p.product_name ||
+          "Product";
 
 
-          return `
+        const qty =
+          p.qty ||
+          p.quantity ||
+          1;
 
-            <div class="product">
 
-              <span>
+        const price =
+          Number(
+            p.price ||
+            p.amount ||
+            0
+          );
 
-                ${escapeHTML(
-                  productName
-                )}
 
-                ×
+        return `
 
-                ${escapeHTML(
-                  String(quantity)
-                )}
+          <div class="product">
 
-              </span>
+            <span>
+              ${escapeHTML(pname)}
+              × ${escapeHTML(String(qty))}
+            </span>
 
-              <span>
-
-                ₹${price.toLocaleString(
-                  "en-IN"
-                )}
-
-              </span>
-
-            </div>
-
-          `;
-
-        })
-        .join("");
-
-  }
-  else{
-
-    productHTML = `
-
-      <div class="product">
-
-        <span>
-          Order items
-        </span>
-
-        <span>
-          —
-        </span>
-
-      </div>
-
-    `;
-
-  }
-
-
-  let paymentHTML = "";
-
-
-  const paymentRef =
-    order.payment_ref ||
-    order.utr ||
-    order.payment_reference ||
-    "";
-
-
-  const paymentMethod =
-    order.payment_method ||
-    "UPI";
-
-
-  if(paymentRef){
-
-    paymentHTML = `
-
-      <div class="payment">
-
-        <div class="payment-title">
-          Payment Method
-        </div>
-
-        <div>
-          ${escapeHTML(
-            String(paymentMethod)
-          )}
-        </div>
-
-        <br>
-
-        <div class="payment-title">
-          UTR / Payment Reference
-        </div>
-
-        <div class="payment-ref">
-          ${escapeHTML(
-            String(paymentRef)
-          )}
-        </div>
-
-      </div>
-
-    `;
-
-  }
-
-
-  let actionHTML = "";
-
-
-  /* PENDING */
-
-  if(status === "pending"){
-
-    actionHTML = `
-
-      <div class="actions">
-
-        <div class="action-title">
-          💳 Payment Action
-        </div>
-
-        <button
-          class="approve-btn"
-          onclick="approvePayment('${escapeJS(
-            String(orderId)
-          )}')"
-        >
-          ✅ Approve Payment
-        </button>
-
-        <button
-          class="reject-btn"
-          onclick="updateOrderStatus(
-            '${escapeJS(String(orderId))}',
-            'cancelled'
-          )"
-        >
-          ❌ Reject
-        </button>
-
-      </div>
-
-    `;
-
-  }
-
-
-  /* PAID */
-
-  else if(status === "paid"){
-
-    actionHTML = `
-
-      <div class="actions">
-
-        <div class="action-title">
-          📦 Order Processing
-        </div>
-
-        <button
-          class="processing-btn"
-          onclick="updateOrderStatus(
-            '${escapeJS(String(orderId))}',
-            'processing'
-          )"
-        >
-          ⚙️ Mark Processing
-        </button>
-
-        <button
-          class="ship-btn"
-          onclick="updateOrderStatus(
-            '${escapeJS(String(orderId))}',
-            'shipped'
-          )"
-        >
-          🚚 Mark Shipped
-        </button>
-
-        <button
-          class="reject-btn"
-          onclick="updateOrderStatus(
-            '${escapeJS(String(orderId))}',
-            'cancelled'
-          )"
-        >
-          ❌ Cancel
-        </button>
-
-      </div>
-
-    `;
-
-  }
-
-
-  /* PROCESSING */
-
-  else if(status === "processing"){
-
-    actionHTML = `
-
-      <div class="actions">
-
-        <div class="action-title">
-          📦 Order Processing
-        </div>
-
-        <button
-          class="ship-btn"
-          onclick="updateOrderStatus(
-            '${escapeJS(String(orderId))}',
-            'shipped'
-          )"
-        >
-          🚚 Mark Shipped
-        </button>
-
-        <button
-          class="reject-btn"
-          onclick="updateOrderStatus(
-            '${escapeJS(String(orderId))}',
-            'cancelled'
-          )"
-        >
-          ❌ Cancel
-        </button>
-
-      </div>
-
-    `;
-
-  }
-
-
-  /* SHIPPED */
-
-  else if(status === "shipped"){
-
-    actionHTML = `
-
-      <div class="actions">
-
-        <div class="action-title">
-          🚚 Delivery
-        </div>
-
-        <button
-          class="deliver-btn"
-          onclick="updateOrderStatus(
-            '${escapeJS(String(orderId))}',
-            'delivered'
-          )"
-        >
-          ✅ Mark Delivered
-        </button>
-
-      </div>
-
-    `;
-
-  }
-
-
-  /* DELIVERED */
-
-  else if(status === "delivered"){
-
-    actionHTML = `
-
-      <div class="actions">
-
-        <div class="action-title">
-          ✅ Order Completed
-        </div>
-
-        <button
-          class="deliver-btn disabled-btn"
-          disabled
-        >
-          ✓ Delivered
-        </button>
-
-      </div>
-
-    `;
-
-  }
-
-
-  /* CANCELLED */
-
-  else if(
-    status === "cancelled" ||
-    status === "canceled"
-  ){
-
-    actionHTML = `
-
-      <div class="actions">
-
-        <div class="action-title">
-          ❌ Order Cancelled
-        </div>
-
-        <button
-          class="reject-btn disabled-btn"
-          disabled
-        >
-          Cancelled
-        </button>
-
-      </div>
-
-    `;
-
-  }
-
-
-  return `
-
-    <div class="order">
-
-      <div class="order-top">
-
-        <div>
-
-          <div class="order-id">
-
-            Order #${escapeHTML(
-              String(orderId)
-            )}
+            <span>
+              ₹${price.toLocaleString("en-IN")}
+            </span>
 
           </div>
 
-          <div
-            style="
-              color:#777;
-              margin-top:5px;
-            "
-          >
+        `;
 
-            ${formatDate(
-              order.created_at ||
-              order.createdAt ||
-              order.date
-            )}
+      }).join("");
 
-          </div>
+    }
+    else{
 
-        </div>
+      productHTML = `
 
+        <div class="product">
 
-        <div>
+          <span>
+            Order items
+          </span>
 
-          <span
-            class="status ${statusClass(status)}"
-          >
-
-            ${escapeHTML(
-              status.toUpperCase()
-            )}
-
+          <span>
+            View order data
           </span>
 
         </div>
 
-      </div>
+      `;
+
+    }
 
 
-      <!-- CUSTOMER -->
+    /* ACTION BUTTONS */
 
-      <div class="customer">
-
-        👤
-        <b>
-          ${escapeHTML(
-            String(name)
-          )}
-        </b>
-
-        <br>
-
-        📱
-        ${escapeHTML(
-          String(phone)
-        )}
-
-        <br>
-
-        📧
-        ${escapeHTML(
-          String(email)
-        )}
-
-        <br>
-
-        📍
-        ${escapeHTML(
-          String(address)
-        )}
-
-      </div>
+    let actionHTML = "";
 
 
-      <!-- PRODUCTS -->
+    if(status === "pending"){
 
-      <div class="products">
+      actionHTML = `
 
-        <b>
-          🛒 Products
-        </b>
+        <div class="actions">
 
-        <div
-          style="margin-top:10px"
-        >
+          <div class="action-title">
+            💳 Payment Action
+          </div>
 
-          ${productHTML}
+          <button
+            class="approve-btn"
+            onclick="updateOrderStatus('${escapeJS(String(orderId))}','paid')"
+          >
+            ✅ Approve Payment
+          </button>
+
+          <button
+            class="reject-btn"
+            onclick="updateOrderStatus('${escapeJS(String(orderId))}','cancelled')"
+          >
+            ❌ Reject
+          </button>
 
         </div>
 
-      </div>
-
-
-      <!-- PAYMENT -->
-
-      ${paymentHTML}
-
-
-      <!-- AMOUNT -->
-
-      <div class="amount">
-
-        Total:
-
-        ₹${amount.toLocaleString(
-          "en-IN"
-        )}
-
-      </div>
-
-
-      <!-- ACTIONS -->
-
-      ${actionHTML}
-
-    </div>
-
-  `;
-
-}
-
-
-/* =====================================================
-   APPROVE PAYMENT
-===================================================== */
-
-async function approvePayment(orderId){
-
-  if(
-    !confirm(
-      "Approve this payment?\n\n" +
-      "The order will be marked as PAID."
-    )
-  ){
-
-    return;
-
-  }
-
-
-  try{
-
-    showToast(
-      "Approving payment..."
-    );
-
-
-    const response =
-      await fetch(
-        "/api/admin/orders/" +
-        encodeURIComponent(orderId) +
-        "/approve-payment",
-        {
-          method:"PATCH",
-
-          credentials:"same-origin",
-
-          headers:{
-            "Content-Type":
-              "application/json"
-          }
-        }
-      );
-
-
-    const data =
-      await response.json();
-
-
-    if(
-      response.status === 401
-    ){
-
-      alert(
-        "Admin login expired. Please login again."
-      );
-
-      adminLogout();
-
-      return;
+      `;
 
     }
 
 
-    if(
-      !response.ok ||
-      data.success === false
-    ){
+    else if(status === "paid"){
 
-      throw new Error(
-        data.message ||
-        "Could not approve payment"
-      );
+      actionHTML = `
+
+        <div class="actions">
+
+          <div class="action-title">
+            📦 Order Processing
+          </div>
+
+          <button
+            class="processing-btn"
+            onclick="updateOrderStatus('${escapeJS(String(orderId))}','processing')"
+          >
+            ⚙️ Mark Processing
+          </button>
+
+          <button
+            class="ship-btn"
+            onclick="updateOrderStatus('${escapeJS(String(orderId))}','shipped')"
+          >
+            🚚 Mark Shipped
+          </button>
+
+          <button
+            class="reject-btn"
+            onclick="updateOrderStatus('${escapeJS(String(orderId))}','cancelled')"
+          >
+            ❌ Cancel
+          </button>
+
+        </div>
+
+      `;
 
     }
 
 
-    showToast(
-      "✅ Payment approved successfully!"
-    );
+    else if(status === "processing"){
+
+      actionHTML = `
+
+        <div class="actions">
+
+          <div class="action-title">
+            📦 Order Processing
+          </div>
+
+          <button
+            class="ship-btn"
+            onclick="updateOrderStatus('${escapeJS(String(orderId))}','shipped')"
+          >
+            🚚 Mark Shipped
+          </button>
+
+          <button
+            class="reject-btn"
+            onclick="updateOrderStatus('${escapeJS(String(orderId))}','cancelled')"
+          >
+            ❌ Cancel
+          </button>
+
+        </div>
+
+      `;
+
+    }
 
 
-    await loadOrders();
+    else if(status === "shipped"){
 
-  }
-  catch(error){
+      actionHTML = `
 
-    console.error(
-      "APPROVE PAYMENT ERROR:",
-      error
-    );
+        <div class="actions">
 
-    alert(
-      "❌ Payment approval failed.\n\n" +
-      error.message
-    );
+          <div class="action-title">
+            🚚 Delivery
+          </div>
 
-  }
+          <button
+            class="deliver-btn"
+            onclick="updateOrderStatus('${escapeJS(String(orderId))}','delivered')"
+          >
+            ✅ Mark Delivered
+          </button>
+
+        </div>
+
+      `;
+
+    }
+
+
+    else if(status === "delivered"){
+
+      actionHTML = `
+
+        <div class="actions">
+
+          <div class="action-title">
+            ✅ Order Completed
+          </div>
+
+          <button
+            class="deliver-btn disabled-btn"
+            disabled
+          >
+            ✓ Delivered
+          </button>
+
+        </div>
+
+      `;
+
+    }
+
+
+    else if(
+      status === "cancelled" ||
+      status === "canceled"
+    ){
+
+      actionHTML = `
+
+        <div class="actions">
+
+          <div class="action-title">
+            ❌ Order Cancelled
+          </div>
+
+          <button
+            class="reject-btn disabled-btn"
+            disabled
+          >
+            Cancelled
+          </button>
+
+        </div>
+
+      `;
+
+    }
+
+
+    return `
+
+      <div class="order">
+
+
+        <!-- TOP -->
+
+        <div class="order-top">
+
+          <div>
+
+            <div class="order-id">
+
+              Order #${escapeHTML(String(orderId))}
+
+            </div>
+
+
+            <div
+              style="color:#777;margin-top:5px"
+            >
+
+              ${formatDate(
+                order.created_at ||
+                order.createdAt ||
+                order.date
+              )}
+
+            </div>
+
+          </div>
+
+
+          <div>
+
+            <span
+              class="status ${statusClass(status)}"
+            >
+
+              ${escapeHTML(status.toUpperCase())}
+
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- CUSTOMER -->
+
+        <div class="customer">
+
+          👤
+          <b>
+            ${escapeHTML(String(name))}
+          </b>
+
+          <br>
+
+          📱
+          ${escapeHTML(String(phone))}
+
+          <br>
+
+          📧
+          ${escapeHTML(String(email))}
+
+          <br>
+
+          📍
+          ${escapeHTML(String(address))}
+
+        </div>
+
+
+        <!-- PRODUCTS -->
+
+        <div class="products">
+
+          <b>
+            🛒 Products
+          </b>
+
+          <div style="margin-top:10px">
+
+            ${productHTML}
+
+          </div>
+
+        </div>
+
+
+        <!-- AMOUNT -->
+
+        <div class="amount">
+
+          Total:
+          ₹${amount.toLocaleString("en-IN")}
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        ${actionHTML}
+
+
+      </div>
+
+    `;
+
+  }).join("");
 
 }
 
@@ -1904,16 +1331,20 @@ async function approvePayment(orderId){
    UPDATE ORDER STATUS
 ===================================================== */
 
-async function updateOrderStatus(
-  orderId,
-  status
-){
+async function updateOrderStatus(orderId,status){
 
-  let message =
-    "Update order status?";
+  let message = "";
 
 
-  if(status === "cancelled"){
+  if(status === "paid"){
+
+    message =
+      "Approve this payment?\n\n" +
+      "The order will be marked as PAID.";
+
+  }
+
+  else if(status === "cancelled"){
 
     message =
       "Reject/cancel this order?";
@@ -1951,9 +1382,8 @@ async function updateOrderStatus(
 
   try{
 
-    showToast(
-      "Updating order..."
-    );
+
+    showToast("Updating order...");
 
 
     const response =
@@ -1963,16 +1393,14 @@ async function updateOrderStatus(
         {
           method:"PATCH",
 
-          credentials:"same-origin",
-
           headers:{
-            "Content-Type":
-              "application/json"
+            "Content-Type":"application/json"
           },
 
           body:JSON.stringify({
             status:status
           })
+
         }
       );
 
@@ -1981,25 +1409,7 @@ async function updateOrderStatus(
       await response.json();
 
 
-    if(
-      response.status === 401
-    ){
-
-      alert(
-        "Admin login expired. Please login again."
-      );
-
-      adminLogout();
-
-      return;
-
-    }
-
-
-    if(
-      !response.ok ||
-      data.success === false
-    ){
+    if(!response.ok){
 
       throw new Error(
         data.message ||
@@ -2009,12 +1419,62 @@ async function updateOrderStatus(
     }
 
 
-    showToast(
-      "✅ Order updated successfully!"
-    );
+    if(data.success === false){
+
+      throw new Error(
+        data.message ||
+        "Could not update order"
+      );
+
+    }
 
 
-    await loadOrders();
+    if(status === "paid"){
+
+      showToast(
+        "✅ Payment approved successfully!"
+      );
+
+    }
+
+    else if(status === "cancelled"){
+
+      showToast(
+        "❌ Order cancelled."
+      );
+
+    }
+
+    else if(status === "processing"){
+
+      showToast(
+        "⚙️ Order marked as processing."
+      );
+
+    }
+
+    else if(status === "shipped"){
+
+      showToast(
+        "🚚 Order marked as shipped."
+      );
+
+    }
+
+    else if(status === "delivered"){
+
+      showToast(
+        "✅ Order marked as delivered."
+      );
+
+    }
+
+
+    /* RELOAD */
+
+    await loadProducts();
+loadOrders();
+
 
   }
   catch(error){
@@ -2023,6 +1483,7 @@ async function updateOrderStatus(
       "UPDATE ORDER ERROR:",
       error
     );
+
 
     alert(
       "❌ Update failed.\n\n" +
@@ -2043,20 +1504,25 @@ function statusClass(status){
   if(status === "paid")
     return "paid";
 
+
   if(status === "processing")
     return "processing";
+
 
   if(status === "shipped")
     return "shipped";
 
+
   if(status === "delivered")
     return "delivered";
+
 
   if(
     status === "cancelled" ||
     status === "canceled"
   )
     return "cancelled";
+
 
   return "pending";
 
@@ -2078,28 +1544,14 @@ function formatDate(value){
 
   try{
 
-    const date =
-      new Date(value);
-
-
-    if(
-      Number.isNaN(
-        date.getTime()
-      )
-    ){
-
-      return String(value);
-
-    }
-
-
-    return date.toLocaleString(
-      "en-IN",
-      {
-        dateStyle:"medium",
-        timeStyle:"short"
-      }
-    );
+    return new Date(value)
+      .toLocaleString(
+        "en-IN",
+        {
+          dateStyle:"medium",
+          timeStyle:"short"
+        }
+      );
 
   }
   catch{
@@ -2118,26 +1570,11 @@ function formatDate(value){
 function escapeHTML(value){
 
   return String(value)
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 
 }
 
@@ -2149,57 +1586,20 @@ function escapeHTML(value){
 function escapeJS(value){
 
   return String(value)
-    .replace(
-      /\\/g,
-      "\\\\"
-    )
-    .replace(
-      /'/g,
-      "\\'"
-    )
-    .replace(
-      /"/g,
-      '\\"'
-    )
-    .replace(
-      /\n/g,
-      "\\n"
-    )
-    .replace(
-      /\r/g,
-      "\\r"
-    );
+    .replace(/\\/g,"\\\\")
+    .replace(/'/g,"\\'")
+    .replace(/"/g,'\\"')
+    .replace(/\n/g,"\\n")
+    .replace(/\r/g,"\\r");
 
 }
-
-
-/* =====================================================
-   ENTER KEY LOGIN
-===================================================== */
-
-document
-  .getElementById("password")
-  .addEventListener(
-    "keydown",
-    function(event){
-
-      if(
-        event.key === "Enter"
-      ){
-
-        adminLogin();
-
-      }
-
-    }
-  );
 
 
 /* =====================================================
    START
 ===================================================== */
 
-checkAdminSession();
+loadOrders();
 
 </script>
 
