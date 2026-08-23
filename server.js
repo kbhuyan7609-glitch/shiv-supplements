@@ -56,6 +56,50 @@ if (!hasColumn("payment_ref")) {
   db.exec("ALTER TABLE orders ADD COLUMN payment_ref TEXT");
 }
 
+
+/* =========================
+   PRODUCTS / INVENTORY
+========================= */
+db.exec(`
+CREATE TABLE IF NOT EXISTS products (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  brand TEXT NOT NULL,
+  name TEXT NOT NULL,
+  category TEXT NOT NULL,
+  flavor TEXT DEFAULT '',
+  size TEXT DEFAULT '',
+  mrp REAL NOT NULL DEFAULT 0,
+  price REAL NOT NULL DEFAULT 0,
+  stock INTEGER NOT NULL DEFAULT 0,
+  image TEXT DEFAULT '',
+  description TEXT DEFAULT '',
+  active INTEGER NOT NULL DEFAULT 1,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+`);
+
+const productCount = db.prepare("SELECT COUNT(*) AS count FROM products").get().count;
+if (productCount === 0) {
+  const seedProducts = [
+    ["MuscleBlaze","Biozyme Whey","Whey Protein","Chocolate","1 kg",3999,2999,10,"","Premium whey protein."],
+    ["Avvatar","Whey Protein","Whey Protein","Malai Kulfi","1 kg",3999,3199,10,"","High-quality whey protein."],
+    ["Optimum Nutrition","Gold Standard Whey","Whey Protein","Double Rich Chocolate","1 lb",2499,2199,10,"","Popular whey protein."],
+    ["MuscleBlaze","Creatine Monohydrate","Creatine","Unflavoured","250 g",999,799,15,"","Creatine monohydrate."],
+    ["Avvatar","Mass Gainer","Mass Gainer","Chocolate","3 kg",3499,2899,8,"","Mass gainer for calorie surplus."],
+    ["MuscleBlaze","Pre Workout","Pre-Workout","Fruit Punch","100 g",1499,1199,8,"","Pre-workout supplement."]
+  ];
+  const ins = db.prepare(`
+    INSERT INTO products
+    (brand,name,category,flavor,size,mrp,price,stock,image,description)
+    VALUES (?,?,?,?,?,?,?,?,?,?)
+  `);
+  const seed = db.transaction(() => {
+    for (const p of seedProducts) ins.run(...p);
+  });
+  seed();
+}
+
 /* =========================
    EXPRESS
 ========================= */
@@ -132,12 +176,82 @@ function requireAdmin(req, res, next) {
 
 function parseItems(items) {
   if (!Array.isArray(items) || items.length === 0) return null;
-  return items.map((item) => ({
-    id: item.id ?? null,
-    name: String(item.name || "Product").slice(0, 200),
-    price: Number(item.price) || 0,
-    qty: Math.max(1, Number(item.qty || item.quantity || 1))
-  }));
+  return items.map((item) => {
+    const id = Number(item.id);
+    const product = Number.isInteger(id) && id > 0
+      ? db.prepare("SELECT id, brand, name, category, flavor, size, price, stock, active FROM products WHERE id = ?").get(id)
+      : null;
+
+    if (!product || !product.active) {
+      throw Object.assign(new Error("One or more selected products are no longer available"), { status: 400 });
+    }
+
+    const qty = Math.max(1, Number(item.qty || item.quantity || 1));
+    if (!Number.isInteger(qty) || qty < 1) {
+      throw Object.assign(new Error("Invalid product quantity"), { status: 400 });
+    }
+    if (product.stock < qty) {
+      throw Object.assign(new Error(`${product.name} has only ${product.stock} item(s) in stock`), { status: 400 });
+    }
+
+    return {
+      id: product.id,
+      brand: product.brand,
+      name: product.name,
+      category: product.category,
+      flavor: product.flavor || "",
+      size: product.size || "",
+      price: Number(product.price),
+      qty
+    };
+  });
+}
+
+
+function cleanProductInput(body) {
+  const brand = String(body.brand || "").trim().slice(0, 100);
+  const name = String(body.name || "").trim().slice(0, 200);
+  const category = String(body.category || "").trim().slice(0, 100);
+  const flavor = String(body.flavor || "").trim().slice(0, 100);
+  const size = String(body.size || "").trim().slice(0, 100);
+  const mrp = Number(body.mrp);
+  const price = Number(body.price);
+  const stock = Math.max(0, Math.floor(Number(body.stock || 0)));
+  const image = String(body.image || "").trim().slice(0, 1000);
+  const description = String(body.description || "").trim().slice(0, 500);
+
+  if (!brand || !name || !category) {
+    throw Object.assign(new Error("Brand, product name and category are required"), { status: 400 });
+  }
+  if (!Number.isFinite(mrp) || mrp < 0 || !Number.isFinite(price) || price < 0) {
+    throw Object.assign(new Error("Enter valid MRP and selling price"), { status: 400 });
+  }
+  if (price > mrp && mrp > 0) {
+    throw Object.assign(new Error("Selling price cannot be greater than MRP"), { status: 400 });
+  }
+  return { brand, name, category, flavor, size, mrp, price, stock, image, description };
+}
+
+function serializeProduct(p) {
+  const mrp = Number(p.mrp || 0);
+  const price = Number(p.price || 0);
+  return {
+    id: p.id,
+    brand: p.brand,
+    name: p.name,
+    category: p.category,
+    flavor: p.flavor || "",
+    size: p.size || "",
+    mrp,
+    price,
+    discount: mrp > 0 ? Math.max(0, Math.round((1 - price / mrp) * 100)) : 0,
+    stock: Number(p.stock || 0),
+    image: p.image || "",
+    description: p.description || "",
+    active: Boolean(p.active),
+    created_at: p.created_at,
+    updated_at: p.updated_at
+  };
 }
 
 function createPendingOrder(req, body) {
@@ -150,7 +264,8 @@ function createPendingOrder(req, body) {
   const cleanPhone = normalizePhone(phone);
   const cleanEmail = String(email).trim().toLowerCase();
   const cleanItems = parseItems(items);
-  const numericAmount = Number(amount);
+  const calculatedAmount = cleanItems.reduce((sum, item) => sum + (Number(item.price) * Number(item.qty)), 0);
+  const numericAmount = calculatedAmount;
 
   if (!validPhone(cleanPhone)) {
     throw Object.assign(new Error("Enter a valid 10-digit mobile number"), { status: 400 });
@@ -430,6 +545,24 @@ app.get("/api/orders", requireLogin, (req, res) => {
   }
 });
 
+
+/* =========================
+   PUBLIC PRODUCTS
+========================= */
+app.get("/api/products", (req, res) => {
+  try {
+    const products = db.prepare(`
+      SELECT * FROM products
+      WHERE active = 1
+      ORDER BY brand COLLATE NOCASE, name COLLATE NOCASE, id DESC
+    `).all().map(serializeProduct);
+    res.json({ success: true, products });
+  } catch (error) {
+    console.error("GET PRODUCTS ERROR:", error);
+    res.status(500).json({ success: false, message: "Could not load products" });
+  }
+});
+
 /* =========================
    ADMIN AUTH
 ========================= */
@@ -469,6 +602,79 @@ app.get("/api/admin/me", (req, res) => {
 app.use("/api/admin", requireAdmin);
 
 /* =========================
+   ADMIN PRODUCTS / INVENTORY
+========================= */
+app.get("/api/admin/products", (req, res) => {
+  try {
+    const products = db.prepare("SELECT * FROM products ORDER BY brand COLLATE NOCASE, name COLLATE NOCASE, id DESC")
+      .all().map(serializeProduct);
+    res.json({ success: true, products });
+  } catch (error) {
+    console.error("ADMIN PRODUCTS ERROR:", error);
+    res.status(500).json({ success: false, message: "Could not load products" });
+  }
+});
+
+app.post("/api/admin/products", (req, res) => {
+  try {
+    const p = cleanProductInput(req.body);
+    const result = db.prepare(`
+      INSERT INTO products
+      (brand,name,category,flavor,size,mrp,price,stock,image,description,active,updated_at)
+      VALUES (?,?,?,?,?,?,?,?,?,?,1,CURRENT_TIMESTAMP)
+    `).run(p.brand,p.name,p.category,p.flavor,p.size,p.mrp,p.price,p.stock,p.image,p.description);
+    const product = db.prepare("SELECT * FROM products WHERE id = ?").get(result.lastInsertRowid);
+    res.json({ success: true, message: "Product added", product: serializeProduct(product) });
+  } catch (error) {
+    console.error("ADD PRODUCT ERROR:", error);
+    res.status(error.status || 500).json({ success: false, message: error.message || "Could not add product" });
+  }
+});
+
+app.patch("/api/admin/products/:id", (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id <= 0) {
+      return res.status(400).json({ success: false, message: "Invalid product ID" });
+    }
+    const existing = db.prepare("SELECT * FROM products WHERE id = ?").get(id);
+    if (!existing) return res.status(404).json({ success: false, message: "Product not found" });
+
+    const p = cleanProductInput({ ...existing, ...req.body });
+    const active = req.body.active === undefined ? existing.active : (req.body.active ? 1 : 0);
+
+    db.prepare(`
+      UPDATE products SET
+        brand=?, name=?, category=?, flavor=?, size=?, mrp=?, price=?,
+        stock=?, image=?, description=?, active=?, updated_at=CURRENT_TIMESTAMP
+      WHERE id=?
+    `).run(p.brand,p.name,p.category,p.flavor,p.size,p.mrp,p.price,p.stock,p.image,p.description,active,id);
+
+    const product = db.prepare("SELECT * FROM products WHERE id = ?").get(id);
+    res.json({ success: true, message: "Product updated", product: serializeProduct(product) });
+  } catch (error) {
+    console.error("UPDATE PRODUCT ERROR:", error);
+    res.status(error.status || 500).json({ success: false, message: error.message || "Could not update product" });
+  }
+});
+
+app.delete("/api/admin/products/:id", (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id <= 0) {
+      return res.status(400).json({ success: false, message: "Invalid product ID" });
+    }
+    const result = db.prepare("DELETE FROM products WHERE id = ?").run(id);
+    if (!result.changes) return res.status(404).json({ success: false, message: "Product not found" });
+    res.json({ success: true, message: "Product deleted" });
+  } catch (error) {
+    console.error("DELETE PRODUCT ERROR:", error);
+    res.status(500).json({ success: false, message: "Could not delete product" });
+  }
+});
+
+
+/* =========================
    ADMIN ORDERS
 ========================= */
 
@@ -505,7 +711,21 @@ app.patch("/api/admin/orders/:id/approve-payment", (req, res) => {
       return res.status(400).json({ success: false, message: "No UTR/payment reference submitted" });
     }
 
-    db.prepare("UPDATE orders SET status = 'paid' WHERE id = ?").run(orderId);
+    const items = JSON.parse(order.items_json);
+    const decrement = db.transaction(() => {
+      for (const item of items) {
+        const p = db.prepare("SELECT stock FROM products WHERE id = ?").get(item.id);
+        if (!p || Number(p.stock) < Number(item.qty)) {
+          throw new Error(`Insufficient stock for ${item.name || "a product"}`);
+        }
+      }
+      for (const item of items) {
+        db.prepare("UPDATE products SET stock = stock - ?, updated_at=CURRENT_TIMESTAMP WHERE id = ?")
+          .run(Number(item.qty), Number(item.id));
+      }
+      db.prepare("UPDATE orders SET status = 'paid' WHERE id = ?").run(orderId);
+    });
+    decrement();
     res.json({ success: true, message: "Payment approved successfully" });
   } catch (error) {
     console.error("APPROVE PAYMENT ERROR:", error);
