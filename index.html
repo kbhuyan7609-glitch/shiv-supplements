@@ -1722,173 +1722,219 @@ renderAccount();
 }
 
 async function startCheckout(){
+  let u = await me();
 
-let u=await me();
+  if(!u){
+    closeM("cartModal");
+    openAccount();
+    return;
+  }
 
-if(!u){
+  if(!cart.length){
+    return alert("Your cart is empty.");
+  }
 
-closeM("cartModal");
+  closeM("cartModal");
 
-openAccount();
+  document.getElementById("checkoutArea").innerHTML = `
+    <p style="color:#99a3b3">
+      Logged in as ${esc(u.email)}
+    </p>
 
-alert("Please login first.");
+    <div class="row">
+      <div class="field">
+        <label>Name</label>
+        <input id="cname" value="${esc(u.name)}">
+      </div>
 
-return;
+      <div class="field">
+        <label>Mobile</label>
+        <input id="cphone" value="${esc(u.phone)}">
+      </div>
+    </div>
 
+    <div class="field">
+      <label>Email</label>
+      <input id="cemail" value="${esc(u.email)}">
+    </div>
+
+    <div class="field">
+      <label>Delivery Address *</label>
+      <textarea id="caddress"
+        placeholder="Full address with PIN code"></textarea>
+    </div>
+
+    <div class="total">
+      Payable: ${money(total())}
+    </div>
+
+    <div style="
+      background:#0a0e14;
+      border:1px solid #343c49;
+      border-radius:16px;
+      padding:18px;
+      text-align:center;
+      margin:18px 0;
+    ">
+      <h3 style="margin-top:0">Scan & Pay</h3>
+
+      <p style="color:#99a3b3;font-size:13px">
+        Scan this QR using PhonePe, Google Pay or another UPI app.
+      </p>
+
+      <img
+        src="qr.png"
+        alt="Shiv Supplements UPI QR"
+        style="
+          width:min(320px,85vw);
+          max-width:100%;
+          border-radius:12px;
+          background:#fff;
+          padding:8px;
+        "
+      >
+
+      <p style="color:#ffd66c;font-weight:900;margin-bottom:0">
+        Pay exactly ${money(total())}
+      </p>
+    </div>
+
+    <div class="field">
+      <label>UTR / Transaction ID *</label>
+      <input
+        id="utr"
+        maxlength="50"
+        placeholder="Enter UTR / transaction ID after payment"
+      >
+    </div>
+
+    <button class="primary" onclick="submitManualOrder()">
+      Submit Payment Details
+    </button>
+
+    <p style="color:#99a3b3;font-size:12px;line-height:1.5">
+      After payment, enter your UTR. Your order will remain
+      <b>Payment Pending</b> until the store admin verifies it.
+    </p>
+  `;
+
+  show("checkoutModal");
 }
 
-closeM("cartModal");
-
-document.getElementById("checkoutArea")
-.innerHTML=`
-
-<p style="color:#99a3b3">
-
-Logged in as
-<b>${esc(u.email)}</b>
-
-</p>
-
-<div class="row">
-
-<div class="field">
-
-<label>Name</label>
-
-<input
-id="cname"
-value="${esc(u.name)}">
-
-</div>
-
-<div class="field">
-
-<label>Mobile</label>
-
-<input
-id="cphone"
-value="${esc(u.phone)}">
-
-</div>
-
-</div>
-
-<div class="field">
-
-<label>Email</label>
-
-<input
-id="cemail"
-value="${esc(u.email)}">
-
-</div>
-
-<div class="field">
-
-<label>Delivery Address *</label>
-
-<textarea
-id="caddress"
-placeholder="Full address with PIN code">
-</textarea>
-
-</div>
-
-<div class="total">
-
-Payable: ${money(total())}
-
-</div>
-
-<div class="paymentNote">
-
-<b>UPI PAYMENT</b>
-
-<br><br>
-
-1. Scan the QR code below using PhonePe,
-Google Pay, Paytm or any UPI app.
-
-<br>
-
-2. Pay exactly
-<b>${money(total())}</b>.
-
-<br>
-
-3. After payment, copy your UTR /
-transaction number.
-
-<br>
-
-4. Enter the UTR below and submit.
-
-</div>
-
-<div class="qrBox">
-
-<img
-src="qr.png"
-alt="Shiv Supplements UPI QR">
-
-</div>
-
-<div class="field">
-
-<label>
-UPI Transaction ID / UTR *
-</label>
-
-<input
-id="utr"
-type="text"
-maxlength="100"
-placeholder="Enter UTR / Transaction ID">
-
-</div>
-
-<button class="primary"
-style="width:100%"
-onclick="submitManualOrder()">
-
-Submit Payment Details
-
-</button>
-
-<p style="color:#99a3b3;font-size:12px;margin-top:14px">
-
-After submission, your order will remain
-<b>Payment Pending</b> until the store admin
-verifies the payment.
-
-</p>
-
-`;
-
-show("checkoutModal");
-
-}
 
 async function submitManualOrder(){
 
-const data={
+  const name = val("cname");
+  const phone = val("cphone");
+  const email = val("cemail");
+  const address = val("caddress");
+  const utr = val("utr");
 
-name:val("cname"),
+  if(!name || !phone || !email || !address){
+    return alert("Please complete all delivery details.");
+  }
 
-phone:val("cphone"),
+  if(!utr){
+    return alert("Please enter the UTR / Transaction ID.");
+  }
 
-email:val("cemail"),
+  if(!cart.length){
+    return alert("Your cart is empty.");
+  }
 
-address:val("caddress"),
+  try{
 
-items:cart,
+    /*
+      STEP 1:
+      Create the order first.
+      This gives us the localOrderId required by server.js.
+    */
 
-amount:total(),
+    const createResponse = await fetch("/api/create-order", {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        name,
+        phone,
+        email,
+        address,
+        items:cart,
+        amount:total()
+      })
+    });
 
-utr:val("utr")
+    const createResult = await createResponse.json();
 
-};
+    if(!createResponse.ok){
+      return alert(
+        createResult.message ||
+        createResult.error ||
+        "Could not create order."
+      );
+    }
 
+    const localOrderId =
+      createResult.order?.localOrderId ||
+      createResult.order?.id;
+
+    if(!localOrderId){
+      console.error("CREATE ORDER RESPONSE:", createResult);
+      return alert("Order ID was not generated.");
+    }
+
+    /*
+      STEP 2:
+      Submit UTR together with Order ID.
+    */
+
+    const paymentResponse = await fetch("/api/manual-order", {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        localOrderId:localOrderId,
+        utr:utr
+      })
+    });
+
+    const paymentResult = await paymentResponse.json();
+
+    if(!paymentResponse.ok){
+      return alert(
+        paymentResult.message ||
+        "Could not submit payment details."
+      );
+    }
+
+    console.log("ORDER SUBMITTED:", paymentResult);
+
+    cart = [];
+    save();
+
+    closeM("checkoutModal");
+
+    alert(
+      "Order submitted successfully!\\n\\n" +
+      "Order ID: " + localOrderId +
+      "\\n\\n" +
+      "Payment is pending verification."
+    );
+
+    renderCart();
+
+  }catch(error){
+
+    console.error("MANUAL ORDER ERROR:",error);
+
+    alert(
+      "Could not submit the order. " +
+      "Please check your internet connection and try again."
+    );
+  }
+}
 if(!data.name||
 !data.phone||
 !data.email||
