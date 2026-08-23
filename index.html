@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -44,9 +45,12 @@ a{
 
 button,
 input,
-textarea,
-select{
+textarea{
   font:inherit;
+}
+
+button{
+  cursor:pointer;
 }
 
 .announce{
@@ -105,7 +109,6 @@ nav{
   border-radius:10px;
   padding:11px 14px;
   font-weight:800;
-  cursor:pointer;
 }
 
 .cartBtn{
@@ -115,7 +118,6 @@ nav{
   border-radius:10px;
   padding:12px 15px;
   font-weight:950;
-  cursor:pointer;
 }
 
 .hero{
@@ -187,7 +189,6 @@ h1{
   border-radius:12px;
   padding:14px 20px;
   font-weight:950;
-  cursor:pointer;
 }
 
 .secondary{
@@ -197,7 +198,6 @@ h1{
   border-radius:12px;
   padding:14px 20px;
   font-weight:850;
-  cursor:pointer;
 }
 
 .trust{
@@ -219,12 +219,7 @@ h1{
   border:1px solid #303744;
   border-radius:30px;
   background:
-    radial-gradient(
-      circle at 50% 30%,
-      #302d23 0,
-      #151920 40%,
-      #090b10 75%
-    );
+  radial-gradient(circle at 50% 30%,#302d23 0,#151920 40%,#090b10 75%);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -402,7 +397,6 @@ section{
   border-radius:10px;
   padding:12px;
   font-weight:950;
-  cursor:pointer;
 }
 
 .deal{
@@ -496,7 +490,6 @@ footer{
   background:none;
   color:#fff;
   font-size:28px;
-  cursor:pointer;
 }
 
 .tabs{
@@ -512,7 +505,6 @@ footer{
   border:1px solid var(--line);
   background:#0b0f15;
   color:#fff;
-  cursor:pointer;
 }
 
 .tab.active{
@@ -543,11 +535,6 @@ footer{
   outline:none;
 }
 
-.field input:focus,
-.field textarea:focus{
-  border-color:var(--gold);
-}
-
 .field textarea{
   min-height:85px;
   resize:vertical;
@@ -573,7 +560,6 @@ footer{
   color:#fff;
   border-radius:7px;
   padding:3px 9px;
-  cursor:pointer;
 }
 
 .total{
@@ -582,43 +568,82 @@ footer{
   margin:18px 0;
 }
 
-.qrBox{
+/* UPI PAYMENT */
+
+.upiBox{
+  margin-top:18px;
+  padding:20px;
+  border:1px solid #4b3c18;
+  border-radius:18px;
+  background:linear-gradient(145deg,#19150b,#0c1016);
   text-align:center;
-  background:#080b10;
-  border:1px solid #303744;
-  border-radius:16px;
-  padding:18px;
-  margin:18px 0;
 }
 
-.qrBox img{
-  width:240px;
-  max-width:100%;
-  border-radius:8px;
-  background:#fff;
-  padding:8px;
+.upiTitle{
+  font-size:20px;
+  font-weight:950;
+  margin-bottom:8px;
 }
 
-.orderNote{
+.upiText{
   color:var(--muted);
   font-size:13px;
   line-height:1.6;
 }
 
+.qr{
+  width:260px;
+  max-width:80%;
+  display:block;
+  margin:18px auto;
+  border-radius:12px;
+  background:#fff;
+  padding:8px;
+}
+
+.upiId{
+  display:inline-block;
+  padding:10px 14px;
+  background:#080b10;
+  border:1px solid #3a424f;
+  border-radius:10px;
+  font-weight:900;
+  color:#ffd45c;
+  margin:8px 0 15px;
+}
+
+.copyBtn{
+  border:1px solid #444d5a;
+  background:#151b23;
+  color:#fff;
+  border-radius:9px;
+  padding:9px 13px;
+  font-weight:800;
+}
+
+.orderNumber{
+  background:#0b1016;
+  border:1px solid #343d49;
+  border-radius:12px;
+  padding:14px;
+  margin:15px 0;
+}
+
 .successBox{
-  background:#102015;
-  border:1px solid #235d32;
-  border-radius:14px;
-  padding:18px;
-  color:#bdf5c8;
+  border:1px solid #285b3c;
+  background:#0b1b12;
+  border-radius:15px;
+  padding:20px;
+  text-align:center;
 }
 
 .errorBox{
-  background:#241112;
-  border:1px solid #6a2729;
-  border-radius:14px;
-  padding:18px;
-  color:#ffb8b8;
+  color:#ff9b9b;
+  background:#250f12;
+  border:1px solid #61242a;
+  border-radius:10px;
+  padding:12px;
+  margin-top:10px;
 }
 
 @media(max-width:900px){
@@ -686,7 +711,6 @@ footer{
 
   .deal .primary{
     margin-top:18px;
-    display:inline-block;
   }
 
   .wa{
@@ -730,6 +754,7 @@ footer{
 </div>
 </nav>
 
+
 <header class="hero">
 
 <div>
@@ -743,9 +768,8 @@ Build your <span class="gold">stronger</span> self.
 </h1>
 
 <p>
-Shop premium sports nutrition for muscle gain, strength,
-recovery and performance — with a clean, professional online
-shopping experience.
+Shop premium sports nutrition for muscle gain, strength, recovery
+and performance — with a clean, professional online shopping experience.
 </p>
 
 <div class="actions">
@@ -761,8 +785,8 @@ Create Account
 </div>
 
 <div class="trust">
-<span>✓ Secure Ordering</span>
 <span>✓ UPI Payment</span>
+<span>✓ UTR Verification</span>
 <span>✓ Customer Accounts</span>
 <span>✓ WhatsApp Support</span>
 </div>
@@ -776,6 +800,7 @@ Create Account
 </div>
 
 </header>
+
 
 <section id="categories">
 
@@ -818,13 +843,14 @@ Create Account
 
 </section>
 
+
 <section id="shop">
 
 <div class="head">
 
 <div>
 <h2>Featured Supplements</h2>
-<p>Sample catalog — replace with your actual inventory and prices.</p>
+<p>Choose your products and add them to your cart.</p>
 </div>
 
 <a
@@ -839,13 +865,16 @@ Get Full List →
 
 </section>
 
+
 <section id="offers">
 
 <div class="deal">
 
 <div>
 <h2>🔥 Exclusive Store Offers</h2>
-<p>Ask us for today's prices, combo deals and available stock.</p>
+<p>
+Ask us for today's prices, combo deals and available stock.
+</p>
 </div>
 
 <a
@@ -859,13 +888,14 @@ View Offers
 
 </section>
 
+
 <section id="why">
 
 <div class="head">
 
 <div>
 <h2>Why Shop With Us?</h2>
-<p>Professional supplement ordering experience.</p>
+<p>Simple and secure UPI ordering.</p>
 </div>
 
 </div>
@@ -900,13 +930,17 @@ Add products to cart, enter delivery details and place your order online.
 
 </section>
 
+
 <footer>
 © 2026 Shiv Supplements • Sports Nutrition Store •
-<a href="https://instagram.com/shivsupplements" target="_blank">
+<a
+href="https://instagram.com/shivsupplements"
+target="_blank">
 @shivsupplements
 </a>
 • +91 81449 89064
 </footer>
+
 
 <a
 class="wa"
@@ -916,7 +950,7 @@ target="_blank">
 </a>
 
 
-<!-- ACCOUNT MODAL -->
+<!-- ACCOUNT -->
 
 <div class="overlay" id="accountModal">
 
@@ -939,7 +973,7 @@ Login or create your account.
 </div>
 
 
-<!-- CART MODAL -->
+<!-- CART -->
 
 <div class="overlay" id="cartModal">
 
@@ -958,7 +992,7 @@ Login or create your account.
 </div>
 
 
-<!-- CHECKOUT MODAL -->
+<!-- CHECKOUT -->
 
 <div class="overlay" id="checkoutModal">
 
@@ -979,86 +1013,110 @@ Login or create your account.
 
 <script>
 
+/* =====================================================
+   SHIV SUPPLEMENTS
+   UPI PAYMENT SETTINGS
+===================================================== */
+
+/*
+  IMPORTANT:
+  Replace this with your REAL Shiv Supplements UPI ID.
+*/
+
+const UPI_ID = "YOUR_UPI_ID@upi";
+
+const STORE_NAME = "Shiv Supplements";
+
+const QR_IMAGE = "qr.png";
+
+
+/* =====================================================
+   PRODUCTS
+===================================================== */
+
 const products = [
 
 {
-id:1,
-name:"Whey Protein",
-price:1999,
-tag:"PROTEIN",
-icon:"🥤",
-desc:"Multiple brands and flavours available."
+ id:1,
+ name:"Whey Protein",
+ price:1999,
+ tag:"PROTEIN",
+ icon:"🥤",
+ desc:"Multiple brands and flavours available."
 },
 
 {
-id:2,
-name:"Whey Isolate",
-price:2799,
-tag:"ISOLATE",
-icon:"💪",
-desc:"Premium protein option."
+ id:2,
+ name:"Whey Isolate",
+ price:2799,
+ tag:"ISOLATE",
+ icon:"💪",
+ desc:"Premium protein option."
 },
 
 {
-id:3,
-name:"Creatine",
-price:899,
-tag:"STRENGTH",
-icon:"⚡",
-desc:"Multiple brands and sizes."
+ id:3,
+ name:"Creatine",
+ price:899,
+ tag:"STRENGTH",
+ icon:"⚡",
+ desc:"Multiple brands and sizes."
 },
 
 {
-id:4,
-name:"Mass Gainer",
-price:2499,
-tag:"MASS",
-icon:"🏋️",
-desc:"Multiple flavours available."
+ id:4,
+ name:"Mass Gainer",
+ price:2499,
+ tag:"MASS",
+ icon:"🏋️",
+ desc:"Multiple flavours available."
 },
 
 {
-id:5,
-name:"Pre-Workout",
-price:1299,
-tag:"PERFORMANCE",
-icon:"🔥",
-desc:"Training performance range."
+ id:5,
+ name:"Pre-Workout",
+ price:1299,
+ tag:"PERFORMANCE",
+ icon:"🔥",
+ desc:"Training performance range."
 },
 
 {
-id:6,
-name:"Fat Burner",
-price:999,
-tag:"FITNESS",
-icon:"⚡",
-desc:"Fitness supplement range."
+ id:6,
+ name:"Fat Burner",
+ price:999,
+ tag:"FITNESS",
+ icon:"⚡",
+ desc:"Fitness supplement range."
 },
 
 {
-id:7,
-name:"Multivitamin",
-price:699,
-tag:"ESSENTIALS",
-icon:"💊",
-desc:"Daily nutrition category."
+ id:7,
+ name:"Multivitamin",
+ price:699,
+ tag:"ESSENTIALS",
+ icon:"💊",
+ desc:"Daily nutrition category."
 },
 
 {
-id:8,
-name:"Omega",
-price:799,
-tag:"ESSENTIALS",
-icon:"🧴",
-desc:"Available sizes and brands."
+ id:8,
+ name:"Omega",
+ price:799,
+ tag:"ESSENTIALS",
+ icon:"🧴",
+ desc:"Available sizes and brands."
 }
 
 ];
 
 
-let cart = JSON.parse(
-localStorage.getItem("shiv_cart") || "[]"
-);
+/* =====================================================
+   CART
+===================================================== */
+
+let cart =
+JSON.parse(localStorage.getItem("shiv_cart") || "[]");
 
 
 const money = n =>
@@ -1066,33 +1124,28 @@ const money = n =>
 
 
 const total = () =>
-cart.reduce(
-(s,i) => {
+cart.reduce((sum,item)=>{
 
 const product =
-products.find(p => p.id === i.id);
+products.find(p=>p.id===item.id);
 
-return s +
-(product ? product.price * i.qty : 0);
+return sum +
+(product ? product.price * item.qty : 0);
 
-},
-0
-);
+},0);
 
 
 const count = () =>
-cart.reduce((s,i) => s + i.qty,0);
+cart.reduce((sum,item)=>sum + item.qty,0);
 
 
 function go(id){
 
-const el = document.getElementById(id);
-
-if(el){
-el.scrollIntoView({
-behavior:"smooth"
+document
+.getElementById(id)
+.scrollIntoView({
+ behavior:"smooth"
 });
-}
 
 }
 
@@ -1112,16 +1165,20 @@ renderCart();
 
 function add(id){
 
-const item =
-cart.find(i => i.id === id);
+let item =
+cart.find(i=>i.id===id);
 
 if(item){
+
 item.qty++;
+
 }else{
+
 cart.push({
-id:id,
-qty:1
+ id:id,
+ qty:1
 });
+
 }
 
 save();
@@ -1131,17 +1188,17 @@ save();
 
 function change(id,d){
 
-const item =
-cart.find(i => i.id === id);
+let item =
+cart.find(i=>i.id===id);
 
-if(!item) return;
+if(!item)return;
 
 item.qty += d;
 
 if(item.qty <= 0){
 
 cart =
-cart.filter(i => i.id !== id);
+cart.filter(i=>i.id!==id);
 
 }
 
@@ -1150,14 +1207,14 @@ save();
 }
 
 
+/* =====================================================
+   PRODUCTS
+===================================================== */
+
 function renderProducts(){
 
-const box =
-document.getElementById("products");
+document.getElementById("products").innerHTML =
 
-if(!box) return;
-
-box.innerHTML =
 products.map(p => `
 
 <article class="product">
@@ -1173,11 +1230,11 @@ ${p.tag}
 </span>
 
 <h3>
-${esc(p.name)}
+${p.name}
 </h3>
 
 <p>
-${esc(p.desc)}
+${p.desc}
 </p>
 
 <div class="price">
@@ -1196,41 +1253,43 @@ Add to Cart
 
 `).join("");
 
-document.getElementById("cartCount")
-.textContent = count();
+document.getElementById("cartCount").textContent =
+count();
 
 }
 
 
+/* =====================================================
+   CART
+===================================================== */
+
 function renderCart(){
 
-document.getElementById("cartCount")
-.textContent = count();
-
-const area =
-document.getElementById("cartArea");
-
-if(!area) return;
-
+document.getElementById("cartCount").textContent =
+count();
 
 if(!cart.length){
 
-area.innerHTML =
-"<p style='color:#99a3b3'>Your cart is empty.</p>";
+document.getElementById("cartArea").innerHTML =
+
+`
+<p style="color:#99a3b3">
+Your cart is empty.
+</p>
+`;
 
 return;
 
 }
 
+document.getElementById("cartArea").innerHTML =
 
-area.innerHTML =
-
-cart.map(i => {
+cart.map(item => {
 
 const p =
-products.find(p => p.id === i.id);
+products.find(product=>product.id===item.id);
 
-if(!p) return "";
+if(!p)return "";
 
 return `
 
@@ -1240,7 +1299,7 @@ return `
 
 ${p.icon}
 
-<b>${esc(p.name)}</b>
+<b>${p.name}</b>
 
 <br>
 
@@ -1252,15 +1311,13 @@ ${money(p.price)} each
 
 <div class="qty">
 
-<button
-onclick="change(${p.id},-1)">
+<button onclick="change(${p.id},-1)">
 −
 </button>
 
-${i.qty}
+${item.qty}
 
-<button
-onclick="change(${p.id},1)">
+<button onclick="change(${p.id},1)">
 +
 </button>
 
@@ -1270,7 +1327,9 @@ onclick="change(${p.id},1)">
 
 `;
 
-}).join("") +
+}).join("")
+
++
 
 `
 
@@ -1298,17 +1357,21 @@ show("cartModal");
 }
 
 
+/* =====================================================
+   USER
+===================================================== */
+
 async function me(){
 
 try{
 
 const response =
-await fetch("/api/me",{
-credentials:"same-origin"
-});
+await fetch("/api/me");
 
 if(!response.ok){
+
 return null;
+
 }
 
 const data =
@@ -1318,7 +1381,7 @@ return data.user || null;
 
 }catch(error){
 
-console.error("ME ERROR:",error);
+console.error(error);
 
 return null;
 
@@ -1338,14 +1401,17 @@ renderAccount();
 
 async function renderAccount(){
 
-const user = await me();
+const user =
+await me();
 
 if(user){
 
-document.getElementById("accountText")
-.textContent = "Account";
+document
+.getElementById("accountText")
+.textContent="Account";
 
-document.getElementById("accountArea")
+document
+.getElementById("accountArea")
 .innerHTML = `
 
 <p>
@@ -1354,9 +1420,13 @@ Welcome back,
 </p>
 
 <p style="color:#99a3b3">
+
 ${esc(user.phone)}
+
 <br>
+
 ${esc(user.email)}
+
 </p>
 
 <button
@@ -1378,12 +1448,7 @@ return;
 }
 
 
-document.getElementById("accountText")
-.textContent = "Login";
-
-
-document.getElementById("accountArea")
-.innerHTML = `
+document.getElementById("accountArea").innerHTML = `
 
 <div class="tabs">
 
@@ -1412,6 +1477,10 @@ ${loginForm()}
 }
 
 
+/* =====================================================
+   LOGIN
+===================================================== */
+
 function loginForm(){
 
 return `
@@ -1425,11 +1494,9 @@ Email or Mobile Number
 <input
 id="loginIdentifier"
 type="text"
-placeholder="Email or 10-digit mobile number"
-autocomplete="username">
+placeholder="Email or 10-digit mobile">
 
 </div>
-
 
 <div class="field">
 
@@ -1440,11 +1507,9 @@ Password
 <input
 id="loginPassword"
 type="password"
-placeholder="Password"
-autocomplete="current-password">
+placeholder="Password">
 
 </div>
-
 
 <button
 class="primary"
@@ -1452,19 +1517,91 @@ onclick="login()">
 Login
 </button>
 
-
 <p style="color:#99a3b3;font-size:12px;margin-top:14px">
-
-New customer?
-
-Tap <b>Registration</b> above.
-
+New customer? Tap Registration above.
 </p>
 
 `;
 
 }
 
+
+async function login(){
+
+const identifier =
+val("loginIdentifier");
+
+const password =
+val("loginPassword");
+
+if(!identifier || !password){
+
+alert("Please enter login details.");
+
+return;
+
+}
+
+try{
+
+const response =
+await fetch("/api/login",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+email: identifier,
+
+phone: identifier,
+
+password: password
+
+})
+
+});
+
+const data =
+await response.json();
+
+if(!response.ok){
+
+alert(
+data.message ||
+data.error ||
+"Invalid login details"
+);
+
+return;
+
+}
+
+document
+.getElementById("accountText")
+.textContent="Account";
+
+closeM("accountModal");
+
+alert("Login successful!");
+
+}catch(error){
+
+console.error(error);
+
+alert("Unable to login.");
+
+}
+
+}
+
+
+/* =====================================================
+   REGISTRATION
+===================================================== */
 
 function registerForm(){
 
@@ -1478,8 +1615,7 @@ Full Name *
 
 <input
 id="regName"
-placeholder="Your full name"
-autocomplete="name">
+placeholder="Your full name">
 
 </div>
 
@@ -1494,8 +1630,7 @@ Mobile Number *
 id="regPhone"
 type="tel"
 maxlength="10"
-placeholder="10-digit mobile number"
-autocomplete="tel">
+placeholder="10-digit mobile number">
 
 </div>
 
@@ -1509,8 +1644,7 @@ Email Address *
 <input
 id="regEmail"
 type="email"
-placeholder="your@email.com"
-autocomplete="email">
+placeholder="your@email.com">
 
 </div>
 
@@ -1524,8 +1658,7 @@ Password *
 <input
 id="regPassword"
 type="password"
-placeholder="Minimum 6 characters"
-autocomplete="new-password">
+placeholder="Minimum 6 characters">
 
 </div>
 
@@ -1536,6 +1669,10 @@ onclick="register()">
 Create Account
 </button>
 
+<p style="color:#99a3b3;font-size:12px">
+Your account will be created securely.
+</p>
+
 `;
 
 }
@@ -1543,156 +1680,59 @@ Create Account
 
 function showLogin(){
 
-document.getElementById("loginTab")
-.className = "tab active";
+document
+.getElementById("loginTab")
+.className="tab active";
 
-document.getElementById("regTab")
-.className = "tab";
+document
+.getElementById("regTab")
+.className="tab";
 
-document.getElementById("formArea")
-.innerHTML = loginForm();
+document
+.getElementById("formArea")
+.innerHTML=loginForm();
 
 }
 
 
 function showRegister(){
 
-document.getElementById("regTab")
-.className = "tab active";
+document
+.getElementById("regTab")
+.className="tab active";
 
-document.getElementById("loginTab")
-.className = "tab";
+document
+.getElementById("loginTab")
+.className="tab";
 
-document.getElementById("formArea")
-.innerHTML = registerForm();
-
-}
-
-
-/* =========================
-   FIXED LOGIN
-========================= */
-
-async function login(){
-
-const identifier =
-document.getElementById("loginIdentifier")
-.value
-.trim();
-
-const password =
-document.getElementById("loginPassword")
-.value;
-
-if(!identifier){
-
-alert("Please enter your email or mobile number.");
-
-return;
+document
+.getElementById("formArea")
+.innerHTML=registerForm();
 
 }
 
-if(!password){
-
-alert("Please enter your password.");
-
-return;
-
-}
-
-
-try{
-
-const response =
-await fetch("/api/login",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-credentials:"same-origin",
-
-body:JSON.stringify({
-
-email:identifier,
-
-phone:identifier,
-
-password:password
-
-})
-
-});
-
-
-const data =
-await response.json();
-
-
-if(!response.ok || !data.success){
-
-alert(
-data.message ||
-"Invalid login details."
-);
-
-return;
-
-}
-
-
-document.getElementById("accountText")
-.textContent = "Account";
-
-
-closeM("accountModal");
-
-
-alert("Login successful!");
-
-
-}catch(error){
-
-console.error("LOGIN ERROR:",error);
-
-alert(
-"Unable to connect to server. Please try again."
-);
-
-}
-
-}
-
-
-/* =========================
-   REGISTRATION
-========================= */
 
 async function register(){
 
 const name =
-document.getElementById("regName")
-.value
-.trim();
+val("regName");
 
 const phone =
-document.getElementById("regPhone")
-.value
-.trim();
+val("regPhone");
 
 const email =
-document.getElementById("regEmail")
-.value
-.trim();
+val("regEmail");
 
 const password =
-document.getElementById("regPassword")
-.value;
+val("regPassword");
 
 
-if(!name || !phone || !email || !password){
+if(
+!name ||
+!phone ||
+!email ||
+!password
+){
 
 alert(
 "Please fill all required fields."
@@ -1703,7 +1743,7 @@ return;
 }
 
 
-if(!/^[6-9]\d{9}$/.test(phone)){
+if(!/^\d{10}$/.test(phone)){
 
 alert(
 "Enter a valid 10-digit mobile number."
@@ -1714,21 +1754,10 @@ return;
 }
 
 
-if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-
-alert(
-"Enter a valid email address."
-);
-
-return;
-
-}
-
-
 if(password.length < 6){
 
 alert(
-"Password must contain at least 6 characters."
+"Password must be at least 6 characters."
 );
 
 return;
@@ -1747,16 +1776,11 @@ headers:{
 "Content-Type":"application/json"
 },
 
-credentials:"same-origin",
-
 body:JSON.stringify({
 
 name:name,
-
 phone:phone,
-
 email:email,
-
 password:password
 
 })
@@ -1768,39 +1792,37 @@ const data =
 await response.json();
 
 
-if(!response.ok || !data.success){
+if(!response.ok){
 
 alert(
 data.message ||
-"Registration failed."
+data.error ||
+"Registration failed"
 );
 
 return;
 
 }
+
+
+document
+.getElementById("accountText")
+.textContent="Account";
 
 
 alert(
 "Account created successfully!"
 );
 
-
-document.getElementById("accountText")
-.textContent = "Account";
-
-
-closeM("accountModal");
+renderAccount();
 
 
 }catch(error){
 
-console.error(
-"REGISTER ERROR:",
-error
-);
+console.error(error);
 
 alert(
-"Unable to create account. Please try again."
+"Unable to create account."
 );
 
 }
@@ -1808,60 +1830,41 @@ alert(
 }
 
 
-/* =========================
+/* =====================================================
    LOGOUT
-========================= */
+===================================================== */
 
 async function logout(){
 
 try{
 
-const response =
-await fetch("/api/logout",{
-
-method:"POST",
-
-credentials:"same-origin"
-
-});
-
-
-document.getElementById("accountText")
-.textContent = "Login";
-
-await renderAccount();
+await fetch(
+"/api/logout",
+{
+method:"POST"
+}
+);
 
 }catch(error){
 
-console.error(
-"LOGOUT ERROR:",
-error
-);
+console.error(error);
 
 }
 
+document
+.getElementById("accountText")
+.textContent="Login";
+
+renderAccount();
+
 }
 
 
-/* =========================
-   MANUAL UPI CHECKOUT
-========================= */
+/* =====================================================
+   CHECKOUT
+===================================================== */
 
 async function startCheckout(){
-
-const user = await me();
-
-
-if(!user){
-
-closeM("cartModal");
-
-openAccount();
-
-return;
-
-}
-
 
 if(!cart.length){
 
@@ -1872,17 +1875,35 @@ return;
 }
 
 
+const user =
+await me();
+
+
+if(!user){
+
+closeM("cartModal");
+
+openAccount();
+
+alert(
+"Please login before placing an order."
+);
+
+return;
+
+}
+
+
 closeM("cartModal");
 
 
-document.getElementById("checkoutArea")
+document
+.getElementById("checkoutArea")
 .innerHTML = `
 
 <p style="color:#99a3b3">
-
 Logged in as
 <b>${esc(user.email)}</b>
-
 </p>
 
 
@@ -1890,9 +1911,7 @@ Logged in as
 
 <div class="field">
 
-<label>
-Name
-</label>
+<label>Name</label>
 
 <input
 id="cname"
@@ -1903,9 +1922,7 @@ value="${esc(user.name)}">
 
 <div class="field">
 
-<label>
-Mobile
-</label>
+<label>Mobile</label>
 
 <input
 id="cphone"
@@ -1918,9 +1935,7 @@ value="${esc(user.phone)}">
 
 <div class="field">
 
-<label>
-Email
-</label>
+<label>Email</label>
 
 <input
 id="cemail"
@@ -1937,7 +1952,8 @@ Delivery Address *
 
 <textarea
 id="caddress"
-placeholder="Full address with PIN code"></textarea>
+placeholder="Full address with PIN code">
+</textarea>
 
 </div>
 
@@ -1947,72 +1963,29 @@ Payable: ${money(total())}
 </div>
 
 
-<div class="qrBox">
-
-<h3>
-Scan & Pay Using Any UPI App
-</h3>
-
-<img
-src="qr.png"
-alt="Shiv Supplements UPI QR">
-
-<p class="orderNote">
-
-Scan the QR code and pay exactly
-<b>${money(total())}</b>.
-
-</p>
-
-</div>
-
-
-<div class="field">
-
-<label>
-UPI Transaction ID / UTR *
-</label>
-
-<input
-id="utr"
-type="text"
-maxlength="100"
-placeholder="Enter your UTR / Transaction ID">
-
-</div>
-
-
 <button
 class="primary"
-style="width:100%"
-onclick="submitManualOrder()">
-
-Submit Payment Details
-
+onclick="createUPIOrder()">
+Create Order & Pay by UPI
 </button>
 
-
-<p class="orderNote">
-
-After you submit the UTR, the order remains
-<b>Payment Pending</b> until the store admin
-verifies the payment.
-
+<p style="color:#99a3b3;font-size:12px">
+After creating the order, scan the QR code and pay the exact amount.
+Then enter your UTR/reference number.
 </p>
 
 `;
-
 
 show("checkoutModal");
 
 }
 
 
-/* =========================
-   SUBMIT MANUAL ORDER
-========================= */
+/* =====================================================
+   CREATE UPI ORDER
+===================================================== */
 
-async function submitManualOrder(){
+async function createUPIOrder(){
 
 const name =
 val("cname");
@@ -2026,18 +1999,16 @@ val("cemail");
 const address =
 val("caddress");
 
-const utr =
-val("utr");
 
-
-if(!name ||
+if(
+!name ||
 !phone ||
 !email ||
-!address ||
-!utr){
+!address
+){
 
 alert(
-"Order ID and UTR are required"
+"Please complete all delivery details."
 );
 
 return;
@@ -2045,7 +2016,7 @@ return;
 }
 
 
-if(!/^[6-9]\d{9}$/.test(phone)){
+if(!/^\d{10}$/.test(phone)){
 
 alert(
 "Enter a valid 10-digit mobile number."
@@ -2056,29 +2027,50 @@ return;
 }
 
 
-if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-
-alert(
-"Enter a valid email address."
-);
-
-return;
-
-}
-
-
 if(!cart.length){
 
-alert(
-"Your cart is empty."
-);
+alert("Your cart is empty.");
 
 return;
 
 }
 
 
-const payload = {
+const items =
+cart.map(item=>{
+
+const product =
+products.find(p=>p.id===item.id);
+
+return {
+
+id:product.id,
+
+name:product.name,
+
+price:product.price,
+
+qty:item.qty
+
+};
+
+});
+
+
+try{
+
+const response =
+await fetch(
+"/api/create-order",
+{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
 
 name:name,
 
@@ -2088,29 +2080,11 @@ email:email,
 
 address:address,
 
-items:cart,
+items:items,
 
-amount:total(),
+amount:total()
 
-utr:utr
-
-};
-
-
-try{
-
-const response =
-await fetch("/api/manual-order",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-credentials:"same-origin",
-
-body:JSON.stringify(payload)
+})
 
 });
 
@@ -2119,11 +2093,12 @@ const data =
 await response.json();
 
 
-if(!response.ok || !data.success){
+if(!response.ok){
 
 alert(
 data.message ||
-"Could not submit order."
+data.error ||
+"Could not create order"
 );
 
 return;
@@ -2131,71 +2106,35 @@ return;
 }
 
 
-/* Clear cart */
+if(
+!data.success ||
+!data.order ||
+!data.order.id
+){
 
-cart = [];
+alert(
+"Order was not created correctly."
+);
 
-save();
+return;
+
+}
 
 
-document.getElementById("checkoutArea")
-.innerHTML = `
-
-<div class="successBox">
-
-<h3>
-✅ Order Submitted Successfully
-</h3>
-
-<p>
-Your payment details have been submitted.
-</p>
-
-<p>
-Order ID:
-<b>#${esc(
-String(data.order?.id || "")
-)}</b>
-</p>
-
-<p>
-UTR:
-<b>${esc(utr)}</b>
-</p>
-
-<p>
-Status:
-<b>Payment Pending</b>
-</p>
-
-<p>
-The store admin will verify your payment
-and update your order status.
-</p>
-
-</div>
-
-<button
-class="primary"
-style="margin-top:15px"
-onclick="closeM('checkoutModal')">
-
-Done
-
-</button>
-
-`;
+showUPIPayment(
+data.order
+);
 
 
 }catch(error){
 
 console.error(
-"MANUAL ORDER ERROR:",
+"CREATE ORDER ERROR:",
 error
 );
 
 alert(
-"Unable to submit order. Please try again."
+"Unable to create order. Please try again."
 );
 
 }
@@ -2203,18 +2142,345 @@ alert(
 }
 
 
-/* =========================
+/* =====================================================
+   UPI PAYMENT SCREEN
+===================================================== */
+
+function showUPIPayment(order){
+
+const amount =
+Number(order.amount);
+
+
+document
+.getElementById("checkoutArea")
+.innerHTML = `
+
+<div class="upiBox">
+
+<div class="upiTitle">
+📱 Pay Using UPI
+</div>
+
+
+<div class="upiText">
+
+Scan the QR code using
+PhonePe, Google Pay, Paytm or any UPI app.
+
+<br><br>
+
+Pay the exact amount:
+
+</div>
+
+
+<div class="total">
+${money(amount)}
+</div>
+
+
+<img
+class="qr"
+src="${QR_IMAGE}"
+alt="Shiv Supplements UPI QR Code"
+onerror="this.style.display='none';document.getElementById('qrError').style.display='block';">
+
+
+<div
+id="qrError"
+style="display:none;color:#ff9b9b;margin:10px 0">
+
+QR image <b>qr.png</b> was not found.
+Please upload qr.png to the same folder as index.html.
+
+</div>
+
+
+<div class="upiText">
+UPI ID
+</div>
+
+
+<div class="upiId">
+${esc(UPI_ID)}
+</div>
+
+
+<br>
+
+
+<button
+class="copyBtn"
+onclick="copyUPI()">
+📋 Copy UPI ID
+</button>
+
+
+<div class="orderNumber">
+
+<b>Order ID</b>
+
+<br>
+
+<span style="font-size:24px;color:#ffd45c">
+#${order.id}
+</span>
+
+</div>
+
+
+<p class="upiText">
+
+After successful payment,
+enter the UTR / transaction reference number below.
+
+</p>
+
+
+<div class="field">
+
+<label>
+UTR / Transaction Reference Number *
+</label>
+
+<input
+id="utrInput"
+type="text"
+maxlength="100"
+placeholder="Enter UTR / transaction ID">
+
+</div>
+
+
+<button
+class="primary"
+style="width:100%"
+onclick="submitUTR(${order.id})">
+
+Submit Payment Details
+
+</button>
+
+
+<p
+style="color:#99a3b3;font-size:12px;margin-top:15px">
+
+Your order will remain
+<b>Payment Pending</b>
+until the store admin verifies your payment.
+
+</p>
+
+</div>
+
+`;
+
+}
+
+
+/* =====================================================
+   COPY UPI
+===================================================== */
+
+async function copyUPI(){
+
+try{
+
+await navigator.clipboard.writeText(
+UPI_ID
+);
+
+alert(
+"UPI ID copied!"
+);
+
+}catch(error){
+
+alert(
+"UPI ID: " + UPI_ID
+);
+
+}
+
+}
+
+
+/* =====================================================
+   SUBMIT UTR
+===================================================== */
+
+async function submitUTR(orderId){
+
+const utr =
+val("utrInput");
+
+
+if(!utr){
+
+alert(
+"Please enter your UTR / transaction reference number."
+);
+
+return;
+
+}
+
+
+if(utr.length < 6){
+
+alert(
+"Please enter a valid UTR / transaction reference number."
+);
+
+return;
+
+}
+
+
+try{
+
+const response =
+await fetch(
+"/api/manual-order",
+{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+localOrderId:orderId,
+
+utr:utr
+
+})
+
+});
+
+
+const data =
+await response.json();
+
+
+if(!response.ok){
+
+alert(
+data.message ||
+data.error ||
+"Could not submit payment details."
+);
+
+return;
+
+}
+
+
+document
+.getElementById("checkoutArea")
+.innerHTML = `
+
+<div class="successBox">
+
+<div style="font-size:50px">
+✅
+</div>
+
+<h2>
+Payment Details Submitted
+</h2>
+
+<p style="color:#99a3b3">
+
+Order ID:
+<b>#${orderId}</b>
+
+<br><br>
+
+UTR:
+<b>${esc(utr)}</b>
+
+</p>
+
+<p>
+
+Your payment is now
+<b>Pending Verification</b>.
+
+</p>
+
+<p style="color:#99a3b3;font-size:13px">
+
+The store admin will verify your UPI payment
+and update the order status.
+
+</p>
+
+
+<button
+class="primary"
+onclick="finishOrder()">
+
+Done
+
+</button>
+
+</div>
+
+`;
+
+
+cart=[];
+
+save();
+
+
+}catch(error){
+
+console.error(
+"UTR ERROR:",
+error
+);
+
+alert(
+"Unable to submit UTR. Please try again."
+);
+
+}
+
+}
+
+
+/* =====================================================
+   FINISH ORDER
+===================================================== */
+
+function finishOrder(){
+
+closeM("checkoutModal");
+
+alert(
+"Order placed successfully. Payment is pending verification."
+);
+
+}
+
+
+/* =====================================================
    HELPERS
-========================= */
+===================================================== */
 
 function val(id){
 
 const element =
 document.getElementById(id);
 
-if(!element) return "";
-
-return element.value.trim();
+return element
+? element.value.trim()
+: "";
 
 }
 
@@ -2224,7 +2490,9 @@ function esc(value){
 return String(value ?? "")
 .replace(
 /[&<>"']/g,
-m => ({
+function(match){
+
+return {
 
 "&":"&amp;",
 "<":"&lt;",
@@ -2232,7 +2500,9 @@ m => ({
 '"':"&quot;",
 "'":"&#39;"
 
-}[m])
+}[match];
+
+}
 );
 
 }
@@ -2245,7 +2515,7 @@ document.getElementById(id);
 
 if(element){
 
-element.style.display = "block";
+element.style.display="block";
 
 }
 
@@ -2259,28 +2529,52 @@ document.getElementById(id);
 
 if(element){
 
-element.style.display = "none";
+element.style.display="none";
 
 }
 
 }
 
 
-/* =========================
-   INITIALIZE
-========================= */
+/* =====================================================
+   CLOSE MODAL WHEN CLICKING OUTSIDE
+===================================================== */
+
+document
+.querySelectorAll(".overlay")
+.forEach(overlay=>{
+
+overlay.addEventListener(
+"click",
+function(event){
+
+if(event.target === overlay){
+
+overlay.style.display="none";
+
+}
+
+}
+);
+
+});
+
+
+/* =====================================================
+   INITIAL LOAD
+===================================================== */
 
 renderProducts();
 
 renderCart();
 
-
-me().then(user => {
+me().then(user=>{
 
 if(user){
 
-document.getElementById("accountText")
-.textContent = "Account";
+document
+.getElementById("accountText")
+.textContent="Account";
 
 }
 
