@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shiv Supplements - Admin Dashboard</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#0b0f14;
+  color:#fff;
+}
+
+header{
+  background:#111821;
+  border-bottom:1px solid #263342;
+  padding:18px 25px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+.logo{
+  font-size:24px;
+  font-weight:900;
+}
+
+.logo span{
+  color:#f7b51b;
+}
+
+.refresh{
+  background:#f7b51b;
+  border:0;
+  padding:10px 18px;
+  border-radius:8px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.container{
+  max-width:1400px;
+  margin:auto;
+  padding:25px;
+}
+
+h1{
+  margin-bottom:20px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.stat{
+  background:#121a23;
+  border:1px solid #263342;
+  border-radius:12px;
+  padding:20px;
+}
+
+.stat small{
+  color:#8e9aaa;
+}
+
+.stat strong{
+  display:block;
+  font-size:28px;
+  margin-top:8px;
+}
+
+.orders{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+.order{
+  background:#121a23;
+  border:1px solid #263342;
+  border-radius:14px;
+  padding:20px;
+}
+
+.order-top{
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  align-items:center;
+  margin-bottom:15px;
+}
+
+.order-id{
+  font-size:20px;
+  font-weight:900;
+}
+
+.status{
+  padding:7px 12px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+}
+
+.pending{background:#5b4500;color:#ffd84d}
+.paid{background:#063d24;color:#4dff9a}
+.processing{background:#123b62;color:#64b7ff}
+.shipped{background:#392066;color:#c59cff}
+.delivered{background:#164d30;color:#7dffad}
+.cancelled{background:#551b1b;color:#ff7777}
+
+.customer{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+  color:#cbd5e1;
+  margin-bottom:15px;
+}
+
+.customer div{
+  background:#0d131a;
+  padding:10px;
+  border-radius:7px;
+}
+
+.items{
+  background:#0d131a;
+  padding:15px;
+  border-radius:9px;
+  margin-bottom:15px;
+}
+
+.item{
+  display:flex;
+  justify-content:space-between;
+  padding:7px 0;
+  border-bottom:1px solid #202a35;
+}
+
+.item:last-child{
+  border-bottom:0;
+}
+
+.amount{
+  font-size:22px;
+  font-weight:900;
+  color:#f7b51b;
+  margin:12px 0;
+}
+
+.utr{
+  background:#1a2029;
+  padding:12px;
+  border-radius:8px;
+  margin-bottom:15px;
+  word-break:break-all;
+}
+
+select{
+  width:100%;
+  background:#0b0f14;
+  color:#fff;
+  border:1px solid #394757;
+  padding:12px;
+  border-radius:8px;
+  font-size:15px;
+}
+
+.update{
+  margin-top:10px;
+  width:100%;
+  padding:12px;
+  border:0;
+  border-radius:8px;
+  background:#f7b51b;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.empty{
+  text-align:center;
+  padding:50px;
+  color:#8e9aaa;
+}
+
+.error{
+  background:#551b1b;
+  color:#ff9999;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:20px;
+}
+
+@media(max-width:800px){
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .customer{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:500px){
+  header{
+    padding:15px;
+  }
+
+  .container{
+    padding:15px;
+  }
+
+  .stats{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .order-top{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">
+    SHIV <span>SUPPLEMENTS</span>
+  </div>
+
+  <button class="refresh" onclick="loadOrders()">
+    🔄 Refresh Orders
+  </button>
+</header>
+
+<div class="container">
+
+  <h1>📦 Admin Orders</h1>
+
+  <div id="error"></div>
+
+  <div class="stats">
+    <div class="stat">
+      <small>Total Orders</small>
+      <strong id="totalOrders">0</strong>
+    </div>
+
+    <div class="stat">
+      <small>Pending</small>
+      <strong id="pendingOrders">0</strong>
+    </div>
+
+    <div class="stat">
+      <small>Paid</small>
+      <strong id="paidOrders">0</strong>
+    </div>
+
+    <div class="stat">
+      <small>Total Sales</small>
+      <strong id="totalSales">₹0</strong>
+    </div>
+  </div>
+
+  <div id="orders" class="orders">
+    <div class="empty">
+      Loading orders...
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+let allOrders = [];
+
+async function loadOrders(){
+
+  const ordersBox = document.getElementById("orders");
+  const errorBox = document.getElementById("error");
+
+  errorBox.innerHTML = "";
+
+  ordersBox.innerHTML = `
+    <div class="empty">
+      Loading orders...
+    </div>
+  `;
+
+  try{
+
+    const response = await fetch("/api/admin/orders");
+
+    const data = await response.json();
+
+    if(!response.ok || !data.success){
+      throw new Error(data.message || "Could not load orders");
+    }
+
+    allOrders = data.orders || [];
+
+    updateStats();
+
+    renderOrders();
+
+  }catch(error){
+
+    console.error(error);
+
+    errorBox.innerHTML = `
+      <div class="error">
+        ❌ ${escapeHTML(error.message)}
+      </div>
+    `;
+
+    ordersBox.innerHTML = `
+      <div class="empty">
+        Could not load orders.
+      </div>
+    `;
+  }
+}
+
+
+function updateStats(){
+
+  document.getElementById("totalOrders").textContent =
+    allOrders.length;
+
+  document.getElementById("pendingOrders").textContent =
+    allOrders.filter(o => o.status === "pending").length;
+
+  document.getElementById("paidOrders").textContent =
+    allOrders.filter(o => o.status === "paid").length;
+
+  const sales = allOrders
+    .filter(o => o.status !== "cancelled")
+    .reduce((sum,o) => sum + Number(o.amount || 0),0);
+
+  document.getElementById("totalSales").textContent =
+    "₹" + sales.toLocaleString("en-IN");
+}
+
+
+function renderOrders(){
+
+  const box = document.getElementById("orders");
+
+  if(!allOrders.length){
+
+    box.innerHTML = `
+      <div class="empty">
+        No orders found.
+      </div>
+    `;
+
+    return;
+  }
+
+  box.innerHTML = allOrders.map(order => {
+
+    const items = Array.isArray(order.items)
+      ? order.items
+      : [];
+
+    const itemHTML = items.map(item => {
+
+      const name =
+        item.name ||
+        item.title ||
+        item.product ||
+        "Product";
+
+      const qty =
+        item.qty ||
+        item.quantity ||
+        1;
+
+      const price =
+        item.price ||
+        0;
+
+      return `
+        <div class="item">
+          <span>
+            ${escapeHTML(name)}
+            × ${qty}
+          </span>
+
+          <span>
+            ₹${Number(price * qty).toLocaleString("en-IN")}
+          </span>
+        </div>
+      `;
+
+    }).join("");
+
+    const paymentId =
+      order.razorpay_payment_id ||
+      order.utr ||
+      "Not available";
+
+    return `
+
+      <div class="order">
+
+        <div class="order-top">
+
+          <div class="order-id">
+            Order #${order.id}
+          </div>
+
+          <div class="status ${escapeHTML(order.status || "pending")}">
+            ${escapeHTML(order.status || "pending")}
+          </div>
+
+        </div>
+
+
+        <div class="customer">
+
+          <div>
+            👤 <b>Name:</b>
+            ${escapeHTML(order.name || "-")}
+          </div>
+
+          <div>
+            📞 <b>Phone:</b>
+            ${escapeHTML(order.phone || "-")}
+          </div>
+
+          <div>
+            📧 <b>Email:</b>
+            ${escapeHTML(order.email || "-")}
+          </div>
+
+          <div>
+            📅 <b>Date:</b>
+            ${escapeHTML(order.created_at || "-")}
+          </div>
+
+          <div style="grid-column:1/-1">
+            📍 <b>Address:</b>
+            ${escapeHTML(order.address || "-")}
+          </div>
+
+        </div>
+
+
+        <div class="items">
+
+          <b>🛍 Products</b>
+
+          <div style="margin-top:10px">
+            ${itemHTML || "<div>No product details</div>"}
+          </div>
+
+        </div>
+
+
+        <div class="amount">
+          Payable: ₹${Number(order.amount || 0).toLocaleString("en-IN")}
+        </div>
+
+
+        <div class="utr">
+
+          <b>💳 Payment / UTR:</b><br>
+
+          ${escapeHTML(paymentId)}
+
+        </div>
+
+
+        <label>
+          <b>Order Status</b>
+        </label>
+
+        <select id="status-${order.id}">
+
+          ${statusOption("pending",order.status)}
+          ${statusOption("paid",order.status)}
+          ${statusOption("processing",order.status)}
+          ${statusOption("shipped",order.status)}
+          ${statusOption("delivered",order.status)}
+          ${statusOption("cancelled",order.status)}
+
+        </select>
+
+
+        <button
+          class="update"
+          onclick="updateStatus(${order.id})">
+
+          ✅ Update Order Status
+
+        </button>
+
+      </div>
+
+    `;
+
+  }).join("");
+}
+
+
+function statusOption(value,current){
+
+  return `
+    <option
+      value="${value}"
+      ${value === current ? "selected" : ""}>
+      ${value.toUpperCase()}
+    </option>
+  `;
+}
+
+
+async function updateStatus(id){
+
+  const select =
+    document.getElementById("status-" + id);
+
+  const status = select.value;
+
+  if(!confirm(
+    "Change Order #" + id +
+    " status to " + status + "?"
+  )){
+    return;
+  }
+
+  try{
+
+    const response = await fetch(
+      "/api/admin/orders/" + id,
+      {
+        method:"PATCH",
+
+        headers:{
+          "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+          status:status
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if(!response.ok || !data.success){
+
+      throw new Error(
+        data.message ||
+        "Could not update order"
+      );
+
+    }
+
+    alert(
+      "✅ Order #" +
+      id +
+      " updated to " +
+      status
+    );
+
+    await loadOrders();
+
+  }catch(error){
+
+    alert(
+      "❌ " +
+      error.message
+    );
+
+  }
+
+}
+
+
+function escapeHTML(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+loadOrders();
+
+</script>
+
+</body>
+</html>
