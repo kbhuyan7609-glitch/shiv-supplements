@@ -301,6 +301,75 @@ section{
   font-weight:900;
 }
 
+.brandGrid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+}
+
+.brandCard{
+  background:linear-gradient(145deg,#151b23,#0b0f14);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:22px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.brandCard:hover,
+.brandCard.active{
+  transform:translateY(-3px);
+  border-color:#ffd45c;
+  box-shadow:0 8px 28px rgba(0,0,0,.22);
+}
+
+.brandLogo{
+  width:48px;
+  height:48px;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#242b35;
+  font-size:24px;
+  margin-bottom:13px;
+}
+
+.brandCard h3{
+  margin:0 0 6px;
+  font-size:17px;
+}
+
+.brandCard p{
+  color:var(--muted);
+  font-size:12px;
+  margin:0;
+}
+
+.categoryBar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:18px;
+}
+
+.categoryBtn{
+  border:1px solid var(--line);
+  background:#11161d;
+  color:#fff;
+  border-radius:999px;
+  padding:10px 15px;
+  cursor:pointer;
+  font-weight:800;
+}
+
+.categoryBtn:hover,
+.categoryBtn.active{
+  background:#ffd45c;
+  color:#111;
+  border-color:#ffd45c;
+}
+
 .cats{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -808,40 +877,16 @@ Create Account
 <section id="categories">
 
 <div class="head">
-
-<div>
-<h2>Shop by Category</h2>
-<p>Find the right products for your training.</p>
+  <div>
+    <h2>Shop by Brand</h2>
+    <p>Choose a brand, then select a supplement category.</p>
+  </div>
 </div>
 
-</div>
+<div class="brandGrid" id="brandGrid"></div>
 
-<div class="cats">
-
-<div class="cat">
-<div class="catIcon">🥛</div>
-<h3>Whey Protein</h3>
-<p>Whey, isolate and protein options.</p>
-</div>
-
-<div class="cat">
-<div class="catIcon">⚡</div>
-<h3>Creatine</h3>
-<p>Creatine products for strength and performance.</p>
-</div>
-
-<div class="cat">
-<div class="catIcon">🏋️</div>
-<h3>Mass Gainers</h3>
-<p>High-calorie products for bulking goals.</p>
-</div>
-
-<div class="cat">
-<div class="catIcon">🔥</div>
-<h3>Performance</h3>
-<p>Pre-workout and other training essentials.</p>
-</div>
-
+<div class="categoryBar" id="categoryBar" style="display:none;">
+  <button class="categoryBtn active" data-category="ALL" onclick="selectCategory('ALL')">All Products</button>
 </div>
 
 </section>
@@ -852,8 +897,8 @@ Create Account
 <div class="head">
 
 <div>
-<h2>Featured Supplements</h2>
-<p>Choose your products and add them to your cart.</p>
+<h2 id="productSectionTitle">All Supplements</h2>
+<p id="productSectionSubtitle">Choose a brand and category to see products.</p>
 </div>
 
 <a
@@ -1065,6 +1110,7 @@ async function loadProducts(){
 
     // Remove cart items for products that no longer exist/are inactive.
     cart = cart.filter(item => products.some(p => p.id === Number(item.id)));
+    renderBrandNavigation();
     renderProducts();
     renderCart();
   }catch(err){
@@ -1174,53 +1220,225 @@ save();
    PRODUCTS
 ===================================================== */
 
-function renderProducts(){
+let selectedBrand = "ALL";
+let selectedCategory = "ALL";
 
-document.getElementById("products").innerHTML =
-
-products.map(p => `
-
-<article class="product">
-
-<div class="pic">
-${p.image ? `<img src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain;border-radius:12px;">` : p.icon}
-</div>
-
-<div class="pbody">
-
-<span class="tag">
-${p.tag}
-</span>
-
-<h3>
-${p.name}
-</h3>
-
-<p>
-${p.desc}
-</p>
-
-<div class="price">
-${money(p.price)}
-</div>
-
-<button
-class="buy"
-onclick="add(${p.id})">
-Add to Cart
-</button>
-
-</div>
-
-</article>
-
-`).join("");
-
-document.getElementById("cartCount").textContent =
-count();
-
+function normalizeText(value){
+  return String(value || "").trim();
 }
 
+function brandKey(value){
+  return normalizeText(value).toLowerCase();
+}
+
+function categoryKey(value){
+  return normalizeText(value).toLowerCase();
+}
+
+function brandIcon(brand){
+  const b = brandKey(brand);
+  if(b.includes("ripped")) return "🔥";
+  if(b.includes("transformium")) return "⚡";
+  if(b.includes("dalaso") || b.includes("dallas")) return "💪";
+  if(b.includes("hypertrophy")) return "🏋️";
+  return "🥤";
+}
+
+function displayCategory(category){
+  const c = normalizeText(category);
+  if(!c) return "Other";
+  return c
+    .replace(/mass\s*gainer/i,"Mass Gainer")
+    .replace(/pre[-\s]?workout/i,"Pre-Workout")
+    .replace(/fat[-\s]?burner/i,"Fat Burner")
+    .replace(/whey\s*protein/i,"Whey Protein")
+    .replace(/whey\s*isolate/i,"Whey Isolate");
+}
+
+function getBrands(){
+  const map = new Map();
+  products.forEach(p=>{
+    const brand = normalizeText(p.brand) || "Other";
+    const key = brandKey(brand);
+    if(!map.has(key)) map.set(key, brand);
+  });
+  return [...map.values()].sort((a,b)=>a.localeCompare(b));
+}
+
+function getCategoriesForBrand(brand){
+  const map = new Map();
+  products
+    .filter(p => selectedBrand === "ALL" || brandKey(p.brand) === brandKey(brand))
+    .forEach(p=>{
+      const raw = normalizeText(p.category) || "Other";
+      const key = categoryKey(raw);
+      if(!map.has(key)) map.set(key, displayCategory(raw));
+    });
+  return [...map.values()].sort((a,b)=>a.localeCompare(b));
+}
+
+function renderBrandNavigation(){
+  const grid = document.getElementById("brandGrid");
+  if(!grid) return;
+
+  const brands = getBrands();
+
+  if(!brands.length){
+    grid.innerHTML = '<p style="color:#99a3b3">No brands available yet.</p>';
+    document.getElementById("categoryBar").style.display = "none";
+    return;
+  }
+
+  grid.innerHTML = `
+    <div class="brandCard ${selectedBrand==="ALL" ? "active" : ""}" onclick="selectBrand('ALL')">
+      <div class="brandLogo">🛒</div>
+      <h3>All Brands</h3>
+      <p>${products.length} product${products.length===1?"":"s"}</p>
+    </div>
+    ${brands.map(brand=>{
+      const count = products.filter(p=>brandKey(p.brand)===brandKey(brand)).length;
+      return `
+        <div class="brandCard ${brandKey(selectedBrand)===brandKey(brand) ? "active" : ""}"
+             onclick='selectBrand(${JSON.stringify(brand)})'>
+          <div class="brandLogo">${brandIcon(brand)}</div>
+          <h3>${brand}</h3>
+          <p>${count} product${count===1?"":"s"}</p>
+        </div>
+      `;
+    }).join("")}
+  `;
+
+  renderCategoryNavigation();
+}
+
+function renderCategoryNavigation(){
+  const bar = document.getElementById("categoryBar");
+  if(!bar) return;
+
+  const categories = getCategoriesForBrand(selectedBrand);
+
+  bar.style.display = "flex";
+  bar.innerHTML = `
+    <button class="categoryBtn ${selectedCategory==="ALL" ? "active" : ""}"
+            data-category="ALL"
+            onclick="selectCategory('ALL')">
+      All Products
+    </button>
+    ${categories.map(category=>`
+      <button class="categoryBtn ${categoryKey(selectedCategory)===categoryKey(category) ? "active" : ""}"
+              data-category="${category.replace(/"/g,'&quot;')}"
+              onclick='selectCategory(${JSON.stringify(category)})'>
+        ${category}
+      </button>
+    `).join("")}
+  `;
+
+  // If the selected category no longer exists for this brand, reset it.
+  if(selectedCategory !== "ALL" &&
+     !categories.some(c=>categoryKey(c)===categoryKey(selectedCategory))){
+    selectedCategory = "ALL";
+  }
+}
+
+function selectBrand(brand){
+  selectedBrand = brand;
+  selectedCategory = "ALL";
+  renderBrandNavigation();
+  renderProducts();
+
+  document.getElementById("shop")?.scrollIntoView({
+    behavior:"smooth",
+    block:"start"
+  });
+}
+
+function selectCategory(category){
+  selectedCategory = category;
+  renderCategoryNavigation();
+  renderProducts();
+
+  document.getElementById("shop")?.scrollIntoView({
+    behavior:"smooth",
+    block:"start"
+  });
+}
+
+function productMatches(p){
+  const brandMatch =
+    selectedBrand === "ALL" ||
+    brandKey(p.brand) === brandKey(selectedBrand);
+
+  const categoryMatch =
+    selectedCategory === "ALL" ||
+    categoryKey(displayCategory(p.category)) === categoryKey(selectedCategory);
+
+  return brandMatch && categoryMatch;
+}
+
+function renderProducts(){
+  const visibleProducts = products.filter(productMatches);
+
+  const title = document.getElementById("productSectionTitle");
+  const subtitle = document.getElementById("productSectionSubtitle");
+
+  if(title){
+    title.textContent =
+      selectedBrand === "ALL"
+        ? "All Supplements"
+        : selectedCategory === "ALL"
+          ? selectedBrand
+          : `${selectedBrand} — ${selectedCategory}`;
+  }
+
+  if(subtitle){
+    subtitle.textContent =
+      `${visibleProducts.length} product${visibleProducts.length===1?"":"s"} available`;
+  }
+
+  const container = document.getElementById("products");
+
+  if(!visibleProducts.length){
+    container.innerHTML = `
+      <div style="grid-column:1/-1;padding:30px;text-align:center;color:#99a3b3;">
+        No products found in this category yet.
+      </div>
+    `;
+  }else{
+    container.innerHTML = visibleProducts.map(p => `
+      <article class="product">
+        <div class="pic">
+          ${p.image
+            ? `<img src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain;border-radius:12px;">`
+            : p.icon}
+        </div>
+
+        <div class="pbody">
+          <span class="tag">${displayCategory(p.category || p.brand)}</span>
+
+          <h3>${p.name}</h3>
+
+          <p>
+            ${[
+              p.brand,
+              p.flavor,
+              p.size
+            ].filter(Boolean).join(" • ") || p.description || ""}
+          </p>
+
+          <div class="price">${money(p.price)}</div>
+
+          <button
+            class="buy"
+            onclick="add(${p.id})">
+            Add to Cart
+          </button>
+        </div>
+      </article>
+    `).join("");
+  }
+
+  document.getElementById("cartCount").textContent = count();
+}
 
 /* =====================================================
    CART
@@ -2694,9 +2912,8 @@ overlay.style.display="none";
    INITIAL LOAD
 ===================================================== */
 
-loadProducts();
-
 renderCart();
+loadProducts();
 
 me().then(user=>{
 
