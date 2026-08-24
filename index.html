@@ -864,15 +864,6 @@ Get Full List →
 
 </div>
 
-
-<div style="display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px">
-  <select id="brandFilter" onchange="applyProductFilters()" style="background:#11161e;color:#fff;border:1px solid #343c49;padding:10px;border-radius:10px">
-    <option value="">All Brands</option>
-  </select>
-  <select id="categoryFilter" onchange="applyProductFilters()" style="background:#11161e;color:#fff;border:1px solid #343c49;padding:10px;border-radius:10px">
-    <option value="">All Categories</option>
-  </select>
-</div>
 <div class="products" id="products"></div>
 
 </section>
@@ -1036,7 +1027,7 @@ Login or create your account.
   Replace this with your REAL Shiv Supplements UPI ID.
 */
 
-const UPI_ID = "8144989064-3@ybl";
+const UPI_ID = "YOUR_UPI_ID@upi";
 
 const STORE_NAME = "Shiv Supplements";
 
@@ -1046,60 +1037,42 @@ const QR_IMAGE = "qr.png";
 let currentUPIOrderId = null;
 
 
-
-function applyProductFilters(){
-  const brand=document.getElementById("brandFilter")?.value||"";
-  const category=document.getElementById("categoryFilter")?.value||"";
-  const filtered=products.filter(p=>(!brand||p.brand===brand)&&(!category||p.category===category));
-  const original=products;
-  products=filtered;
-  renderProducts();
-  products=original;
-}
-
-function populateProductFilters(){
-  const b=document.getElementById("brandFilter");
-  const c=document.getElementById("categoryFilter");
-  if(!b||!c)return;
-  const brands=[...new Set(products.map(p=>p.brand).filter(Boolean))].sort();
-  const cats=[...new Set(products.map(p=>p.category).filter(Boolean))].sort();
-  b.innerHTML='<option value="">All Brands</option>'+brands.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");
-  c.innerHTML='<option value="">All Categories</option>'+cats.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");
-}
-
 /* =====================================================
    PRODUCTS
 ===================================================== */
 
-let products = [
-  {id:1,brand:"MuscleBlaze",name:"Biozyme Whey",category:"Whey Protein",flavor:"Chocolate",size:"1 kg",mrp:3999,price:2999,stock:10,tag:"WHEY PROTEIN",icon:"🥤",image:"",desc:"Premium whey protein."},
-  {id:2,brand:"Avvatar",name:"Whey Protein",category:"Whey Protein",flavor:"Malai Kulfi",size:"1 kg",mrp:3999,price:3199,stock:10,tag:"WHEY PROTEIN",icon:"💪",image:"",desc:"High-quality whey protein."},
-  {id:3,brand:"Optimum Nutrition",name:"Gold Standard Whey",category:"Whey Protein",flavor:"Double Rich Chocolate",size:"1 lb",mrp:2499,price:2199,stock:10,tag:"WHEY PROTEIN",icon:"🥛",image:"",desc:"Popular whey protein."},
-  {id:4,brand:"MuscleBlaze",name:"Creatine Monohydrate",category:"Creatine",flavor:"Unflavoured",size:"250 g",mrp:999,price:799,stock:15,tag:"CREATINE",icon:"⚡",image:"",desc:"Creatine monohydrate."},
-  {id:5,brand:"Avvatar",name:"Mass Gainer",category:"Mass Gainer",flavor:"Chocolate",size:"3 kg",mrp:3499,price:2899,stock:8,tag:"MASS GAINER",icon:"🏋️",image:"",desc:"Mass gainer for calorie surplus."},
-  {id:6,brand:"MuscleBlaze",name:"Pre Workout",category:"Pre-Workout",flavor:"Fruit Punch",size:"100 g",mrp:1499,price:1199,stock:8,tag:"PRE-WORKOUT",icon:"🔥",image:"",desc:"Pre-workout supplement."}
-];
+let products = [];
 
-async function loadProductsFromServer(){
+// Load the products saved from the Admin Dashboard/database.
+async function loadProducts(){
   try{
-    const response=await fetch("/api/products",{cache:"no-store"});
-    const data=await response.json();
-    if(!response.ok || !Array.isArray(data.products)) throw new Error(data.message||"Product API failed");
-    products=data.products.map(p=>({
-      ...p,
-      tag:String(p.category||"SUPPLEMENT").toUpperCase(),
-      icon:p.category==="Creatine"?"⚡":p.category==="Mass Gainer"?"🏋️":p.category==="Pre-Workout"?"🔥":"🥤",
-      desc:p.description||`${p.brand} ${p.name}`,
-      stock:Number(p.stock||0)
-    }));
-  }catch(error){
-    console.error("PRODUCT LOAD ERROR:",error);
-  }
-  populateProductFilters();
-  renderProducts();
-  renderCart();
-}
+    const res = await fetch('/api/products', { cache:'no-store' });
+    const data = await res.json();
+    if(!data.success) throw new Error(data.message || 'Could not load products');
 
+    products = (data.products || []).map(p => ({
+      ...p,
+      id: Number(p.id),
+      price: Number(p.price || 0),
+      mrp: Number(p.mrp || 0),
+      stock: Number(p.stock || 0),
+      tag: String(p.category || p.brand || 'SUPPLEMENT').toUpperCase(),
+      icon: p.image ? '' : (String(p.category || '').toLowerCase().includes('protein') ? '🥤' :
+             String(p.category || '').toLowerCase().includes('creatine') ? '⚡' :
+             String(p.category || '').toLowerCase().includes('gainer') ? '🏋️' : '💊'),
+      desc: [p.brand, p.flavor, p.size].filter(Boolean).join(' • ') || p.description || ''
+    }));
+
+    // Remove cart items for products that no longer exist/are inactive.
+    cart = cart.filter(item => products.some(p => p.id === Number(item.id)));
+    renderProducts();
+    renderCart();
+  }catch(err){
+    console.error('PRODUCT LOAD ERROR:', err);
+    document.getElementById('products').innerHTML =
+      '<p style="color:#99a3b3">Products could not be loaded. Please refresh the page.</p>';
+  }
+}
 
 /* =====================================================
    CART
@@ -1154,19 +1127,25 @@ renderCart();
 
 
 function add(id){
-  const product=products.find(p=>Number(p.id)===Number(id));
-  if(!product){ alert("Product is not available."); return; }
-  const stock=Number(product.stock||0);
-  if(stock<=0){ alert("This product is out of stock."); return; }
 
-  let item=cart.find(i=>Number(i.id)===Number(id));
-  if(item){
-    if(item.qty>=stock){ alert("Only "+stock+" item(s) available."); return; }
-    item.qty++;
-  }else{
-    cart.push({id:Number(id),qty:1});
-  }
-  save();
+let item =
+cart.find(i=>i.id===id);
+
+if(item){
+
+item.qty++;
+
+}else{
+
+cart.push({
+ id:id,
+ qty:1
+});
+
+}
+
+save();
+
 }
 
 
@@ -1196,29 +1175,50 @@ save();
 ===================================================== */
 
 function renderProducts(){
-  document.getElementById("products").innerHTML = products.map(p => {
-    const stock=Number(p.stock||0);
-    const soldOut=stock<=0;
-    const discount=Number(p.discount||0);
-    const image=p.image
-      ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" style="width:100%;height:205px;object-fit:contain;padding:18px" onerror="this.style.display='none';this.parentElement.innerHTML='${esc(p.icon||"🥤")}'">`
-      : `${p.icon||"🥤"}`;
-    return `
-      <article class="product">
-        <div class="pic">${image}</div>
-        <div class="pbody">
-          <span class="tag">${esc(p.brand||"")}${p.tag?" • "+esc(p.tag):""}</span>
-          <h3>${esc(p.name)}</h3>
-          <p>${esc(p.desc||"")}${p.size?"<br><b>"+esc(p.size)+"</b>":""}${p.flavor?" • "+esc(p.flavor):""}</p>
-          <div class="price">${money(p.price)}
-            ${Number(p.mrp)>Number(p.price)?`<span style="font-size:12px;color:#7f8998;text-decoration:line-through;margin-left:7px">${money(p.mrp)}</span>`:""}
-            ${discount>0?`<span style="font-size:11px;color:#52e39a;margin-left:7px">${discount}% OFF</span>`:""}
-          </div>
-          <button class="buy" ${soldOut?"disabled":""} onclick="add(${p.id})">${soldOut?"Out of Stock":"Add to Cart"}</button>
-        </div>
-      </article>`;
-  }).join("");
-  document.getElementById("cartCount").textContent=count();
+
+document.getElementById("products").innerHTML =
+
+products.map(p => `
+
+<article class="product">
+
+<div class="pic">
+${p.image ? `<img src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain;border-radius:12px;">` : p.icon}
+</div>
+
+<div class="pbody">
+
+<span class="tag">
+${p.tag}
+</span>
+
+<h3>
+${p.name}
+</h3>
+
+<p>
+${p.desc}
+</p>
+
+<div class="price">
+${money(p.price)}
+</div>
+
+<button
+class="buy"
+onclick="add(${p.id})">
+Add to Cart
+</button>
+
+</div>
+
+</article>
+
+`).join("");
+
+document.getElementById("cartCount").textContent =
+count();
+
 }
 
 
@@ -2694,7 +2694,7 @@ overlay.style.display="none";
    INITIAL LOAD
 ===================================================== */
 
-renderProducts();
+loadProducts();
 
 renderCart();
 
