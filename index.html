@@ -301,75 +301,6 @@ section{
   font-weight:900;
 }
 
-.brandGrid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:15px;
-}
-
-.brandCard{
-  background:linear-gradient(145deg,#151b23,#0b0f14);
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:22px;
-  cursor:pointer;
-  transition:.2s;
-}
-
-.brandCard:hover,
-.brandCard.active{
-  transform:translateY(-3px);
-  border-color:#ffd45c;
-  box-shadow:0 8px 28px rgba(0,0,0,.22);
-}
-
-.brandLogo{
-  width:48px;
-  height:48px;
-  border-radius:14px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#242b35;
-  font-size:24px;
-  margin-bottom:13px;
-}
-
-.brandCard h3{
-  margin:0 0 6px;
-  font-size:17px;
-}
-
-.brandCard p{
-  color:var(--muted);
-  font-size:12px;
-  margin:0;
-}
-
-.categoryBar{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  margin-top:18px;
-}
-
-.categoryBtn{
-  border:1px solid var(--line);
-  background:#11161d;
-  color:#fff;
-  border-radius:999px;
-  padding:10px 15px;
-  cursor:pointer;
-  font-weight:800;
-}
-
-.categoryBtn:hover,
-.categoryBtn.active{
-  background:#ffd45c;
-  color:#111;
-  border-color:#ffd45c;
-}
-
 .cats{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -877,16 +808,40 @@ Create Account
 <section id="categories">
 
 <div class="head">
-  <div>
-    <h2>Shop by Brand</h2>
-    <p>Choose a brand, then select a supplement category.</p>
-  </div>
+
+<div>
+<h2>Shop by Category</h2>
+<p>Find the right products for your training.</p>
 </div>
 
-<div class="brandGrid" id="brandGrid"></div>
+</div>
 
-<div class="categoryBar" id="categoryBar" style="display:none;">
-  <button class="categoryBtn active" data-category="ALL" onclick="selectCategory('ALL')">All Products</button>
+<div class="cats">
+
+<div class="cat">
+<div class="catIcon">🥛</div>
+<h3>Whey Protein</h3>
+<p>Whey, isolate and protein options.</p>
+</div>
+
+<div class="cat">
+<div class="catIcon">⚡</div>
+<h3>Creatine</h3>
+<p>Creatine products for strength and performance.</p>
+</div>
+
+<div class="cat">
+<div class="catIcon">🏋️</div>
+<h3>Mass Gainers</h3>
+<p>High-calorie products for bulking goals.</p>
+</div>
+
+<div class="cat">
+<div class="catIcon">🔥</div>
+<h3>Performance</h3>
+<p>Pre-workout and other training essentials.</p>
+</div>
+
 </div>
 
 </section>
@@ -897,8 +852,8 @@ Create Account
 <div class="head">
 
 <div>
-<h2 id="productSectionTitle">All Supplements</h2>
-<p id="productSectionSubtitle">Choose a brand and category to see products.</p>
+<h2>Featured Supplements</h2>
+<p>Choose your products and add them to your cart.</p>
 </div>
 
 <a
@@ -909,6 +864,15 @@ Get Full List →
 
 </div>
 
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px">
+  <select id="brandFilter" onchange="applyProductFilters()" style="background:#11161e;color:#fff;border:1px solid #343c49;padding:10px;border-radius:10px">
+    <option value="">All Brands</option>
+  </select>
+  <select id="categoryFilter" onchange="applyProductFilters()" style="background:#11161e;color:#fff;border:1px solid #343c49;padding:10px;border-radius:10px">
+    <option value="">All Categories</option>
+  </select>
+</div>
 <div class="products" id="products"></div>
 
 </section>
@@ -1082,43 +1046,60 @@ const QR_IMAGE = "qr.png";
 let currentUPIOrderId = null;
 
 
+
+function applyProductFilters(){
+  const brand=document.getElementById("brandFilter")?.value||"";
+  const category=document.getElementById("categoryFilter")?.value||"";
+  const filtered=products.filter(p=>(!brand||p.brand===brand)&&(!category||p.category===category));
+  const original=products;
+  products=filtered;
+  renderProducts();
+  products=original;
+}
+
+function populateProductFilters(){
+  const b=document.getElementById("brandFilter");
+  const c=document.getElementById("categoryFilter");
+  if(!b||!c)return;
+  const brands=[...new Set(products.map(p=>p.brand).filter(Boolean))].sort();
+  const cats=[...new Set(products.map(p=>p.category).filter(Boolean))].sort();
+  b.innerHTML='<option value="">All Brands</option>'+brands.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");
+  c.innerHTML='<option value="">All Categories</option>'+cats.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");
+}
+
 /* =====================================================
    PRODUCTS
 ===================================================== */
 
-let products = [];
+let products = [
+  {id:1,brand:"MuscleBlaze",name:"Biozyme Whey",category:"Whey Protein",flavor:"Chocolate",size:"1 kg",mrp:3999,price:2999,stock:10,tag:"WHEY PROTEIN",icon:"🥤",image:"",desc:"Premium whey protein."},
+  {id:2,brand:"Avvatar",name:"Whey Protein",category:"Whey Protein",flavor:"Malai Kulfi",size:"1 kg",mrp:3999,price:3199,stock:10,tag:"WHEY PROTEIN",icon:"💪",image:"",desc:"High-quality whey protein."},
+  {id:3,brand:"Optimum Nutrition",name:"Gold Standard Whey",category:"Whey Protein",flavor:"Double Rich Chocolate",size:"1 lb",mrp:2499,price:2199,stock:10,tag:"WHEY PROTEIN",icon:"🥛",image:"",desc:"Popular whey protein."},
+  {id:4,brand:"MuscleBlaze",name:"Creatine Monohydrate",category:"Creatine",flavor:"Unflavoured",size:"250 g",mrp:999,price:799,stock:15,tag:"CREATINE",icon:"⚡",image:"",desc:"Creatine monohydrate."},
+  {id:5,brand:"Avvatar",name:"Mass Gainer",category:"Mass Gainer",flavor:"Chocolate",size:"3 kg",mrp:3499,price:2899,stock:8,tag:"MASS GAINER",icon:"🏋️",image:"",desc:"Mass gainer for calorie surplus."},
+  {id:6,brand:"MuscleBlaze",name:"Pre Workout",category:"Pre-Workout",flavor:"Fruit Punch",size:"100 g",mrp:1499,price:1199,stock:8,tag:"PRE-WORKOUT",icon:"🔥",image:"",desc:"Pre-workout supplement."}
+];
 
-// Load the products saved from the Admin Dashboard/database.
-async function loadProducts(){
+async function loadProductsFromServer(){
   try{
-    const res = await fetch('/api/products', { cache:'no-store' });
-    const data = await res.json();
-    if(!data.success) throw new Error(data.message || 'Could not load products');
-
-    products = (data.products || []).map(p => ({
+    const response=await fetch("/api/products",{cache:"no-store"});
+    const data=await response.json();
+    if(!response.ok || !Array.isArray(data.products)) throw new Error(data.message||"Product API failed");
+    products=data.products.map(p=>({
       ...p,
-      id: Number(p.id),
-      price: Number(p.price || 0),
-      mrp: Number(p.mrp || 0),
-      stock: Number(p.stock || 0),
-      tag: String(p.category || p.brand || 'SUPPLEMENT').toUpperCase(),
-      icon: p.image ? '' : (String(p.category || '').toLowerCase().includes('protein') ? '🥤' :
-             String(p.category || '').toLowerCase().includes('creatine') ? '⚡' :
-             String(p.category || '').toLowerCase().includes('gainer') ? '🏋️' : '💊'),
-      desc: [p.brand, p.flavor, p.size].filter(Boolean).join(' • ') || p.description || ''
+      tag:String(p.category||"SUPPLEMENT").toUpperCase(),
+      icon:p.category==="Creatine"?"⚡":p.category==="Mass Gainer"?"🏋️":p.category==="Pre-Workout"?"🔥":"🥤",
+      desc:p.description||`${p.brand} ${p.name}`,
+      stock:Number(p.stock||0)
     }));
-
-    // Remove cart items for products that no longer exist/are inactive.
-    cart = cart.filter(item => products.some(p => p.id === Number(item.id)));
-    renderBrandNavigation();
-    renderProducts();
-    renderCart();
-  }catch(err){
-    console.error('PRODUCT LOAD ERROR:', err);
-    document.getElementById('products').innerHTML =
-      '<p style="color:#99a3b3">Products could not be loaded. Please refresh the page.</p>';
+  }catch(error){
+    console.error("PRODUCT LOAD ERROR:",error);
   }
+  populateProductFilters();
+  renderProducts();
+  renderCart();
 }
+
 
 /* =====================================================
    CART
@@ -1173,25 +1154,19 @@ renderCart();
 
 
 function add(id){
+  const product=products.find(p=>Number(p.id)===Number(id));
+  if(!product){ alert("Product is not available."); return; }
+  const stock=Number(product.stock||0);
+  if(stock<=0){ alert("This product is out of stock."); return; }
 
-let item =
-cart.find(i=>i.id===id);
-
-if(item){
-
-item.qty++;
-
-}else{
-
-cart.push({
- id:id,
- qty:1
-});
-
-}
-
-save();
-
+  let item=cart.find(i=>Number(i.id)===Number(id));
+  if(item){
+    if(item.qty>=stock){ alert("Only "+stock+" item(s) available."); return; }
+    item.qty++;
+  }else{
+    cart.push({id:Number(id),qty:1});
+  }
+  save();
 }
 
 
@@ -1220,225 +1195,33 @@ save();
    PRODUCTS
 ===================================================== */
 
-let selectedBrand = "ALL";
-let selectedCategory = "ALL";
-
-function normalizeText(value){
-  return String(value || "").trim();
-}
-
-function brandKey(value){
-  return normalizeText(value).toLowerCase();
-}
-
-function categoryKey(value){
-  return normalizeText(value).toLowerCase();
-}
-
-function brandIcon(brand){
-  const b = brandKey(brand);
-  if(b.includes("ripped")) return "🔥";
-  if(b.includes("transformium")) return "⚡";
-  if(b.includes("dalaso") || b.includes("dallas")) return "💪";
-  if(b.includes("hypertrophy")) return "🏋️";
-  return "🥤";
-}
-
-function displayCategory(category){
-  const c = normalizeText(category);
-  if(!c) return "Other";
-  return c
-    .replace(/mass\s*gainer/i,"Mass Gainer")
-    .replace(/pre[-\s]?workout/i,"Pre-Workout")
-    .replace(/fat[-\s]?burner/i,"Fat Burner")
-    .replace(/whey\s*protein/i,"Whey Protein")
-    .replace(/whey\s*isolate/i,"Whey Isolate");
-}
-
-function getBrands(){
-  const map = new Map();
-  products.forEach(p=>{
-    const brand = normalizeText(p.brand) || "Other";
-    const key = brandKey(brand);
-    if(!map.has(key)) map.set(key, brand);
-  });
-  return [...map.values()].sort((a,b)=>a.localeCompare(b));
-}
-
-function getCategoriesForBrand(brand){
-  const map = new Map();
-  products
-    .filter(p => selectedBrand === "ALL" || brandKey(p.brand) === brandKey(brand))
-    .forEach(p=>{
-      const raw = normalizeText(p.category) || "Other";
-      const key = categoryKey(raw);
-      if(!map.has(key)) map.set(key, displayCategory(raw));
-    });
-  return [...map.values()].sort((a,b)=>a.localeCompare(b));
-}
-
-function renderBrandNavigation(){
-  const grid = document.getElementById("brandGrid");
-  if(!grid) return;
-
-  const brands = getBrands();
-
-  if(!brands.length){
-    grid.innerHTML = '<p style="color:#99a3b3">No brands available yet.</p>';
-    document.getElementById("categoryBar").style.display = "none";
-    return;
-  }
-
-  grid.innerHTML = `
-    <div class="brandCard ${selectedBrand==="ALL" ? "active" : ""}" onclick="selectBrand('ALL')">
-      <div class="brandLogo">🛒</div>
-      <h3>All Brands</h3>
-      <p>${products.length} product${products.length===1?"":"s"}</p>
-    </div>
-    ${brands.map(brand=>{
-      const count = products.filter(p=>brandKey(p.brand)===brandKey(brand)).length;
-      return `
-        <div class="brandCard ${brandKey(selectedBrand)===brandKey(brand) ? "active" : ""}"
-             onclick='selectBrand(${JSON.stringify(brand)})'>
-          <div class="brandLogo">${brandIcon(brand)}</div>
-          <h3>${brand}</h3>
-          <p>${count} product${count===1?"":"s"}</p>
-        </div>
-      `;
-    }).join("")}
-  `;
-
-  renderCategoryNavigation();
-}
-
-function renderCategoryNavigation(){
-  const bar = document.getElementById("categoryBar");
-  if(!bar) return;
-
-  const categories = getCategoriesForBrand(selectedBrand);
-
-  bar.style.display = "flex";
-  bar.innerHTML = `
-    <button class="categoryBtn ${selectedCategory==="ALL" ? "active" : ""}"
-            data-category="ALL"
-            onclick="selectCategory('ALL')">
-      All Products
-    </button>
-    ${categories.map(category=>`
-      <button class="categoryBtn ${categoryKey(selectedCategory)===categoryKey(category) ? "active" : ""}"
-              data-category="${category.replace(/"/g,'&quot;')}"
-              onclick='selectCategory(${JSON.stringify(category)})'>
-        ${category}
-      </button>
-    `).join("")}
-  `;
-
-  // If the selected category no longer exists for this brand, reset it.
-  if(selectedCategory !== "ALL" &&
-     !categories.some(c=>categoryKey(c)===categoryKey(selectedCategory))){
-    selectedCategory = "ALL";
-  }
-}
-
-function selectBrand(brand){
-  selectedBrand = brand;
-  selectedCategory = "ALL";
-  renderBrandNavigation();
-  renderProducts();
-
-  document.getElementById("shop")?.scrollIntoView({
-    behavior:"smooth",
-    block:"start"
-  });
-}
-
-function selectCategory(category){
-  selectedCategory = category;
-  renderCategoryNavigation();
-  renderProducts();
-
-  document.getElementById("shop")?.scrollIntoView({
-    behavior:"smooth",
-    block:"start"
-  });
-}
-
-function productMatches(p){
-  const brandMatch =
-    selectedBrand === "ALL" ||
-    brandKey(p.brand) === brandKey(selectedBrand);
-
-  const categoryMatch =
-    selectedCategory === "ALL" ||
-    categoryKey(displayCategory(p.category)) === categoryKey(selectedCategory);
-
-  return brandMatch && categoryMatch;
-}
-
 function renderProducts(){
-  const visibleProducts = products.filter(productMatches);
-
-  const title = document.getElementById("productSectionTitle");
-  const subtitle = document.getElementById("productSectionSubtitle");
-
-  if(title){
-    title.textContent =
-      selectedBrand === "ALL"
-        ? "All Supplements"
-        : selectedCategory === "ALL"
-          ? selectedBrand
-          : `${selectedBrand} — ${selectedCategory}`;
-  }
-
-  if(subtitle){
-    subtitle.textContent =
-      `${visibleProducts.length} product${visibleProducts.length===1?"":"s"} available`;
-  }
-
-  const container = document.getElementById("products");
-
-  if(!visibleProducts.length){
-    container.innerHTML = `
-      <div style="grid-column:1/-1;padding:30px;text-align:center;color:#99a3b3;">
-        No products found in this category yet.
-      </div>
-    `;
-  }else{
-    container.innerHTML = visibleProducts.map(p => `
+  document.getElementById("products").innerHTML = products.map(p => {
+    const stock=Number(p.stock||0);
+    const soldOut=stock<=0;
+    const discount=Number(p.discount||0);
+    const image=p.image
+      ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" style="width:100%;height:205px;object-fit:contain;padding:18px" onerror="this.style.display='none';this.parentElement.innerHTML='${esc(p.icon||"🥤")}'">`
+      : `${p.icon||"🥤"}`;
+    return `
       <article class="product">
-        <div class="pic">
-          ${p.image
-            ? `<img src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain;border-radius:12px;">`
-            : p.icon}
-        </div>
-
+        <div class="pic">${image}</div>
         <div class="pbody">
-          <span class="tag">${displayCategory(p.category || p.brand)}</span>
-
-          <h3>${p.name}</h3>
-
-          <p>
-            ${[
-              p.brand,
-              p.flavor,
-              p.size
-            ].filter(Boolean).join(" • ") || p.description || ""}
-          </p>
-
-          <div class="price">${money(p.price)}</div>
-
-          <button
-            class="buy"
-            onclick="add(${p.id})">
-            Add to Cart
-          </button>
+          <span class="tag">${esc(p.brand||"")}${p.tag?" • "+esc(p.tag):""}</span>
+          <h3>${esc(p.name)}</h3>
+          <p>${esc(p.desc||"")}${p.size?"<br><b>"+esc(p.size)+"</b>":""}${p.flavor?" • "+esc(p.flavor):""}</p>
+          <div class="price">
+            ${Number(p.mrp)>Number(p.price)?`<span style="font-size:12px;color:#7f8998;text-decoration:line-through;margin-right:7px">${money(p.mrp)}</span>`:""}
+            <strong>${money(p.price)}</strong>
+            ${Number(p.mrp)>Number(p.price)?`<span style="font-size:11px;color:#52e39a;margin-left:7px">20% OFF</span>`:""}
+          </div>
+          <button class="buy" ${soldOut?"disabled":""} onclick="add(${p.id})">${soldOut?"Out of Stock":"Add to Cart"}</button>
         </div>
-      </article>
-    `).join("");
-  }
-
-  document.getElementById("cartCount").textContent = count();
+      </article>`;
+  }).join("");
+  document.getElementById("cartCount").textContent=count();
 }
+
 
 /* =====================================================
    CART
@@ -2912,8 +2695,9 @@ overlay.style.display="none";
    INITIAL LOAD
 ===================================================== */
 
+renderProducts();
+
 renderCart();
-loadProducts();
 
 me().then(user=>{
 
