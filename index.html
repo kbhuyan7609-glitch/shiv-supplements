@@ -1108,6 +1108,9 @@ async function loadProductsFromServer(){
 let cart =
 JSON.parse(localStorage.getItem("shiv_cart") || "[]");
 
+let appliedCoupon = "";
+let couponDiscount = 0;
+
 
 const money = n =>
 "₹" + Number(n).toLocaleString("en-IN");
@@ -1123,6 +1126,9 @@ return sum +
 (product ? product.price * item.qty : 0);
 
 },0);
+
+
+const checkoutTotal = () => Math.max(0, total() - Number(couponDiscount || 0));
 
 
 const count = () =>
@@ -1888,6 +1894,27 @@ function formatOrderDate(value){
 }
 
 /* =====================================================
+   COUPONS
+===================================================== */
+
+async function applyCoupon(){
+  const code=(document.getElementById("couponCode")?.value||"").trim().toUpperCase();
+  if(!code)return alert("Enter a coupon code.");
+  try{
+    const r=await fetch("/api/apply-coupon",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code,subtotal:total()})});
+    const data=await r.json();
+    if(!r.ok||!data.success){ appliedCoupon=""; couponDiscount=0; updateCheckoutTotal(); return alert(data.message||"Invalid coupon code"); }
+    appliedCoupon=data.coupon; couponDiscount=Number(data.discount||0); updateCheckoutTotal();
+    const msg=document.getElementById("couponMessage"); if(msg)msg.textContent=`✓ ${appliedCoupon} applied — You save ${money(couponDiscount)}`;
+  }catch(e){ console.error("COUPON ERROR",e); alert("Unable to apply coupon. Please try again."); }
+}
+
+function updateCheckoutTotal(){
+  const el=document.getElementById("checkoutTotal"); if(el)el.innerHTML=`Payable: ${money(checkoutTotal())}`;
+  const dis=document.getElementById("couponDiscount"); if(dis)dis.innerHTML=couponDiscount>0?`Coupon discount: −${money(couponDiscount)}`:"";
+}
+
+/* =====================================================
    CHECKOUT
 ===================================================== */
 
@@ -1922,7 +1949,8 @@ return;
 
 
 closeM("cartModal");
-
+appliedCoupon="";
+couponDiscount=0;
 
 document
 .getElementById("checkoutArea")
@@ -1985,7 +2013,13 @@ placeholder="Full address with PIN code">
 </div>
 
 
-<div class="total">
+<div class="field" style="margin-top:14px">
+<label>Coupon Code</label>
+<div style="display:flex;gap:8px"><input id="couponCode" placeholder="WELCOME10 or 1STORDER10" style="flex:1"><button type="button" class="primary" onclick="applyCoupon()" style="white-space:nowrap">Apply</button></div>
+<p id="couponMessage" style="color:#52e39a;font-size:12px;margin:7px 0 0"></p>
+</div>
+<div id="couponDiscount" style="color:#52e39a;font-size:13px;margin-top:8px"></div>
+<div class="total" id="checkoutTotal">
 Payable: ${money(total())}
 </div>
 
@@ -2109,7 +2143,8 @@ address:address,
 
 items:items,
 
-amount:total()
+amount:checkoutTotal(),
+couponCode:appliedCoupon
 
 })
 
@@ -2695,6 +2730,8 @@ overlay.style.display="none";
 ===================================================== */
 
 loadProductsFromServer();
+
+renderCart();
 
 me().then(user=>{
 
