@@ -721,6 +721,9 @@ footer{
 
 /* CUSTOMER ACCOUNT / ORDERS */
 .accountActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.orderHistory{margin-top:22px}.orderHistoryHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.orderHistoryHead h3{margin:0}.orderRefresh{border:1px solid #3a424f;background:#151b23;color:#fff;border-radius:9px;padding:8px 12px;font-weight:800}.orderCard{background:#0b1016;border:1px solid #303a47;border-radius:14px;padding:16px;margin:12px 0}.orderCardTop{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}.orderId{color:#ffd45c;font-weight:950;font-size:17px}.orderDate{color:#7f8998;font-size:12px;margin-top:4px}.orderStatus{display:inline-block;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:950;letter-spacing:.3px}.orderStatus.pending{background:#3d2d05;color:#ffd45c}.orderStatus.paid{background:#0b3b24;color:#52e39a}.orderStatus.processing{background:#172d54;color:#7db2ff}.orderStatus.shipped{background:#073b58;color:#55c7ff}.orderStatus.delivered{background:#243b12;color:#a0f56a}.orderStatus.cancelled{background:#48151a;color:#ff777f}.orderItems{margin-top:12px;border-top:1px solid #252d38}.orderItem{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #1c232d;font-size:13px}.orderItem:last-child{border-bottom:0}.orderTotal{margin-top:12px;font-size:18px;font-weight:950;color:#ffd45c}.orderPayment{margin-top:10px;color:#aeb7c4;font-size:12px;line-height:1.6}.orderEmpty{color:#99a3b3;background:#0b1016;border:1px dashed #343d49;border-radius:12px;padding:18px;text-align:center}
+
+/* Shiv Supplements premium enhancements */
+.logoSpotlight{max-width:1240px;margin:0 auto;padding:24px 20px 5px}.logoSpotlightInner{border:1px solid #3b3320;background:linear-gradient(135deg,#17140d,#0d1117);border-radius:22px;padding:18px 22px;display:flex;align-items:center;gap:18px;box-shadow:0 18px 55px #0007}.logoSpotlight img{width:74px;height:74px;object-fit:contain;filter:drop-shadow(0 8px 18px #000)}.logoSpotlight strong{font-size:18px}.logoSpotlight p{margin:4px 0 0;color:var(--muted);font-size:13px}.logoSpotlight .miniOffer{margin-left:auto;background:#2a210b;color:#ffd86d;border:1px solid #5b4717;padding:9px 12px;border-radius:999px;font-weight:950;font-size:12px}.shopTools{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}.shopTools input,.shopTools select{background:#11161e;color:#fff;border:1px solid #343c49;padding:11px 12px;border-radius:10px;outline:none}.shopTools input{min-width:240px;flex:1}.shopTools input:focus,.shopTools select:focus{border-color:var(--gold);box-shadow:0 0 0 3px #f7b51b18}.offerCodes{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.codeChip{background:#0d1219;border:1px dashed #66531d;color:#ffd86d;border-radius:10px;padding:9px 12px;font-size:12px;font-weight:900}.couponBox{margin:16px 0;padding:15px;border:1px solid #343c49;background:#0c1118;border-radius:14px}.couponRow{display:flex;gap:8px}.couponRow input{flex:1}.couponRow button{white-space:nowrap}.couponMsg{font-size:12px;margin-top:8px;color:#99a3b3}.couponMsg.ok{color:#52e39a}.couponMsg.err{color:#ff7b7b}.priceSummary{display:grid;gap:6px;margin:14px 0}.summaryLine{display:flex;justify-content:space-between;color:#cbd1dc;font-size:14px}.summaryLine.discount{color:#52e39a;font-weight:900}.summaryLine.final{font-size:19px;font-weight:950;color:#fff;border-top:1px solid #343c49;padding-top:10px;margin-top:4px}@media(max-width:700px){.logoSpotlightInner{padding:15px;flex-wrap:wrap}.logoSpotlight .miniOffer{margin-left:0}.couponRow{flex-direction:column}.couponRow button{width:100%}.shopTools input{min-width:100%}}
 </style>
 </head>
 
@@ -805,6 +808,8 @@ Create Account
 </header>
 
 
+<div class="logoSpotlight"><div class="logoSpotlightInner"><img src="logo.png" alt="Shiv Supplements official logo"><div><strong>SHIV SUPPLEMENTS</strong><p>Premium sports nutrition • Trusted products • Pan-India delivery</p></div><span class="miniOffer">WELCOME10 • 10% OFF</span></div></div>
+
 <section id="categories">
 
 <div class="head">
@@ -865,14 +870,7 @@ Get Full List →
 </div>
 
 
-<div style="display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px">
-  <select id="brandFilter" onchange="applyProductFilters()" style="background:#11161e;color:#fff;border:1px solid #343c49;padding:10px;border-radius:10px">
-    <option value="">All Brands</option>
-  </select>
-  <select id="categoryFilter" onchange="applyProductFilters()" style="background:#11161e;color:#fff;border:1px solid #343c49;padding:10px;border-radius:10px">
-    <option value="">All Categories</option>
-  </select>
-</div>
+<div class="shopTools"><input id="productSearch" oninput="applyProductFilters()" placeholder="🔎 Search product, brand or category..."><select id="brandFilter" onchange="applyProductFilters()"><option value="">All Brands</option></select><select id="categoryFilter" onchange="applyProductFilters()"><option value="">All Categories</option></select><select id="sortFilter" onchange="applyProductFilters()"><option value="featured">Featured</option><option value="priceLow">Price: Low to High</option><option value="priceHigh">Price: High to Low</option><option value="discount">Biggest Discount</option></select></div>
 <div class="products" id="products"></div>
 
 </section>
@@ -885,7 +883,7 @@ Get Full List →
 <div>
 <h2>🔥 Exclusive Store Offers</h2>
 <p>
-Ask us for today's prices, combo deals and available stock.
+Save more with our store coupons. One coupon per order.
 </p>
 </div>
 
@@ -953,6 +951,8 @@ target="_blank">
 • +91 81449 89064
 </footer>
 
+
+<button id="backTop" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="position:fixed;right:18px;bottom:78px;z-index:30;display:none;border:1px solid #454e5b;background:#11161e;color:#fff;width:42px;height:42px;border-radius:50%;font-weight:900">↑</button>
 
 <a
 class="wa"
@@ -1044,17 +1044,21 @@ const QR_IMAGE = "qr.png";
 
 // Stores the current UPI order ID so it can never be lost between screens.
 let currentUPIOrderId = null;
+let appliedCoupon = null;
+let appliedDiscount = 0;
 
 
 
 function applyProductFilters(){
   const brand=document.getElementById("brandFilter")?.value||"";
   const category=document.getElementById("categoryFilter")?.value||"";
-  const filtered=products.filter(p=>(!brand||p.brand===brand)&&(!category||p.category===category));
-  const original=products;
-  products=filtered;
-  renderProducts();
-  products=original;
+  const q=(document.getElementById("productSearch")?.value||"").trim().toLowerCase();
+  const sort=document.getElementById("sortFilter")?.value||"featured";
+  let filtered=products.filter(p=>{const hay=[p.name,p.brand,p.category,p.flavor,p.size].filter(Boolean).join(" ").toLowerCase();return (!brand||p.brand===brand)&&(!category||p.category===category)&&(!q||hay.includes(q));});
+  if(sort==="priceLow") filtered.sort((a,b)=>Number(a.price)-Number(b.price));
+  else if(sort==="priceHigh") filtered.sort((a,b)=>Number(b.price)-Number(a.price));
+  else if(sort==="discount") filtered.sort((a,b)=>Number(b.discount||0)-Number(a.discount||0));
+  renderProducts(filtered);
 }
 
 function populateProductFilters(){
@@ -1195,8 +1199,8 @@ save();
    PRODUCTS
 ===================================================== */
 
-function renderProducts(){
-  document.getElementById("products").innerHTML = products.map(p => {
+function renderProducts(list=products){
+  document.getElementById("products").innerHTML = list.map(p => {
     const stock=Number(p.stock||0);
     const soldOut=stock<=0;
     const discount=Number(p.discount||0);
@@ -1922,7 +1926,7 @@ return;
 
 
 closeM("cartModal");
-
+appliedCoupon=null;appliedDiscount=0;
 
 document
 .getElementById("checkoutArea")
@@ -1985,16 +1989,7 @@ placeholder="Full address with PIN code">
 </div>
 
 
-<div class="total">
-Payable: ${money(total())}
-</div>
-
-
-<button
-class="primary"
-onclick="createUPIOrder()">
-Create Order & Pay by UPI
-</button>
+<div class="couponBox"><b>🎟️ Have a coupon?</b><div class="couponRow" style="margin-top:10px"><input id="couponCode" placeholder="Enter WELCOME10 or 1STORDER10" maxlength="20"><button class="secondary" type="button" onclick="applyCoupon()">Apply Coupon</button></div><div id="couponMsg" class="couponMsg">WELCOME10 • 10% OFF</div></div><div id="checkoutSummary" class="priceSummary"></div><button class="primary" onclick="createUPIOrder()">Create Order & Pay by UPI</button>
 
 <p style="color:#99a3b3;font-size:12px">
 After creating the order, scan the QR code and pay the exact amount.
@@ -2002,11 +1997,14 @@ Then enter your UTR/reference number.
 </p>
 
 `;
-
+renderCheckoutSummary();
 show("checkoutModal");
 
 }
 
+
+function renderCheckoutSummary(){const subtotal=total(),discount=Number(appliedDiscount||0),final=Math.max(0,subtotal-discount),el=document.getElementById("checkoutSummary");if(!el)return;el.innerHTML=`<div class="summaryLine"><span>Subtotal</span><b>${money(subtotal)}</b></div>${discount>0?`<div class="summaryLine discount"><span>Coupon ${esc(appliedCoupon||"")}</span><b>- ${money(discount)}</b></div>`:""}<div class="summaryLine final"><span>Total Payable</span><b>${money(final)}</b></div>`;}
+async function applyCoupon(){const input=document.getElementById("couponCode"),msg=document.getElementById("couponMsg"),code=(input?.value||"").trim().toUpperCase();if(!code){msg.textContent="Enter a coupon code.";msg.className="couponMsg err";return;}try{const response=await fetch("/api/coupons/validate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code,subtotal:total()})});const data=await response.json();if(!response.ok||!data.success)throw new Error(data.message||"Invalid coupon");appliedCoupon=data.code;appliedDiscount=Number(data.discount||0);msg.textContent=`✓ ${data.message} — You save ${money(appliedDiscount)}`;msg.className="couponMsg ok";renderCheckoutSummary();}catch(e){appliedCoupon=null;appliedDiscount=0;msg.textContent=e.message||"Invalid coupon";msg.className="couponMsg err";renderCheckoutSummary();}}
 
 /* =====================================================
    CREATE UPI ORDER
@@ -2108,8 +2106,8 @@ email:email,
 address:address,
 
 items:items,
-
-amount:total()
+couponCode:appliedCoupon || "",
+amount:Math.max(0,total()-Number(appliedDiscount||0))
 
 })
 
@@ -2689,6 +2687,8 @@ overlay.style.display="none";
 
 });
 
+
+window.addEventListener("scroll",()=>{const b=document.getElementById("backTop");if(b)b.style.display=window.scrollY>500?"block":"none";});
 
 /* =====================================================
    INITIAL LOAD
