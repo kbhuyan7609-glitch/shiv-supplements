@@ -4,7 +4,6 @@ const express = require("express");
 const path = require("path");
 const crypto = require("crypto");
 const Database = require("better-sqlite3");
-const Razorpay = require("razorpay");
 const session = require("express-session");
 
 const app = express();
@@ -42,16 +41,9 @@ CREATE TABLE IF NOT EXISTS orders (
   status TEXT DEFAULT 'pending',
   razorpay_order_id TEXT,
   razorpay_payment_id TEXT,
-  coupon_code TEXT,
-  discount_paise INTEGER NOT NULL DEFAULT 0,
   created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 `);
-
-const orderCols = db.prepare("PRAGMA table_info(orders)").all();
-const hasOrderCol = (name) => orderCols.some(c => c.name === name);
-if (!hasOrderCol("coupon_code")) db.exec("ALTER TABLE orders ADD COLUMN coupon_code TEXT");
-if (!hasOrderCol("discount_paise")) db.exec("ALTER TABLE orders ADD COLUMN discount_paise INTEGER NOT NULL DEFAULT 0");
 
 /* =========================
    EXPRESS
@@ -77,22 +69,6 @@ app.use(
 );
 
 app.use(express.static(__dirname));
-
-/* =========================
-   RAZORPAY
-========================= */
-
-let razorpay = null;
-
-if (
-  process.env.RAZORPAY_KEY_ID &&
-  process.env.RAZORPAY_KEY_SECRET
-) {
-  razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET
-  });
-}
 
 /* =========================
    HELPERS
@@ -487,215 +463,102 @@ app.post("/api/verify-otp", async (req, res) => {
 });
 
 /* =========================
-   CREATE RAZORPAY ORDER
+   UPI ORDERS — NO RAZORPAY
 ========================= */
 
-function calculateCoupon(req, code, subtotal) {
-  const normalized = String(code || "").trim().toUpperCase();
-  const base = Number(subtotal);
-  if (!normalized) return { code: "", discount: 0, total: base };
-  if (!Number.isFinite(base) || base <= 0) throw Object.assign(new Error("Invalid order amount"), { status: 400 });
-  if (!["WELCOME10", "1STORDER10"].includes(normalized)) throw Object.assign(new Error("Invalid coupon code"), { status: 400 });
-  if (normalized === "1STORDER10") {
-    if (!req.session.user) throw Object.assign(new Error("Please login first"), { status: 401 });
-    const used = db.prepare("SELECT id FROM orders WHERE user_id=? LIMIT 1").get(req.session.user.id);
-    if (used) throw Object.assign(new Error("1STORDER10 is available only on your first order"), { status: 400 });
-  }
-  const discount = Math.round(base * 0.10 * 100) / 100;
-  return { code: normalized, discount, total: Math.max(0, base - discount) };
-}
-
-app.post("/api/apply-coupon", requireLogin, (req, res) => {
+app.post("/api/create-order", requireLogin, (req, res) => {
   try {
-    const result = calculateCoupon(req, req.body.code, req.body.subtotal);
-    res.json({ success: true, coupon: result.code, discount: result.discount, total: result.total });
-  } catch (error) {
-    res.status(error.status || 500).json({ success: false, message: error.message || "Could not apply coupon" });
-  }
-});
+    const { name, phone, email, address, items, amount } = req.body;
 
-app.post("/api/create-order", async (req, res) => {
-  try {
-    if (!razorpay) {
-      return res.status(500).json({
-        success: false,
-        message: "Razorpay is not configured"
-      });
+    if (!name || !phone || !email || !address || !Array.isArray(items) || !items.length || amount === undefined) {
+      return res.status(400).json({ success:false, message:"All order details are required" });
     }
 
-    const {
-      name,
-      phone,
-      email,
-      address,
-      items,
-      amount
-    } = req.body;
-
-    if (
-      !name ||
-      !phone ||
-      !email ||
-      !address ||
-      !items ||
-      amount === undefined
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "All order details are required"
-      });
-    }
-
+    const cleanPhone = normalizePhone(phone);
+    const cleanEmail = String(email).trim().toLowerCase();
     const numericAmount = Number(amount);
 
-    if (
-      !Number.isFinite(numericAmount) ||
-      numericAmount <= 0
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid amount"
-      });
+    if (!validPhone(cleanPhone)) {
+      return res.status(400).json({ success:false, message:"Enter a valid 10-digit mobile number" });
+    }
+    if (!validEmail(cleanEmail)) {
+      return res.status(400).json({ success:false, message:"Enter a valid email address" });
+    }
+    if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
+      return res.status(400).json({ success:false, message:"Invalid order amount" });
     }
 
-    const coupon = calculateCoupon(req, couponCode, numericAmount);
-    const finalAmount = coupon.total;
-    if (!Number.isFinite(finalAmount) || finalAmount <= 0) return res.status(400).json({ success: false, message: "Invalid final order amount" });
-    const amountPaise = Math.round(finalAmount * 100);
-    const discountPaise = Math.round(coupon.discount * 100);
+    const cleanItems = items.map(item => ({
+      id: Number(item.id),
+      name: String(item.name || ""),
+      price: Number(item.price),
+      qty: Math.max(1, Number(item.qty || 1))
+    })).filter(item => item.id > 0 && item.name && Number.isFinite(item.price) && item.price > 0);
 
-    const razorpayOrder = await razorpay.orders.create({
-      amount: amountPaise,
-      currency: "INR",
-      receipt:
-        "shiv_" +
-        Date.now() +
-        "_" +
-        crypto.randomBytes(3).toString("hex")
-    });
-
-    const result = db
-      .prepare(
-        `
-        INSERT INTO orders
-        (
-          user_id,
-          name,
-          phone,
-          email,
-          address,
-          items_json,
-          amount_paise,
-          status,
-          razorpay_order_id
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `
-      )
-      .run(
-        req.session.user ? req.session.user.id : null,
-        String(name).trim(),
-        normalizePhone(phone),
-        String(email).trim().toLowerCase(),
-        String(address).trim(),
-        JSON.stringify(items),
-        amountPaise,
-        "pending",
-        razorpayOrder.id
-      );
-
-    res.json({
-      success: true,
-      order: {
-        id: result.lastInsertRowid,
-        razorpayOrderId: razorpayOrder.id,
-        amount: razorpayOrder.amount,
-        currency: razorpayOrder.currency
-      }
-    });
-  } catch (error) {
-    console.error("CREATE ORDER ERROR:", error);
-
-    res.status(500).json({
-      success: false,
-      message: "Could not create payment order"
-    });
-  }
-});
-
-/* =========================
-   VERIFY RAZORPAY PAYMENT
-========================= */
-
-app.post("/api/verify-payment", (req, res) => {
-  try {
-    const {
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature
-    } = req.body;
-
-    if (
-      !razorpay_order_id ||
-      !razorpay_payment_id ||
-      !razorpay_signature
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Payment details are incomplete"
-      });
+    if (!cleanItems.length) {
+      return res.status(400).json({ success:false, message:"Invalid order items" });
     }
 
-    if (!process.env.RAZORPAY_KEY_SECRET) {
-      return res.status(500).json({
-        success: false,
-        message: "Razorpay secret is not configured"
-      });
-    }
+    const amountPaise = Math.round(numericAmount * 100);
+    const manualReference = "UPI-" + Date.now() + "-" + crypto.randomBytes(3).toString("hex");
 
-    const generatedSignature = crypto
-      .createHmac(
-        "sha256",
-        process.env.RAZORPAY_KEY_SECRET
-      )
-      .update(
-        razorpay_order_id +
-          "|" +
-          razorpay_payment_id
-      )
-      .digest("hex");
-
-    if (generatedSignature !== razorpay_signature) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid payment signature"
-      });
-    }
-
-    db.prepare(
-      `
-      UPDATE orders
-      SET
-        status = 'paid',
-        razorpay_payment_id = ?
-      WHERE razorpay_order_id = ?
-      `
-    ).run(
-      razorpay_payment_id,
-      razorpay_order_id
+    const result = db.prepare(`
+      INSERT INTO orders (
+        user_id, name, phone, email, address, items_json,
+        amount_paise, status, razorpay_order_id, razorpay_payment_id
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?, NULL)
+    `).run(
+      req.session.user.id,
+      String(name).trim(),
+      cleanPhone,
+      cleanEmail,
+      String(address).trim(),
+      JSON.stringify(cleanItems),
+      amountPaise,
+      manualReference
     );
 
     res.json({
-      success: true,
-      message: "Payment verified successfully"
+      success:true,
+      message:"Order created. Pay by UPI and submit your UTR.",
+      order:{
+        id:Number(result.lastInsertRowid),
+        localOrderId:Number(result.lastInsertRowid),
+        orderReference:manualReference,
+        amount:numericAmount,
+        currency:"INR",
+        status:"pending"
+      }
     });
   } catch (error) {
-    console.error("PAYMENT VERIFY ERROR:", error);
+    console.error("CREATE UPI ORDER ERROR:", error);
+    res.status(500).json({ success:false, message:"Could not create order" });
+  }
+});
 
-    res.status(500).json({
-      success: false,
-      message: "Payment verification failed"
+app.post("/api/manual-order", requireLogin, (req, res) => {
+  try {
+    const orderId = Number(req.body.localOrderId || req.body.orderId || req.body.id);
+    const utr = String(req.body.utr || req.body.paymentRef || "").trim().slice(0, 100);
+
+    if (!Number.isInteger(orderId) || orderId <= 0 || utr.length < 6) {
+      return res.status(400).json({ success:false, message:"Order ID and UTR are required" });
+    }
+
+    const order = db.prepare("SELECT * FROM orders WHERE id = ? AND user_id = ?").get(orderId, req.session.user.id);
+    if (!order) return res.status(404).json({ success:false, message:"Order not found" });
+    if (order.status !== "pending") return res.status(400).json({ success:false, message:"This order is no longer pending" });
+
+    db.prepare("UPDATE orders SET razorpay_payment_id = ? WHERE id = ?").run(utr, orderId);
+
+    res.json({
+      success:true,
+      message:"UTR submitted. Your payment will be verified by the admin.",
+      order:{ id:orderId, status:"pending", paymentMethod:"UPI", paymentRef:utr }
     });
+  } catch (error) {
+    console.error("MANUAL UPI PAYMENT ERROR:", error);
+    res.status(500).json({ success:false, message:"Could not submit payment details" });
   }
 });
 
