@@ -718,6 +718,12 @@ footer{
     bottom:12px;
   }
 }
+
+/* CUSTOMER ACCOUNT / ORDERS */
+.accountActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.orderHistory{margin-top:22px}.orderHistoryHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.orderHistoryHead h3{margin:0}.orderRefresh{border:1px solid #3a424f;background:#151b23;color:#fff;border-radius:9px;padding:8px 12px;font-weight:800}.orderCard{background:#0b1016;border:1px solid #303a47;border-radius:14px;padding:16px;margin:12px 0}.orderCardTop{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}.orderId{color:#ffd45c;font-weight:950;font-size:17px}.orderDate{color:#7f8998;font-size:12px;margin-top:4px}.orderStatus{display:inline-block;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:950;letter-spacing:.3px}.orderStatus.pending{background:#3d2d05;color:#ffd45c}.orderStatus.paid{background:#0b3b24;color:#52e39a}.orderStatus.processing{background:#172d54;color:#7db2ff}.orderStatus.shipped{background:#073b58;color:#55c7ff}.orderStatus.delivered{background:#243b12;color:#a0f56a}.orderStatus.cancelled{background:#48151a;color:#ff777f}.orderItems{margin-top:12px;border-top:1px solid #252d38}.orderItem{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #1c232d;font-size:13px}.orderItem:last-child{border-bottom:0}.orderTotal{margin-top:12px;font-size:18px;font-weight:950;color:#ffd45c}.orderPayment{margin-top:10px;color:#aeb7c4;font-size:12px;line-height:1.6}.orderEmpty{color:#99a3b3;background:#0b1016;border:1px dashed #343d49;border-radius:12px;padding:18px;text-align:center}
+
+/* Shiv Supplements premium enhancements */
+.logoSpotlight{max-width:1240px;margin:0 auto;padding:24px 20px 5px}.logoSpotlightInner{border:1px solid #3b3320;background:linear-gradient(135deg,#17140d,#0d1117);border-radius:22px;padding:18px 22px;display:flex;align-items:center;gap:18px;box-shadow:0 18px 55px #0007}.logoSpotlight img{width:74px;height:74px;object-fit:contain;filter:drop-shadow(0 8px 18px #000)}.logoSpotlight strong{font-size:18px}.logoSpotlight p{margin:4px 0 0;color:var(--muted);font-size:13px}.logoSpotlight .miniOffer{margin-left:auto;background:#2a210b;color:#ffd86d;border:1px solid #5b4717;padding:9px 12px;border-radius:999px;font-weight:950;font-size:12px}.shopTools{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}.shopTools input,.shopTools select{background:#11161e;color:#fff;border:1px solid #343c49;padding:11px 12px;border-radius:10px;outline:none}.shopTools input{min-width:240px;flex:1}.shopTools input:focus,.shopTools select:focus{border-color:var(--gold);box-shadow:0 0 0 3px #f7b51b18}.offerCodes{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.codeChip{background:#0d1219;border:1px dashed #66531d;color:#ffd86d;border-radius:10px;padding:9px 12px;font-size:12px;font-weight:900}.couponBox{margin:16px 0;padding:15px;border:1px solid #343c49;background:#0c1118;border-radius:14px}.couponRow{display:flex;gap:8px}.couponRow input{flex:1}.couponRow button{white-space:nowrap}.couponMsg{font-size:12px;margin-top:8px;color:#99a3b3}.couponMsg.ok{color:#52e39a}.couponMsg.err{color:#ff7b7b}.priceSummary{display:grid;gap:6px;margin:14px 0}.summaryLine{display:flex;justify-content:space-between;color:#cbd1dc;font-size:14px}.summaryLine.discount{color:#52e39a;font-weight:900}.summaryLine.final{font-size:19px;font-weight:950;color:#fff;border-top:1px solid #343c49;padding-top:10px;margin-top:4px}@media(max-width:700px){.logoSpotlightInner{padding:15px;flex-wrap:wrap}.logoSpotlight .miniOffer{margin-left:0}.couponRow{flex-direction:column}.couponRow button{width:100%}.shopTools input{min-width:100%}}
 </style>
 </head>
 
@@ -802,6 +808,8 @@ Create Account
 </header>
 
 
+<div class="logoSpotlight"><div class="logoSpotlightInner"><img src="logo.png" alt="Shiv Supplements official logo"><div><strong>SHIV SUPPLEMENTS</strong><p>Premium sports nutrition • Trusted products • Pan-India delivery</p></div><span class="miniOffer">WELCOME10 • 10% OFF</span></div></div>
+
 <section id="categories">
 
 <div class="head">
@@ -861,6 +869,8 @@ Get Full List →
 
 </div>
 
+
+<div class="shopTools"><input id="productSearch" oninput="applyProductFilters()" placeholder="🔎 Search product, brand or category..."><select id="brandFilter" onchange="applyProductFilters()"><option value="">All Brands</option></select><select id="categoryFilter" onchange="applyProductFilters()"><option value="">All Categories</option></select><select id="sortFilter" onchange="applyProductFilters()"><option value="featured">Featured</option><option value="priceLow">Price: Low to High</option><option value="priceHigh">Price: High to Low</option><option value="discount">Biggest Discount</option></select></div>
 <div class="products" id="products"></div>
 
 </section>
@@ -873,7 +883,7 @@ Get Full List →
 <div>
 <h2>🔥 Exclusive Store Offers</h2>
 <p>
-Ask us for today's prices, combo deals and available stock.
+Save more with our store coupons. One coupon per order.
 </p>
 </div>
 
@@ -941,6 +951,8 @@ target="_blank">
 • +91 81449 89064
 </footer>
 
+
+<button id="backTop" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="position:fixed;right:18px;bottom:78px;z-index:30;display:none;border:1px solid #454e5b;background:#11161e;color:#fff;width:42px;height:42px;border-radius:50%;font-weight:900">↑</button>
 
 <a
 class="wa"
@@ -1012,6 +1024,7 @@ Login or create your account.
 
 
 <script>
+/* Shiv Supplements - UPI checkout fixed version 2026-08-23 */
 
 /* =====================================================
    SHIV SUPPLEMENTS
@@ -1025,94 +1038,71 @@ Login or create your account.
 
 const UPI_ID = "8144989064-3@ybl";
 
-const WHATSAPP_NUMBER = "918144989064";
-
-let currentCheckoutOrder = null;
-
 const STORE_NAME = "Shiv Supplements";
 
 const QR_IMAGE = "qr.png";
 
+// Stores the current UPI order ID so it can never be lost between screens.
+let currentUPIOrderId = null;
+let appliedCoupon = null;
+let appliedDiscount = 0;
+
+
+
+function applyProductFilters(){
+  const brand=document.getElementById("brandFilter")?.value||"";
+  const category=document.getElementById("categoryFilter")?.value||"";
+  const q=(document.getElementById("productSearch")?.value||"").trim().toLowerCase();
+  const sort=document.getElementById("sortFilter")?.value||"featured";
+  let filtered=products.filter(p=>{const hay=[p.name,p.brand,p.category,p.flavor,p.size].filter(Boolean).join(" ").toLowerCase();return (!brand||p.brand===brand)&&(!category||p.category===category)&&(!q||hay.includes(q));});
+  if(sort==="priceLow") filtered.sort((a,b)=>Number(a.price)-Number(b.price));
+  else if(sort==="priceHigh") filtered.sort((a,b)=>Number(b.price)-Number(a.price));
+  else if(sort==="discount") filtered.sort((a,b)=>Number(b.discount||0)-Number(a.discount||0));
+  renderProducts(filtered);
+}
+
+function populateProductFilters(){
+  const b=document.getElementById("brandFilter");
+  const c=document.getElementById("categoryFilter");
+  if(!b||!c)return;
+  const brands=[...new Set(products.map(p=>p.brand).filter(Boolean))].sort();
+  const cats=[...new Set(products.map(p=>p.category).filter(Boolean))].sort();
+  b.innerHTML='<option value="">All Brands</option>'+brands.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");
+  c.innerHTML='<option value="">All Categories</option>'+cats.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");
+}
 
 /* =====================================================
    PRODUCTS
 ===================================================== */
 
-const products = [
-
-{
- id:1,
- name:"Whey Protein",
- price:1999,
- tag:"PROTEIN",
- icon:"🥤",
- desc:"Multiple brands and flavours available."
-},
-
-{
- id:2,
- name:"Whey Isolate",
- price:2799,
- tag:"ISOLATE",
- icon:"💪",
- desc:"Premium protein option."
-},
-
-{
- id:3,
- name:"Creatine",
- price:899,
- tag:"STRENGTH",
- icon:"⚡",
- desc:"Multiple brands and sizes."
-},
-
-{
- id:4,
- name:"Mass Gainer",
- price:2499,
- tag:"MASS",
- icon:"🏋️",
- desc:"Multiple flavours available."
-},
-
-{
- id:5,
- name:"Pre-Workout",
- price:1299,
- tag:"PERFORMANCE",
- icon:"🔥",
- desc:"Training performance range."
-},
-
-{
- id:6,
- name:"Fat Burner",
- price:999,
- tag:"FITNESS",
- icon:"⚡",
- desc:"Fitness supplement range."
-},
-
-{
- id:7,
- name:"Multivitamin",
- price:699,
- tag:"ESSENTIALS",
- icon:"💊",
- desc:"Daily nutrition category."
-},
-
-{
- id:8,
- name:"Omega",
- price:799,
- tag:"ESSENTIALS",
- icon:"🧴",
- desc:"Available sizes and brands."
-}
-
+let products = [
+  {id:1,brand:"MuscleBlaze",name:"Biozyme Whey",category:"Whey Protein",flavor:"Chocolate",size:"1 kg",mrp:3999,price:2999,stock:10,tag:"WHEY PROTEIN",icon:"🥤",image:"",desc:"Premium whey protein."},
+  {id:2,brand:"Avvatar",name:"Whey Protein",category:"Whey Protein",flavor:"Malai Kulfi",size:"1 kg",mrp:3999,price:3199,stock:10,tag:"WHEY PROTEIN",icon:"💪",image:"",desc:"High-quality whey protein."},
+  {id:3,brand:"Optimum Nutrition",name:"Gold Standard Whey",category:"Whey Protein",flavor:"Double Rich Chocolate",size:"1 lb",mrp:2499,price:2199,stock:10,tag:"WHEY PROTEIN",icon:"🥛",image:"",desc:"Popular whey protein."},
+  {id:4,brand:"MuscleBlaze",name:"Creatine Monohydrate",category:"Creatine",flavor:"Unflavoured",size:"250 g",mrp:999,price:799,stock:15,tag:"CREATINE",icon:"⚡",image:"",desc:"Creatine monohydrate."},
+  {id:5,brand:"Avvatar",name:"Mass Gainer",category:"Mass Gainer",flavor:"Chocolate",size:"3 kg",mrp:3499,price:2899,stock:8,tag:"MASS GAINER",icon:"🏋️",image:"",desc:"Mass gainer for calorie surplus."},
+  {id:6,brand:"MuscleBlaze",name:"Pre Workout",category:"Pre-Workout",flavor:"Fruit Punch",size:"100 g",mrp:1499,price:1199,stock:8,tag:"PRE-WORKOUT",icon:"🔥",image:"",desc:"Pre-workout supplement."}
 ];
+
+async function loadProductsFromServer(){
+  try{
+    const response=await fetch("/api/products",{cache:"no-store"});
+    const data=await response.json();
+    if(!response.ok || !Array.isArray(data.products)) throw new Error(data.message||"Product API failed");
+    products=data.products.map(p=>({
+      ...p,
+      tag:String(p.category||"SUPPLEMENT").toUpperCase(),
+      icon:p.category==="Creatine"?"⚡":p.category==="Mass Gainer"?"🏋️":p.category==="Pre-Workout"?"🔥":"🥤",
+      desc:p.description||`${p.brand} ${p.name}`,
+      stock:Number(p.stock||0)
+    }));
+  }catch(error){
+    console.error("PRODUCT LOAD ERROR:",error);
+  }
+  populateProductFilters();
+  renderProducts();
+  renderCart();
+}
 
 
 /* =====================================================
@@ -1168,25 +1158,19 @@ renderCart();
 
 
 function add(id){
+  const product=products.find(p=>Number(p.id)===Number(id));
+  if(!product){ alert("Product is not available."); return; }
+  const stock=Number(product.stock||0);
+  if(stock<=0){ alert("This product is out of stock."); return; }
 
-let item =
-cart.find(i=>i.id===id);
-
-if(item){
-
-item.qty++;
-
-}else{
-
-cart.push({
- id:id,
- qty:1
-});
-
-}
-
-save();
-
+  let item=cart.find(i=>Number(i.id)===Number(id));
+  if(item){
+    if(item.qty>=stock){ alert("Only "+stock+" item(s) available."); return; }
+    item.qty++;
+  }else{
+    cart.push({id:Number(id),qty:1});
+  }
+  save();
 }
 
 
@@ -1215,51 +1199,30 @@ save();
    PRODUCTS
 ===================================================== */
 
-function renderProducts(){
-
-document.getElementById("products").innerHTML =
-
-products.map(p => `
-
-<article class="product">
-
-<div class="pic">
-${p.icon}
-</div>
-
-<div class="pbody">
-
-<span class="tag">
-${p.tag}
-</span>
-
-<h3>
-${p.name}
-</h3>
-
-<p>
-${p.desc}
-</p>
-
-<div class="price">
-${money(p.price)}
-</div>
-
-<button
-class="buy"
-onclick="add(${p.id})">
-Add to Cart
-</button>
-
-</div>
-
-</article>
-
-`).join("");
-
-document.getElementById("cartCount").textContent =
-count();
-
+function renderProducts(list=products){
+  document.getElementById("products").innerHTML = list.map(p => {
+    const stock=Number(p.stock||0);
+    const soldOut=stock<=0;
+    const discount=Number(p.discount||0);
+    const image=p.image
+      ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" style="width:100%;height:205px;object-fit:contain;padding:18px" onerror="this.style.display='none';this.parentElement.innerHTML='${esc(p.icon||"🥤")}'">`
+      : `${p.icon||"🥤"}`;
+    return `
+      <article class="product">
+        <div class="pic">${image}</div>
+        <div class="pbody">
+          <span class="tag">${esc(p.brand||"")}${p.tag?" • "+esc(p.tag):""}</span>
+          <h3>${esc(p.name)}</h3>
+          <p>${esc(p.desc||"")}${p.size?"<br><b>"+esc(p.size)+"</b>":""}${p.flavor?" • "+esc(p.flavor):""}</p>
+          <div class="price">${money(p.price)}
+            ${Number(p.mrp)>Number(p.price)?`<span style="font-size:12px;color:#7f8998;text-decoration:line-through;margin-left:7px">${money(p.mrp)}</span>`:""}
+            ${discount>0?`<span style="font-size:11px;color:#52e39a;margin-left:7px">${discount}% OFF</span>`:""}
+          </div>
+          <button class="buy" ${soldOut?"disabled":""} onclick="add(${p.id})">${soldOut?"Out of Stock":"Add to Cart"}</button>
+        </div>
+      </article>`;
+  }).join("");
+  document.getElementById("cartCount").textContent=count();
 }
 
 
@@ -1433,20 +1396,27 @@ ${esc(user.email)}
 
 </p>
 
-<button
-class="primary"
-onclick="closeM('accountModal');openCart()">
-Cart & Checkout
+<div class="accountActions">
+
+<button class="primary" onclick="closeM('accountModal');openCart()">
+🛒 Cart & Checkout
 </button>
 
-<button
-class="secondary"
-onclick="logout()">
-Logout
+<button class="secondary" onclick="loadMyOrders()">
+📦 My Orders
 </button>
+
+<button class="secondary" onclick="logout()">
+🚪 Logout
+</button>
+
+</div>
+
+<div id="ordersArea" class="orderHistory"></div>
 
 `;
 
+loadMyOrders();
 return;
 
 }
@@ -1865,6 +1835,63 @@ renderAccount();
 
 
 /* =====================================================
+   CUSTOMER ORDER HISTORY
+===================================================== */
+async function loadMyOrders(){
+  const area=document.getElementById("ordersArea");
+  if(!area)return;
+  area.innerHTML='<div class="orderEmpty">Loading your orders...</div>';
+  try{
+    const response=await fetch("/api/orders",{method:"GET",credentials:"same-origin",cache:"no-store"});
+    if(response.status===401){area.innerHTML='<div class="orderEmpty">Please login again to view your orders.</div>';return;}
+    const data=await response.json();
+    if(!response.ok)throw new Error(data.message||data.error||"Could not load orders.");
+    const orders=Array.isArray(data.orders)?data.orders:[];
+    if(!orders.length){area.innerHTML='<div class="orderHistoryHead"><h3>📦 My Orders</h3><button class="orderRefresh" onclick="loadMyOrders()">🔄</button></div><div class="orderEmpty">You haven\'t placed any orders yet.<br><br>Add products to your cart and place your first order.</div>';return;}
+    area.innerHTML='<div class="orderHistoryHead"><h3>📦 My Orders</h3><button class="orderRefresh" onclick="loadMyOrders()">🔄 Refresh</button></div>'+orders.map(renderCustomerOrder).join("");
+  }catch(error){
+    console.error("MY ORDERS ERROR:",error);
+    area.innerHTML='<div class="orderEmpty">❌ Could not load your orders.<br><small>'+esc(error.message||"Please try again.")+'</small><br><br><button class="orderRefresh" onclick="loadMyOrders()">Try Again</button></div>';
+  }
+}
+
+function renderCustomerOrder(order){
+  const orderId=order.id||order.order_id||"—";
+  const status=String(order.status||order.payment_status||"pending").toLowerCase();
+  const items=Array.isArray(order.items)?order.items:[];
+  const paise=Number(order.amount_paise);
+  let amount=Number(order.amount);
+  if(!Number.isFinite(amount))amount=Number(order.total);
+  if(!Number.isFinite(amount)&&Number.isFinite(paise))amount=paise/100;
+  if(!Number.isFinite(amount))amount=0;
+  const method=order.payment_method||"UPI";
+  const ref=order.payment_ref||"";
+  const itemHTML=items.length?items.map(item=>{const name=item.name||item.product_name||"Product";const qty=Number(item.qty||item.quantity||1);const price=Number(item.price||0);return '<div class="orderItem"><span>'+esc(name)+' × '+qty+'</span><span>'+money(price*qty)+'</span></div>';}).join(""): '<div class="orderItem"><span>Order items</span><span>—</span></div>';
+  return '<div class="orderCard"><div class="orderCardTop"><div><div class="orderId">Order #'+esc(orderId)+'</div><div class="orderDate">'+formatOrderDate(order.created_at)+'</div></div><span class="orderStatus '+orderStatusClass(status)+'">'+esc(orderStatusText(status))+'</span></div><div class="orderItems">'+itemHTML+'</div><div class="orderTotal">Total: '+money(amount)+'</div><div class="orderPayment">💳 Payment: '+esc(method)+'<br>'+(ref?'🔢 UTR: <b>'+esc(ref)+'</b>':'🔢 UTR: Not submitted yet')+'</div></div>';
+}
+
+function orderStatusClass(status){
+  if(status==="paid")return "paid";
+  if(status==="processing")return "processing";
+  if(status==="shipped")return "shipped";
+  if(status==="delivered")return "delivered";
+  if(status==="cancelled"||status==="canceled")return "cancelled";
+  return "pending";
+}
+function orderStatusText(status){
+  if(status==="paid")return "PAYMENT APPROVED";
+  if(status==="processing")return "PROCESSING";
+  if(status==="shipped")return "SHIPPED 🚚";
+  if(status==="delivered")return "DELIVERED ✅";
+  if(status==="cancelled"||status==="canceled")return "CANCELLED";
+  return "PAYMENT PENDING";
+}
+function formatOrderDate(value){
+  if(!value)return "";
+  try{const d=new Date(value);if(Number.isNaN(d.getTime()))return esc(value);return esc(d.toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short"}));}catch(e){return esc(value);}
+}
+
+/* =====================================================
    CHECKOUT
 ===================================================== */
 
@@ -1899,7 +1926,7 @@ return;
 
 
 closeM("cartModal");
-
+appliedCoupon=null;appliedDiscount=0;
 
 document
 .getElementById("checkoutArea")
@@ -1962,16 +1989,7 @@ placeholder="Full address with PIN code">
 </div>
 
 
-<div class="total">
-Payable: ${money(total())}
-</div>
-
-
-<button
-class="primary"
-onclick="createUPIOrder()">
-Create Order & Pay by UPI
-</button>
+<div class="couponBox"><b>🎟️ Have a coupon?</b><div class="couponRow" style="margin-top:10px"><input id="couponCode" placeholder="Enter WELCOME10 or 1STORDER10" maxlength="20"><button class="secondary" type="button" onclick="applyCoupon()">Apply Coupon</button></div><div id="couponMsg" class="couponMsg">WELCOME10 • 10% OFF</div></div><div id="checkoutSummary" class="priceSummary"></div><button class="primary" onclick="createUPIOrder()">Create Order & Pay by UPI</button>
 
 <p style="color:#99a3b3;font-size:12px">
 After creating the order, scan the QR code and pay the exact amount.
@@ -1979,11 +1997,14 @@ Then enter your UTR/reference number.
 </p>
 
 `;
-
+renderCheckoutSummary();
 show("checkoutModal");
 
 }
 
+
+function renderCheckoutSummary(){const subtotal=total(),discount=Number(appliedDiscount||0),final=Math.max(0,subtotal-discount),el=document.getElementById("checkoutSummary");if(!el)return;el.innerHTML=`<div class="summaryLine"><span>Subtotal</span><b>${money(subtotal)}</b></div>${discount>0?`<div class="summaryLine discount"><span>Coupon ${esc(appliedCoupon||"")}</span><b>- ${money(discount)}</b></div>`:""}<div class="summaryLine final"><span>Total Payable</span><b>${money(final)}</b></div>`;}
+async function applyCoupon(){const input=document.getElementById("couponCode"),msg=document.getElementById("couponMsg"),code=(input?.value||"").trim().toUpperCase();if(!code){msg.textContent="Enter a coupon code.";msg.className="couponMsg err";return;}try{const response=await fetch("/api/coupons/validate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code,subtotal:total()})});const data=await response.json();if(!response.ok||!data.success)throw new Error(data.message||"Invalid coupon");appliedCoupon=data.code;appliedDiscount=Number(data.discount||0);msg.textContent=`✓ ${data.message} — You save ${money(appliedDiscount)}`;msg.className="couponMsg ok";renderCheckoutSummary();}catch(e){appliedCoupon=null;appliedDiscount=0;msg.textContent=e.message||"Invalid coupon";msg.className="couponMsg err";renderCheckoutSummary();}}
 
 /* =====================================================
    CREATE UPI ORDER
@@ -2085,8 +2106,8 @@ email:email,
 address:address,
 
 items:items,
-
-amount:total()
+couponCode:appliedCoupon || "",
+amount:Math.max(0,total()-Number(appliedDiscount||0))
 
 })
 
@@ -2125,8 +2146,14 @@ return;
 }
 
 
+currentUPIOrderId = Number(
+  data.order.id ||
+  data.order.localOrderId ||
+  0
+);
+
 showUPIPayment(
-data.order
+  data.order
 );
 
 
@@ -2152,211 +2179,84 @@ alert(
 
 function showUPIPayment(order){
 
-currentCheckoutOrder = order;
+const amount = Number(order?.amount || 0);
+const safeOrderId = Number(order?.id || order?.localOrderId || 0);
 
-const amount =
-Number(order.amount);
+currentUPIOrderId = Number.isInteger(safeOrderId) && safeOrderId > 0
+  ? safeOrderId : null;
 
+const upiLink =
+  "upi://pay?pa=" + encodeURIComponent(UPI_ID) +
+  "&pn=" + encodeURIComponent(STORE_NAME) +
+  "&am=" + encodeURIComponent(amount.toFixed(2)) +
+  "&cu=INR" +
+  "&tn=" + encodeURIComponent("Shiv Supplements Order #" + safeOrderId);
 
-document
-.getElementById("checkoutArea")
-.innerHTML = `
+document.getElementById("checkoutArea").innerHTML = `
 
-<div class="upiBox">
+<div class="upiBox" style="max-width:560px;margin:auto;text-align:center">
 
-<div class="upiTitle">
-📱 Pay Using UPI
+<div class="upiTitle">💳 Complete Your Payment</div>
+
+<div style="margin:10px 0 18px;color:#99a3b3;font-size:14px">
+Order <b style="color:#fff">#${safeOrderId}</b>
 </div>
 
-
-<div class="upiText">
-
-Scan the QR code using
-PhonePe, Google Pay, Paytm or any UPI app.
-
-<br><br>
-
-Pay the exact amount:
-
+<div style="background:#111820;border:1px solid #303a46;border-radius:18px;padding:18px;margin-bottom:18px">
+<div style="font-size:13px;color:#99a3b3">TOTAL PAYABLE</div>
+<div style="font-size:36px;font-weight:900;color:#f7b51b;margin-top:5px">${money(amount)}</div>
 </div>
 
+<a href="${upiLink}"
+style="display:block;background:linear-gradient(90deg,#5f259f,#7b2cbf);color:white;text-decoration:none;border-radius:14px;padding:16px 18px;font-weight:900;font-size:17px;box-shadow:0 8px 25px rgba(95,37,159,.3);margin-bottom:10px">
+📱 Pay Now with PhonePe / UPI
+</a>
 
-<div class="total">
-${money(amount)}
+<div style="font-size:12px;color:#77808d;margin:8px 0 18px">
+Tap the button on your phone to open your UPI app with the exact amount.
 </div>
 
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+<button class="copyBtn" onclick="copyUPI()">📋 Copy UPI ID</button>
+<button class="copyBtn" onclick="copyUPIAmount(${amount})">💰 Copy Amount</button>
+</div>
 
-<img
-class="qr"
-src="${QR_IMAGE}"
+<div class="upiText">UPI ID</div>
+<div class="upiId" style="margin:8px 0 18px">${esc(UPI_ID)}</div>
+
+<img class="qr" src="${QR_IMAGE}"
 alt="Shiv Supplements UPI QR Code"
 onerror="this.style.display='none';document.getElementById('qrError').style.display='block';">
 
-
-<div
-id="qrError"
-style="display:none;color:#ff9b9b;margin:10px 0">
-
-QR image <b>qr.png</b> was not found.
-Please upload qr.png to the same folder as index.html.
-
+<div id="qrError" style="display:none;color:#ff9b9b;margin:10px 0">
+QR image <b>qr.png</b> was not found. You can still use the Pay Now button or UPI ID.
 </div>
 
-
-<div class="upiText">
-UPI ID
+<div style="margin:20px 0 10px;text-align:left">
+<div style="font-weight:800;margin-bottom:6px">After payment</div>
+<div class="upiText">Enter the UTR / transaction reference number from PhonePe or your UPI app.</div>
 </div>
 
-
-<div class="upiId">
-${esc(UPI_ID)}
+<div class="field" style="text-align:left">
+<label>UTR / Transaction Reference Number *</label>
+<input id="utrInput" type="text" maxlength="100" placeholder="Enter UTR / transaction ID">
 </div>
 
-
-<br>
-
-
-<button
-class="copyBtn"
-onclick="copyUPI()">
-📋 Copy UPI ID
+<button class="primary" style="width:100%;margin-top:8px" onclick="submitUTR(${safeOrderId})">
+✅ Submit Payment Details
 </button>
 
-
-<button
-class="primary"
-style="width:100%;margin-top:10px;background:#25D366;color:#07110a"
-onclick="sendOrderWhatsApp()">
-📲 Send Order Details on WhatsApp
-</button>
-
-
-<div class="orderNumber">
-
-<b>Order ID</b>
-
-<br>
-
-<span style="font-size:24px;color:#ffd45c">
-#${order.id}
-</span>
-
-</div>
-
-
-<p class="upiText">
-
-After successful payment,
-enter the UTR / transaction reference number below.
-
-</p>
-
-
-<div class="field">
-
-<label>
-UTR / Transaction Reference Number *
-</label>
-
-<input
-id="utrInput"
-type="text"
-maxlength="100"
-placeholder="Enter UTR / transaction ID">
-
-</div>
-
-
-<button
-class="primary"
-style="width:100%"
-onclick="submitUTR(${order.id})">
-
-Submit Payment Details
-
-</button>
-
-
-<p
-style="color:#99a3b3;font-size:12px;margin-top:15px">
-
-Your order will remain
-<b>Payment Pending</b>
-until the store admin verifies your payment.
-
+<p style="color:#99a3b3;font-size:12px;margin-top:15px">
+Your order will remain <b>Payment Pending</b> until the store admin verifies your payment.
 </p>
 
 </div>
-
 `;
-
 }
-
 
 /* =====================================================
    COPY UPI
 ===================================================== */
-
-function openWhatsApp(message){
-
-const url =
-"https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(message);
-
-window.open(url, "_blank");
-
-}
-
-
-function sendOrderWhatsApp(){
-
-const order = currentCheckoutOrder;
-
-if(!order){
-alert("Order details are not available. Please place the order again.");
-return;
-}
-
-let productLines = "";
-
-if(Array.isArray(order.items)){
-productLines = order.items.map(item =>
-`• ${item.name || item.title || "Product"} x ${item.qty || item.quantity || 1} — ₹${Number(item.price || 0).toFixed(2)}`
-).join("\n");
-}
-
-const message =
-`🛒 *NEW ORDER - SHIV SUPPLEMENTS*\n\n` +
-`Order ID: #${order.id}\n` +
-`Customer: ${order.name || "N/A"}\n` +
-`Phone: ${order.phone || "N/A"}\n` +
-`Email: ${order.email || "N/A"}\n` +
-`Address: ${order.address || "N/A"}\n\n` +
-(productLines ? `*Products:*\n${productLines}\n\n` : "") +
-`💰 *Total: ₹${Number(order.amount || 0).toFixed(2)}*\n` +
-`💳 Payment: UPI - Pending` ;
-
-openWhatsApp(message);
-
-}
-
-
-function sendPaymentWhatsApp(orderId, utr){
-
-const order = currentCheckoutOrder || {};
-
-const message =
-`💳 *PAYMENT UPDATE - SHIV SUPPLEMENTS*\n\n` +
-`Order ID: #${orderId}\n` +
-`Customer: ${order.name || "N/A"}\n` +
-`Phone: ${order.phone || "N/A"}\n` +
-`Amount: ₹${Number(order.amount || 0).toFixed(2)}\n` +
-`UTR / Transaction ID: ${utr}\n\n` +
-`Please verify the payment and update the order status.`;
-
-openWhatsApp(message);
-
-}
-
 
 async function copyUPI(){
 
@@ -2381,37 +2281,82 @@ alert(
 }
 
 
+
+async function copyUPIAmount(amount){
+  try{
+    await navigator.clipboard.writeText(Number(amount).toFixed(2));
+    alert("Amount copied!");
+  }catch(error){
+    alert("Amount: ₹" + Number(amount).toFixed(2));
+  }
+}
+
 /* =====================================================
    SUBMIT UTR
 ===================================================== */
 
 async function submitUTR(orderId){
 
-const utr =
-val("utrInput");
+const numericOrderId =
+  Number(orderId || currentUPIOrderId || 0);
 
+const utr =
+  val("utrInput");
+
+const errorBox =
+  document.getElementById("utrError");
+
+const button =
+  document.getElementById("submitUTRButton");
+
+function showUTRError(message){
+
+  if(errorBox){
+    errorBox.textContent = message;
+    errorBox.style.display = "block";
+  }else{
+    alert(message);
+  }
+
+}
+
+if(
+  !Number.isInteger(numericOrderId) ||
+  numericOrderId <= 0
+){
+
+showUTRError(
+  "Your order number was not created. Please go back and create the order again."
+);
+
+return;
+
+}
 
 if(!utr){
 
-alert(
-"Please enter your UTR / transaction reference number."
+showUTRError(
+  "Please enter your UTR / transaction reference number."
 );
 
 return;
 
 }
-
 
 if(utr.length < 6){
 
-alert(
-"Please enter a valid UTR / transaction reference number."
+showUTRError(
+  "Please enter a valid UTR / transaction reference number."
 );
 
 return;
 
 }
 
+if(button){
+  button.disabled = true;
+  button.textContent = "Submitting...";
+}
 
 try{
 
@@ -2426,9 +2371,17 @@ headers:{
 "Content-Type":"application/json"
 },
 
+credentials:"same-origin",
+
 body:JSON.stringify({
 
-localOrderId:orderId,
+localOrderId:numericOrderId,
+
+// Send aliases too so this works with the current
+// and earlier manual-order server implementations.
+orderId:numericOrderId,
+
+id:numericOrderId,
 
 utr:utr
 
@@ -2436,23 +2389,30 @@ utr:utr
 
 });
 
+let data = {};
 
-const data =
-await response.json();
-
+try{
+  data = await response.json();
+}catch(e){
+  data = {};
+}
 
 if(!response.ok){
 
-alert(
-data.message ||
-data.error ||
-"Could not submit payment details."
+showUTRError(
+  data.message ||
+  data.error ||
+  "Could not submit payment details. Please try again."
 );
+
+if(button){
+  button.disabled = false;
+  button.textContent = "Submit Payment Details";
+}
 
 return;
 
 }
-
 
 document
 .getElementById("checkoutArea")
@@ -2471,7 +2431,7 @@ Payment Details Submitted
 <p style="color:#99a3b3">
 
 Order ID:
-<b>#${orderId}</b>
+<b>#${numericOrderId}</b>
 
 <br><br>
 
@@ -2481,10 +2441,8 @@ UTR:
 </p>
 
 <p>
-
 Your payment is now
 <b>Pending Verification</b>.
-
 </p>
 
 <p style="color:#99a3b3;font-size:13px">
@@ -2494,32 +2452,21 @@ and update the order status.
 
 </p>
 
-
-<button
-class="primary"
-style="width:100%;background:#25D366;color:#07110a;margin-bottom:10px"
-onclick="sendPaymentWhatsApp(${orderId}, '${esc(utr).replace("'", "\\'")}')">
-📲 Send Payment Update on WhatsApp
-</button>
-
-
 <button
 class="primary"
 onclick="finishOrder()">
-
 Done
-
 </button>
 
 </div>
 
 `;
 
+currentUPIOrderId =
+  numericOrderId;
 
-cart=[];
-
+cart = [];
 save();
-
 
 }catch(error){
 
@@ -2528,9 +2475,14 @@ console.error(
 error
 );
 
-alert(
-"Unable to submit UTR. Please try again."
+showUTRError(
+"Unable to submit UTR. Please check your internet connection and try again."
 );
+
+if(button){
+  button.disabled = false;
+  button.textContent = "Submit Payment Details";
+}
 
 }
 
@@ -2643,13 +2595,13 @@ overlay.style.display="none";
 });
 
 
+window.addEventListener("scroll",()=>{const b=document.getElementById("backTop");if(b)b.style.display=window.scrollY>500?"block":"none";});
+
 /* =====================================================
    INITIAL LOAD
 ===================================================== */
 
-renderProducts();
-
-renderCart();
+loadProductsFromServer();
 
 me().then(user=>{
 
