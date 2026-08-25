@@ -1210,10 +1210,9 @@ function renderProducts(){
           <span class="tag">${esc(p.brand||"")}${p.tag?" • "+esc(p.tag):""}</span>
           <h3>${esc(p.name)}</h3>
           <p>${esc(p.desc||"")}${p.size?"<br><b>"+esc(p.size)+"</b>":""}${p.flavor?" • "+esc(p.flavor):""}</p>
-          <div class="price">
-            ${Number(p.mrp)>Number(p.price)?`<span style="font-size:12px;color:#7f8998;text-decoration:line-through;margin-right:7px">${money(p.mrp)}</span>`:""}
-            <strong>${money(p.price)}</strong>
-            ${Number(p.mrp)>Number(p.price)?`<span style="font-size:11px;color:#52e39a;margin-left:7px">20% OFF</span>`:""}
+          <div class="price">${money(p.price)}
+            ${Number(p.mrp)>Number(p.price)?`<span style="font-size:12px;color:#7f8998;text-decoration:line-through;margin-left:7px">${money(p.mrp)}</span>`:""}
+            ${discount>0?`<span style="font-size:11px;color:#52e39a;margin-left:7px">${discount}% OFF</span>`:""}
           </div>
           <button class="buy" ${soldOut?"disabled":""} onclick="add(${p.id})">${soldOut?"Out of Stock":"Add to Cart"}</button>
         </div>
@@ -2695,9 +2694,7 @@ overlay.style.display="none";
    INITIAL LOAD
 ===================================================== */
 
-renderProducts();
-
-renderCart();
+loadProductsFromServer();
 
 me().then(user=>{
 
