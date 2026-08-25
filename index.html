@@ -1036,7 +1036,7 @@ Login or create your account.
   Replace this with your REAL Shiv Supplements UPI ID.
 */
 
-const UPI_ID = "YOUR_UPI_ID@upi";
+const UPI_ID = "8144989064-3@ybl";
 
 const STORE_NAME = "Shiv Supplements";
 
@@ -2180,182 +2180,79 @@ alert(
 function showUPIPayment(order){
 
 const amount = Number(order?.amount || 0);
+const safeOrderId = Number(order?.id || order?.localOrderId || 0);
 
-// Accept either field returned by different server versions.
-const safeOrderId = Number(
-  order?.id ||
-  order?.localOrderId ||
-  0
-);
+currentUPIOrderId = Number.isInteger(safeOrderId) && safeOrderId > 0
+  ? safeOrderId : null;
 
-currentUPIOrderId =
-  Number.isInteger(safeOrderId) && safeOrderId > 0
-    ? safeOrderId
-    : null;
+const upiLink =
+  "upi://pay?pa=" + encodeURIComponent(UPI_ID) +
+  "&pn=" + encodeURIComponent(STORE_NAME) +
+  "&am=" + encodeURIComponent(amount.toFixed(2)) +
+  "&cu=INR" +
+  "&tn=" + encodeURIComponent("Shiv Supplements Order #" + safeOrderId);
 
-document
-.getElementById("checkoutArea")
-.innerHTML = `
+document.getElementById("checkoutArea").innerHTML = `
 
-<div class="upiBox">
+<div class="upiBox" style="max-width:560px;margin:auto;text-align:center">
 
-<div class="upiTitle">
-📱 Pay Using UPI
+<div class="upiTitle">💳 Complete Your Payment</div>
+
+<div style="margin:10px 0 18px;color:#99a3b3;font-size:14px">
+Order <b style="color:#fff">#${safeOrderId}</b>
 </div>
 
-<div class="upiText">
-Scan the QR code using PhonePe, Google Pay, Paytm or any UPI app.
-<br><br>
-Pay the exact amount:
+<div style="background:#111820;border:1px solid #303a46;border-radius:18px;padding:18px;margin-bottom:18px">
+<div style="font-size:13px;color:#99a3b3">TOTAL PAYABLE</div>
+<div style="font-size:36px;font-weight:900;color:#f7b51b;margin-top:5px">${money(amount)}</div>
 </div>
 
-<div class="total">
-${money(amount)}
+<a href="${upiLink}"
+style="display:block;background:linear-gradient(90deg,#5f259f,#7b2cbf);color:white;text-decoration:none;border-radius:14px;padding:16px 18px;font-weight:900;font-size:17px;box-shadow:0 8px 25px rgba(95,37,159,.3);margin-bottom:10px">
+📱 Pay Now with PhonePe / UPI
+</a>
+
+<div style="font-size:12px;color:#77808d;margin:8px 0 18px">
+Tap the button on your phone to open your UPI app with the exact amount.
 </div>
 
-<img
-class="qr"
-src="${QR_IMAGE}"
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+<button class="copyBtn" onclick="copyUPI()">📋 Copy UPI ID</button>
+<button class="copyBtn" onclick="copyUPIAmount(${amount})">💰 Copy Amount</button>
+</div>
+
+<div class="upiText">UPI ID</div>
+<div class="upiId" style="margin:8px 0 18px">${esc(UPI_ID)}</div>
+
+<img class="qr" src="${QR_IMAGE}"
 alt="Shiv Supplements UPI QR Code"
 onerror="this.style.display='none';document.getElementById('qrError').style.display='block';">
 
-<div
-id="qrError"
-style="display:none;color:#ff9b9b;margin:10px 0">
-
-QR image <b>qr.png</b> was not found.
-Please upload qr.png to the same folder as index.html.
-
+<div id="qrError" style="display:none;color:#ff9b9b;margin:10px 0">
+QR image <b>qr.png</b> was not found. You can still use the Pay Now button or UPI ID.
 </div>
 
-<div class="upiText">
-UPI ID
+<div style="margin:20px 0 10px;text-align:left">
+<div style="font-weight:800;margin-bottom:6px">After payment</div>
+<div class="upiText">Enter the UTR / transaction reference number from PhonePe or your UPI app.</div>
 </div>
 
-<div class="upiId">
-${esc(UPI_ID)}
+<div class="field" style="text-align:left">
+<label>UTR / Transaction Reference Number *</label>
+<input id="utrInput" type="text" maxlength="100" placeholder="Enter UTR / transaction ID">
 </div>
 
-<br>
-
-<button
-class="copyBtn"
-onclick="copyUPI()">
-📋 Copy UPI ID
+<button class="primary" style="width:100%;margin-top:8px" onclick="submitUTR(${safeOrderId})">
+✅ Submit Payment Details
 </button>
 
-<div class="orderNumber">
-
-<b>Order ID</b>
-
-<br>
-
-<span style="font-size:24px;color:#ffd45c">
-${currentUPIOrderId ? "#" + currentUPIOrderId : "Creating..."}
-</span>
-
-</div>
-
-<p class="upiText">
-After successful payment, enter the UTR / transaction reference number below.
-</p>
-
-<div class="field">
-
-<label>
-UTR / Transaction Reference Number *
-</label>
-
-<input
-id="utrInput"
-type="text"
-maxlength="100"
-autocomplete="off"
-placeholder="Enter UTR / transaction ID"
-oninput="updateUTRButton()">
-
-</div>
-
-<div
-id="utrError"
-style="display:none;color:#ff9b9b;font-size:13px;margin:8px 0">
-</div>
-
-<button
-id="submitUTRButton"
-class="primary"
-style="width:100%"
-onclick="submitUTR(currentUPIOrderId)"
-disabled>
-
-Submit Payment Details
-
-</button>
-
-<p
-style="color:#99a3b3;font-size:12px;margin-top:15px">
-
-Your order will remain
-<b>Payment Pending</b>
-until the store admin verifies your payment.
-
+<p style="color:#99a3b3;font-size:12px;margin-top:15px">
+Your order will remain <b>Payment Pending</b> until the store admin verifies your payment.
 </p>
 
 </div>
-
 `;
-
-setTimeout(()=>{
-  const input = document.getElementById("utrInput");
-  if(input) input.focus();
-}, 100);
-
 }
-
-
-/* =====================================================
-   UTR BUTTON STATE
-===================================================== */
-
-function updateUTRButton(){
-
-const input =
-document.getElementById("utrInput");
-
-const button =
-document.getElementById("submitUTRButton");
-
-const error =
-document.getElementById("utrError");
-
-if(!input || !button) return;
-
-const utr =
-input.value.trim();
-
-button.disabled =
-  utr.length < 6 ||
-  !currentUPIOrderId;
-
-if(error){
-
-if(utr.length > 0 && utr.length < 6){
-
-error.textContent =
-"Please enter at least 6 characters of your UTR.";
-
-error.style.display = "block";
-
-}else{
-
-error.style.display = "none";
-
-}
-
-}
-
-}
-
 
 /* =====================================================
    COPY UPI
@@ -2383,6 +2280,16 @@ alert(
 
 }
 
+
+
+async function copyUPIAmount(amount){
+  try{
+    await navigator.clipboard.writeText(Number(amount).toFixed(2));
+    alert("Amount copied!");
+  }catch(error){
+    alert("Amount: ₹" + Number(amount).toFixed(2));
+  }
+}
 
 /* =====================================================
    SUBMIT UTR
