@@ -63,6 +63,9 @@ const has = (n) => cols.some(c => c.name === n);
 if (!has('payment_method')) db.exec("ALTER TABLE orders ADD COLUMN payment_method TEXT DEFAULT 'UPI'");
 if (!has('payment_ref')) db.exec("ALTER TABLE orders ADD COLUMN payment_ref TEXT");
 if (!has('user_id')) db.exec("ALTER TABLE orders ADD COLUMN user_id INTEGER");
+if (!has('coupon_code')) db.exec("ALTER TABLE orders ADD COLUMN coupon_code TEXT");
+if (!has('discount_paise')) db.exec("ALTER TABLE orders ADD COLUMN discount_paise INTEGER DEFAULT 0");
+if (!has('subtotal_paise')) db.exec("ALTER TABLE orders ADD COLUMN subtotal_paise INTEGER DEFAULT 0");
 
 // Seed only if product table is empty.
 if (db.prepare('SELECT COUNT(*) AS c FROM products').get().c === 0) {
@@ -143,17 +146,31 @@ function parseOrderItems(items) {
     return {id:p.id,brand:p.brand,name:p.name,category:p.category,flavor:p.flavor||'',size:p.size||'',price:Number(p.price),qty};
   });
 }
+function validateCoupon(req, code) {
+  const normalized=String(code||'').trim().toUpperCase();
+  if(!normalized) return {valid:false,code:'',discount:0,message:''};
+  if(normalized!=='WELCOME10' && normalized!=='1STORDER10') return {valid:false,code:normalized,discount:0,message:'Invalid coupon code'};
+  const userId=req.session.user?.id;
+  const orderCount=Number(db.prepare('SELECT COUNT(*) AS c FROM orders WHERE user_id=?').get(userId)?.c||0);
+  if(normalized==='1STORDER10' && orderCount>0) return {valid:false,code:normalized,discount:0,message:'1STORDER10 is valid only on your first order'};
+  return {valid:true,code:normalized,discount:0.10,message:'10% discount applied'};
+}
+
 function createOrder(req,body) {
   const name=String(body.name||'').trim(), phone=normalizePhone(body.phone), email=String(body.email||'').trim().toLowerCase(), address=String(body.address||'').trim();
   if (!name || !phone || !email || !address) throw Object.assign(new Error('All delivery details are required'),{status:400});
   if (!validPhone(phone)) throw Object.assign(new Error('Enter a valid 10-digit mobile number'),{status:400});
   if (!validEmail(email)) throw Object.assign(new Error('Enter a valid email address'),{status:400});
   const items=parseOrderItems(body.items);
-  const amount=items.reduce((s,i)=>s+i.price*i.qty,0);
-  if (amount<=0) throw Object.assign(new Error('Invalid order amount'),{status:400});
-  const r=db.prepare(`INSERT INTO orders(user_id,name,phone,email,address,items_json,amount_paise,status,payment_method)
-    VALUES(?,?,?,?,?,?,?,'pending','UPI')`).run(req.session.user.id,name,phone,email,address,JSON.stringify(items),Math.round(amount*100));
-  return {id:Number(r.lastInsertRowid),amount,currency:'INR',status:'pending',paymentMethod:'UPI'};
+  const subtotal=items.reduce((s,i)=>s+i.price*i.qty,0);
+  if (subtotal<=0) throw Object.assign(new Error('Invalid order amount'),{status:400});
+  const coupon=validateCoupon(req,body.couponCode);
+  if(String(body.couponCode||'').trim() && !coupon.valid) throw Object.assign(new Error(coupon.message),{status:400});
+  const discount=Math.round(subtotal*(coupon.valid?coupon.discount:0));
+  const amount=Math.max(0,subtotal-discount);
+  const r=db.prepare(`INSERT INTO orders(user_id,name,phone,email,address,items_json,amount_paise,status,payment_method,coupon_code,discount_paise,subtotal_paise)
+    VALUES(?,?,?,?,?,?,?,'pending','UPI',?,?,?)`).run(req.session.user.id,name,phone,email,address,JSON.stringify(items),Math.round(amount*100),coupon.valid?coupon.code:null,Math.round(discount*100),Math.round(subtotal*100));
+  return {id:Number(r.lastInsertRowid),amount,currency:'INR',status:'pending',paymentMethod:'UPI',subtotal,discount,couponCode:coupon.valid?coupon.code:null};
 }
 
 // ---------------- PAGES / STATIC ----------------
@@ -204,6 +221,17 @@ app.get('/api/products',(req,res)=>{
   }catch(e){console.error(e);res.status(500).json({success:false,message:'Could not load products'});}
 });
 
+app.post('/api/coupons/validate',requireLogin,(req,res)=>{
+  try {
+    const code=String(req.body.code||'').trim().toUpperCase();
+    const subtotal=Math.max(0,Number(req.body.subtotal||0));
+    const result=validateCoupon(req,code);
+    if(!result.valid) return res.status(400).json({success:false,message:result.message||'Invalid coupon'});
+    const discount=Math.round(subtotal*result.discount);
+    res.json({success:true,code:result.code,discountPercent:10,discount,finalAmount:Math.max(0,subtotal-discount),message:'Coupon applied successfully'});
+  } catch(e) { res.status(500).json({success:false,message:'Could not validate coupon'}); }
+});
+
 app.post('/api/create-order',requireLogin,(req,res)=>{
   try{ const order=createOrder(req,req.body); res.json({success:true,message:'Order created. Pay by UPI and submit your UTR.',order}); }
   catch(e){console.error(e);res.status(e.status||500).json({success:false,message:e.message||'Could not create order'});}
@@ -224,7 +252,7 @@ app.post('/api/manual-order',requireLogin,(req,res)=>{
 
 app.get('/api/orders',requireLogin,(req,res)=>{
   try{
-    const orders=db.prepare('SELECT id,name,phone,email,address,items_json,amount_paise,status,payment_method,payment_ref,created_at FROM orders WHERE user_id=? ORDER BY id DESC').all(req.session.user.id);
+    const orders=db.prepare('SELECT id,name,phone,email,address,items_json,amount_paise,status,payment_method,payment_ref,coupon_code,discount_paise,subtotal_paise,created_at FROM orders WHERE user_id=? ORDER BY id DESC').all(req.session.user.id);
     res.json({success:true,orders:orders.map(o=>({...o,amount:o.amount_paise/100,items:JSON.parse(o.items_json)}))});
   }catch(e){console.error(e);res.status(500).json({success:false,message:'Could not load orders'});}
 });
