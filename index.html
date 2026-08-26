@@ -301,6 +301,75 @@ section{
   font-weight:900;
 }
 
+.brandGrid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+}
+
+.brandCard{
+  background:linear-gradient(145deg,#151b23,#0b0f14);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:22px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.brandCard:hover,
+.brandCard.active{
+  transform:translateY(-3px);
+  border-color:#ffd45c;
+  box-shadow:0 8px 28px rgba(0,0,0,.22);
+}
+
+.brandLogo{
+  width:48px;
+  height:48px;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#242b35;
+  font-size:24px;
+  margin-bottom:13px;
+}
+
+.brandCard h3{
+  margin:0 0 6px;
+  font-size:17px;
+}
+
+.brandCard p{
+  color:var(--muted);
+  font-size:12px;
+  margin:0;
+}
+
+.categoryBar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:18px;
+}
+
+.categoryBtn{
+  border:1px solid var(--line);
+  background:#11161d;
+  color:#fff;
+  border-radius:999px;
+  padding:10px 15px;
+  cursor:pointer;
+  font-weight:800;
+}
+
+.categoryBtn:hover,
+.categoryBtn.active{
+  background:#ffd45c;
+  color:#111;
+  border-color:#ffd45c;
+}
+
 .cats{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -722,15 +791,111 @@ footer{
 /* CUSTOMER ACCOUNT / ORDERS */
 .accountActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.orderHistory{margin-top:22px}.orderHistoryHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.orderHistoryHead h3{margin:0}.orderRefresh{border:1px solid #3a424f;background:#151b23;color:#fff;border-radius:9px;padding:8px 12px;font-weight:800}.orderCard{background:#0b1016;border:1px solid #303a47;border-radius:14px;padding:16px;margin:12px 0}.orderCardTop{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}.orderId{color:#ffd45c;font-weight:950;font-size:17px}.orderDate{color:#7f8998;font-size:12px;margin-top:4px}.orderStatus{display:inline-block;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:950;letter-spacing:.3px}.orderStatus.pending{background:#3d2d05;color:#ffd45c}.orderStatus.paid{background:#0b3b24;color:#52e39a}.orderStatus.processing{background:#172d54;color:#7db2ff}.orderStatus.shipped{background:#073b58;color:#55c7ff}.orderStatus.delivered{background:#243b12;color:#a0f56a}.orderStatus.cancelled{background:#48151a;color:#ff777f}.orderItems{margin-top:12px;border-top:1px solid #252d38}.orderItem{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #1c232d;font-size:13px}.orderItem:last-child{border-bottom:0}.orderTotal{margin-top:12px;font-size:18px;font-weight:950;color:#ffd45c}.orderPayment{margin-top:10px;color:#aeb7c4;font-size:12px;line-height:1.6}.orderEmpty{color:#99a3b3;background:#0b1016;border:1px dashed #343d49;border-radius:12px;padding:18px;text-align:center}
 
-/* Shiv Supplements premium enhancements */
-.logoSpotlight{max-width:1240px;margin:0 auto;padding:24px 20px 5px}.logoSpotlightInner{border:1px solid #3b3320;background:linear-gradient(135deg,#17140d,#0d1117);border-radius:22px;padding:18px 22px;display:flex;align-items:center;gap:18px;box-shadow:0 18px 55px #0007}.logoSpotlight img{width:74px;height:74px;object-fit:contain;filter:drop-shadow(0 8px 18px #000)}.logoSpotlight strong{font-size:18px}.logoSpotlight p{margin:4px 0 0;color:var(--muted);font-size:13px}.logoSpotlight .miniOffer{margin-left:auto;background:#2a210b;color:#ffd86d;border:1px solid #5b4717;padding:9px 12px;border-radius:999px;font-weight:950;font-size:12px}.shopTools{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}.shopTools input,.shopTools select{background:#11161e;color:#fff;border:1px solid #343c49;padding:11px 12px;border-radius:10px;outline:none}.shopTools input{min-width:240px;flex:1}.shopTools input:focus,.shopTools select:focus{border-color:var(--gold);box-shadow:0 0 0 3px #f7b51b18}.offerCodes{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.codeChip{background:#0d1219;border:1px dashed #66531d;color:#ffd86d;border-radius:10px;padding:9px 12px;font-size:12px;font-weight:900}.couponBox{margin:16px 0;padding:15px;border:1px solid #343c49;background:#0c1118;border-radius:14px}.couponRow{display:flex;gap:8px}.couponRow input{flex:1}.couponRow button{white-space:nowrap}.couponMsg{font-size:12px;margin-top:8px;color:#99a3b3}.couponMsg.ok{color:#52e39a}.couponMsg.err{color:#ff7b7b}.priceSummary{display:grid;gap:6px;margin:14px 0}.summaryLine{display:flex;justify-content:space-between;color:#cbd1dc;font-size:14px}.summaryLine.discount{color:#52e39a;font-weight:900}.summaryLine.final{font-size:19px;font-weight:950;color:#fff;border-top:1px solid #343c49;padding-top:10px;margin-top:4px}@media(max-width:700px){.logoSpotlightInner{padding:15px;flex-wrap:wrap}.logoSpotlight .miniOffer{margin-left:0}.couponRow{flex-direction:column}.couponRow button{width:100%}.shopTools input{min-width:100%}}
+/* =========================================================
+   SHIV SUPPLEMENTS — MODERN BRAND REDESIGN
+   Visual-only layer: existing cart/account/product/checkout JS preserved.
+   ========================================================= */
+:root{
+  --bg:#061113;
+  --surface:#0a1a1c;
+  --surface2:#0d2224;
+  --text:#f7fbfb;
+  --muted:#a9bcbd;
+  --line:#173537;
+  --gold:#d6f36a;
+  --orange:#91d53f;
+  --green:#25d366;
+  --brand:#0f5960;
+  --brand2:#1b7c7d;
+}
+body{
+  background:
+    radial-gradient(900px 500px at 85% -10%, rgba(34,135,139,.20), transparent 60%),
+    radial-gradient(700px 450px at -10% 20%, rgba(214,243,106,.09), transparent 60%),
+    #061113;
+}
+.announce{
+  background:#dff3a0;
+  color:#0a1a1c;
+  letter-spacing:1.2px;
+  font-size:11px;
+  padding:10px 14px;
+}
+nav{
+  background:rgba(6,17,19,.86);
+  border-bottom:1px solid rgba(132,205,202,.14);
+  box-shadow:0 10px 35px rgba(0,0,0,.20);
+}
+.nav{padding:12px 20px;gap:28px}
+.brand img{width:58px;height:58px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px rgba(214,243,106,.35),0 8px 30px rgba(0,0,0,.35)}
+.links{gap:26px;color:#d5e1e1;font-size:13px;letter-spacing:.2px}
+.links a{transition:.2s}
+.links a:hover{color:var(--gold);transform:translateY(-1px)}
+.navBtn{background:rgba(13,34,36,.8);border-color:#295154;border-radius:999px;padding:10px 15px}
+.cartBtn{background:var(--gold);border-radius:999px;padding:11px 17px;box-shadow:0 8px 24px rgba(214,243,106,.16)}
+.hero{
+  min-height:690px;
+  padding:90px 20px 72px;
+  grid-template-columns:1.02fr .98fr;
+  gap:55px;
+}
+.hero:before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(115deg,rgba(15,89,96,.10),transparent 45%,rgba(214,243,106,.05));
+}
+.hero:after{width:520px;height:520px;right:0;top:8%;background:rgba(48,171,169,.15);filter:blur(90px)}
+.kicker{
+  border:1px solid rgba(214,243,106,.35);background:rgba(10,35,37,.72);
+  color:#dff3a0;padding:10px 15px;letter-spacing:1.2px
+}
+h1{font-size:clamp(50px,7vw,88px);letter-spacing:-4px;margin:22px 0 18px;max-width:760px}
+.gold{color:var(--gold)}
+.hero p{font-size:17px;line-height:1.8;color:#afc1c2;max-width:650px}
+.primary{background:var(--gold);border-radius:999px;padding:15px 23px;box-shadow:0 10px 28px rgba(214,243,106,.13)}
+.secondary{border-color:#31575a;background:#0b2022;border-radius:999px;padding:15px 23px}
+.trust{gap:12px 20px;color:#c6d7d7}
+.trust span{background:rgba(13,34,36,.7);border:1px solid #1c4144;padding:7px 10px;border-radius:999px}
+.heroCard{
+  height:520px;border:1px solid rgba(137,210,207,.18);border-radius:36px;
+  background:linear-gradient(145deg,rgba(16,53,55,.92),rgba(5,15,17,.97));
+  box-shadow:0 35px 100px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.04);
+  position:relative;isolation:isolate;
+}
+.heroGlow{position:absolute;width:340px;height:340px;border-radius:50%;background:rgba(214,243,106,.10);filter:blur(55px);z-index:-1}
+.logoStage{width:370px;height:370px;border-radius:50%;padding:12px;background:rgba(255,255,255,.97);box-shadow:0 0 0 1px rgba(214,243,106,.28),0 30px 80px rgba(0,0,0,.42);display:flex;align-items:center;justify-content:center;transform:rotate(-2deg)}
+.logoStage img{width:100%;height:100%;object-fit:contain;border-radius:50%}
+.heroBadge{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);white-space:nowrap;background:rgba(5,18,20,.88);border:1px solid rgba(214,243,106,.3);padding:10px 16px;border-radius:999px;color:#dff3a0;font-size:11px;font-weight:950;letter-spacing:1.8px;backdrop-filter:blur(10px)}
+.heroBadge span{color:#75999a;padding:0 4px}
+section{padding:74px 20px}
+.head h2{font-size:36px;letter-spacing:-1px}.head p{color:#9db4b5}
+.brandGrid,.cats{gap:16px}
+.brandCard,.cat,.product,.feature{background:linear-gradient(145deg,rgba(14,40,42,.94),rgba(7,22,24,.96));border-color:#173b3d;box-shadow:0 10px 35px rgba(0,0,0,.13)}
+.brandCard:hover,.brandCard.active{border-color:rgba(214,243,106,.55);box-shadow:0 14px 40px rgba(0,0,0,.22),0 0 0 1px rgba(214,243,106,.07)}
+.brandLogo{background:#123a3d;border-color:#28585b}
+.categoryBtn{background:#0b2022;border-color:#1c4144}
+.categoryBtn:hover,.categoryBtn.active{background:var(--gold);border-color:var(--gold)}
+.pic{background:radial-gradient(circle at 50% 20%,#214b4e,#081719 72%);height:220px}
+.product{border-radius:22px}.product:hover{transform:translateY(-6px);border-color:#2c6062;box-shadow:0 20px 45px rgba(0,0,0,.24)}
+.buy{background:var(--gold);border-radius:999px}
+.price{color:#f5fbfb}.tag{color:#dff3a0}
+.deal{border-color:#2d5556;background:linear-gradient(120deg,#123a3d,#0a1b1d);border-radius:26px}
+.deal h2{letter-spacing:-.5px}
+.feature{border-radius:20px}
+footer{border-top-color:#173537;background:#061012}
+.wa{box-shadow:0 14px 45px rgba(0,0,0,.45);border:2px solid rgba(255,255,255,.12)}
+.overlay{background:rgba(1,8,9,.78);backdrop-filter:blur(8px)}
+.modal{background:linear-gradient(145deg,#0e292b,#071517);border-color:#285456;box-shadow:0 30px 100px rgba(0,0,0,.6)}
+.field input,.field textarea{background:#061315;border-color:#23494b}.tab{background:#061315;border-color:#1d4143}.tab.active{background:var(--gold)}
+@media(max-width:900px){.hero{grid-template-columns:1fr;min-height:auto;padding-top:65px}.heroCard{height:430px}.logoStage{width:290px;height:290px}.heroBadge{font-size:9px}.brandGrid,.cats,.products{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.links{display:none}.nav{gap:12px}.brand img{width:50px;height:50px}.hero{padding:52px 16px 48px}.heroCard{height:370px;border-radius:28px}.logoStage{width:240px;height:240px}.heroBadge{bottom:20px}.heroBadge span{display:none}.hero h1{letter-spacing:-2.5px}.hero p{font-size:15px}.trust{gap:8px}.trust span{font-size:11px}.brandGrid,.cats,.products,.features{grid-template-columns:1fr}.deal{padding:24px;flex-direction:column;align-items:flex-start}section{padding:55px 16px}}
+
 </style>
 </head>
 
 <body>
 
 <div class="announce">
-🔥 AUTHENTIC SUPPLEMENTS • SECURE ONLINE ORDERING • PAN-INDIA DELIVERY
+PURE POWER • PEAK PERFORMANCE • PREMIUM SPORTS NUTRITION
 </div>
 
 <nav>
@@ -770,12 +935,12 @@ SHIV SUPPLEMENTS • PURE POWER, PEAK PERFORMANCE
 </span>
 
 <h1>
-Build your <span class="gold">stronger</span> self.
+Fuel your <span class="gold">stronger</span> self.
 </h1>
 
 <p>
-Shop premium sports nutrition for muscle gain, strength, recovery
-and performance — with a clean, professional online shopping experience.
+Premium sports nutrition for muscle gain, strength, recovery and performance —
+built around the Shiv Supplements promise: Pure Power, Peak Performance.
 </p>
 
 <div class="actions">
@@ -800,53 +965,29 @@ Create Account
 </div>
 
 <div class="heroCard">
-<div class="circle">
-<div class="tub"></div>
-</div>
+  <div class="heroGlow"></div>
+  <div class="logoStage">
+    <img src="logo.png" alt="Shiv Supplements — Pure Power, Peak Performance">
+  </div>
+  <div class="heroBadge">PURE POWER <span>•</span> PEAK PERFORMANCE</div>
 </div>
 
 </header>
 
 
-<div class="logoSpotlight"><div class="logoSpotlightInner"><img src="logo.png" alt="Shiv Supplements official logo"><div><strong>SHIV SUPPLEMENTS</strong><p>Premium sports nutrition • Trusted products • Pan-India delivery</p></div><span class="miniOffer">WELCOME10 • 10% OFF</span></div></div>
-
 <section id="categories">
 
 <div class="head">
-
-<div>
-<h2>Shop by Category</h2>
-<p>Find the right products for your training.</p>
+  <div>
+    <h2>Shop by Brand</h2>
+    <p>Choose a brand, then select a supplement category.</p>
+  </div>
 </div>
 
-</div>
+<div class="brandGrid" id="brandGrid"></div>
 
-<div class="cats">
-
-<div class="cat">
-<div class="catIcon">🥛</div>
-<h3>Whey Protein</h3>
-<p>Whey, isolate and protein options.</p>
-</div>
-
-<div class="cat">
-<div class="catIcon">⚡</div>
-<h3>Creatine</h3>
-<p>Creatine products for strength and performance.</p>
-</div>
-
-<div class="cat">
-<div class="catIcon">🏋️</div>
-<h3>Mass Gainers</h3>
-<p>High-calorie products for bulking goals.</p>
-</div>
-
-<div class="cat">
-<div class="catIcon">🔥</div>
-<h3>Performance</h3>
-<p>Pre-workout and other training essentials.</p>
-</div>
-
+<div class="categoryBar" id="categoryBar" style="display:none;">
+  <button class="categoryBtn active" data-category="ALL" onclick="selectCategory('ALL')">All Products</button>
 </div>
 
 </section>
@@ -857,8 +998,8 @@ Create Account
 <div class="head">
 
 <div>
-<h2>Featured Supplements</h2>
-<p>Choose your products and add them to your cart.</p>
+<h2 id="productSectionTitle">All Supplements</h2>
+<p id="productSectionSubtitle">Choose a brand and category to see products.</p>
 </div>
 
 <a
@@ -869,8 +1010,6 @@ Get Full List →
 
 </div>
 
-
-<div class="shopTools"><input id="productSearch" oninput="applyProductFilters()" placeholder="🔎 Search product, brand or category..."><select id="brandFilter" onchange="applyProductFilters()"><option value="">All Brands</option></select><select id="categoryFilter" onchange="applyProductFilters()"><option value="">All Categories</option></select><select id="sortFilter" onchange="applyProductFilters()"><option value="featured">Featured</option><option value="priceLow">Price: Low to High</option><option value="priceHigh">Price: High to Low</option><option value="discount">Biggest Discount</option></select></div>
 <div class="products" id="products"></div>
 
 </section>
@@ -883,7 +1022,7 @@ Get Full List →
 <div>
 <h2>🔥 Exclusive Store Offers</h2>
 <p>
-Save more with our store coupons. One coupon per order.
+Ask us for today's prices, combo deals and available stock.
 </p>
 </div>
 
@@ -951,8 +1090,6 @@ target="_blank">
 • +91 81449 89064
 </footer>
 
-
-<button id="backTop" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="position:fixed;right:18px;bottom:78px;z-index:30;display:none;border:1px solid #454e5b;background:#11161e;color:#fff;width:42px;height:42px;border-radius:50%;font-weight:900">↑</button>
 
 <a
 class="wa"
@@ -1044,66 +1181,45 @@ const QR_IMAGE = "qr.png";
 
 // Stores the current UPI order ID so it can never be lost between screens.
 let currentUPIOrderId = null;
-let appliedCoupon = null;
-let appliedDiscount = 0;
 
-
-
-function applyProductFilters(){
-  const brand=document.getElementById("brandFilter")?.value||"";
-  const category=document.getElementById("categoryFilter")?.value||"";
-  const q=(document.getElementById("productSearch")?.value||"").trim().toLowerCase();
-  const sort=document.getElementById("sortFilter")?.value||"featured";
-  let filtered=products.filter(p=>{const hay=[p.name,p.brand,p.category,p.flavor,p.size].filter(Boolean).join(" ").toLowerCase();return (!brand||p.brand===brand)&&(!category||p.category===category)&&(!q||hay.includes(q));});
-  if(sort==="priceLow") filtered.sort((a,b)=>Number(a.price)-Number(b.price));
-  else if(sort==="priceHigh") filtered.sort((a,b)=>Number(b.price)-Number(a.price));
-  else if(sort==="discount") filtered.sort((a,b)=>Number(b.discount||0)-Number(a.discount||0));
-  renderProducts(filtered);
-}
-
-function populateProductFilters(){
-  const b=document.getElementById("brandFilter");
-  const c=document.getElementById("categoryFilter");
-  if(!b||!c)return;
-  const brands=[...new Set(products.map(p=>p.brand).filter(Boolean))].sort();
-  const cats=[...new Set(products.map(p=>p.category).filter(Boolean))].sort();
-  b.innerHTML='<option value="">All Brands</option>'+brands.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");
-  c.innerHTML='<option value="">All Categories</option>'+cats.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");
-}
 
 /* =====================================================
    PRODUCTS
 ===================================================== */
 
-let products = [
-  {id:1,brand:"MuscleBlaze",name:"Biozyme Whey",category:"Whey Protein",flavor:"Chocolate",size:"1 kg",mrp:3999,price:2999,stock:10,tag:"WHEY PROTEIN",icon:"🥤",image:"",desc:"Premium whey protein."},
-  {id:2,brand:"Avvatar",name:"Whey Protein",category:"Whey Protein",flavor:"Malai Kulfi",size:"1 kg",mrp:3999,price:3199,stock:10,tag:"WHEY PROTEIN",icon:"💪",image:"",desc:"High-quality whey protein."},
-  {id:3,brand:"Optimum Nutrition",name:"Gold Standard Whey",category:"Whey Protein",flavor:"Double Rich Chocolate",size:"1 lb",mrp:2499,price:2199,stock:10,tag:"WHEY PROTEIN",icon:"🥛",image:"",desc:"Popular whey protein."},
-  {id:4,brand:"MuscleBlaze",name:"Creatine Monohydrate",category:"Creatine",flavor:"Unflavoured",size:"250 g",mrp:999,price:799,stock:15,tag:"CREATINE",icon:"⚡",image:"",desc:"Creatine monohydrate."},
-  {id:5,brand:"Avvatar",name:"Mass Gainer",category:"Mass Gainer",flavor:"Chocolate",size:"3 kg",mrp:3499,price:2899,stock:8,tag:"MASS GAINER",icon:"🏋️",image:"",desc:"Mass gainer for calorie surplus."},
-  {id:6,brand:"MuscleBlaze",name:"Pre Workout",category:"Pre-Workout",flavor:"Fruit Punch",size:"100 g",mrp:1499,price:1199,stock:8,tag:"PRE-WORKOUT",icon:"🔥",image:"",desc:"Pre-workout supplement."}
-];
+let products = [];
 
-async function loadProductsFromServer(){
+// Load the products saved from the Admin Dashboard/database.
+async function loadProducts(){
   try{
-    const response=await fetch("/api/products",{cache:"no-store"});
-    const data=await response.json();
-    if(!response.ok || !Array.isArray(data.products)) throw new Error(data.message||"Product API failed");
-    products=data.products.map(p=>({
-      ...p,
-      tag:String(p.category||"SUPPLEMENT").toUpperCase(),
-      icon:p.category==="Creatine"?"⚡":p.category==="Mass Gainer"?"🏋️":p.category==="Pre-Workout"?"🔥":"🥤",
-      desc:p.description||`${p.brand} ${p.name}`,
-      stock:Number(p.stock||0)
-    }));
-  }catch(error){
-    console.error("PRODUCT LOAD ERROR:",error);
-  }
-  populateProductFilters();
-  renderProducts();
-  renderCart();
-}
+    const res = await fetch('/api/products', { cache:'no-store' });
+    const data = await res.json();
+    if(!data.success) throw new Error(data.message || 'Could not load products');
 
+    products = (data.products || []).map(p => ({
+      ...p,
+      id: Number(p.id),
+      price: Number(p.price || 0),
+      mrp: Number(p.mrp || 0),
+      stock: Number(p.stock || 0),
+      tag: String(p.category || p.brand || 'SUPPLEMENT').toUpperCase(),
+      icon: p.image ? '' : (String(p.category || '').toLowerCase().includes('protein') ? '🥤' :
+             String(p.category || '').toLowerCase().includes('creatine') ? '⚡' :
+             String(p.category || '').toLowerCase().includes('gainer') ? '🏋️' : '💊'),
+      desc: [p.brand, p.flavor, p.size].filter(Boolean).join(' • ') || p.description || ''
+    }));
+
+    // Remove cart items for products that no longer exist/are inactive.
+    cart = cart.filter(item => products.some(p => p.id === Number(item.id)));
+    renderBrandNavigation();
+    renderProducts();
+    renderCart();
+  }catch(err){
+    console.error('PRODUCT LOAD ERROR:', err);
+    document.getElementById('products').innerHTML =
+      '<p style="color:#99a3b3">Products could not be loaded. Please refresh the page.</p>';
+  }
+}
 
 /* =====================================================
    CART
@@ -1158,19 +1274,25 @@ renderCart();
 
 
 function add(id){
-  const product=products.find(p=>Number(p.id)===Number(id));
-  if(!product){ alert("Product is not available."); return; }
-  const stock=Number(product.stock||0);
-  if(stock<=0){ alert("This product is out of stock."); return; }
 
-  let item=cart.find(i=>Number(i.id)===Number(id));
-  if(item){
-    if(item.qty>=stock){ alert("Only "+stock+" item(s) available."); return; }
-    item.qty++;
-  }else{
-    cart.push({id:Number(id),qty:1});
-  }
-  save();
+let item =
+cart.find(i=>i.id===id);
+
+if(item){
+
+item.qty++;
+
+}else{
+
+cart.push({
+ id:id,
+ qty:1
+});
+
+}
+
+save();
+
 }
 
 
@@ -1199,32 +1321,225 @@ save();
    PRODUCTS
 ===================================================== */
 
-function renderProducts(list=products){
-  document.getElementById("products").innerHTML = list.map(p => {
-    const stock=Number(p.stock||0);
-    const soldOut=stock<=0;
-    const discount=Number(p.discount||0);
-    const image=p.image
-      ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" style="width:100%;height:205px;object-fit:contain;padding:18px" onerror="this.style.display='none';this.parentElement.innerHTML='${esc(p.icon||"🥤")}'">`
-      : `${p.icon||"🥤"}`;
-    return `
-      <article class="product">
-        <div class="pic">${image}</div>
-        <div class="pbody">
-          <span class="tag">${esc(p.brand||"")}${p.tag?" • "+esc(p.tag):""}</span>
-          <h3>${esc(p.name)}</h3>
-          <p>${esc(p.desc||"")}${p.size?"<br><b>"+esc(p.size)+"</b>":""}${p.flavor?" • "+esc(p.flavor):""}</p>
-          <div class="price">${money(p.price)}
-            ${Number(p.mrp)>Number(p.price)?`<span style="font-size:12px;color:#7f8998;text-decoration:line-through;margin-left:7px">${money(p.mrp)}</span>`:""}
-            ${discount>0?`<span style="font-size:11px;color:#52e39a;margin-left:7px">${discount}% OFF</span>`:""}
-          </div>
-          <button class="buy" ${soldOut?"disabled":""} onclick="add(${p.id})">${soldOut?"Out of Stock":"Add to Cart"}</button>
-        </div>
-      </article>`;
-  }).join("");
-  document.getElementById("cartCount").textContent=count();
+let selectedBrand = "ALL";
+let selectedCategory = "ALL";
+
+function normalizeText(value){
+  return String(value || "").trim();
 }
 
+function brandKey(value){
+  return normalizeText(value).toLowerCase();
+}
+
+function categoryKey(value){
+  return normalizeText(value).toLowerCase();
+}
+
+function brandIcon(brand){
+  const b = brandKey(brand);
+  if(b.includes("ripped")) return "🔥";
+  if(b.includes("transformium")) return "⚡";
+  if(b.includes("dalaso") || b.includes("dallas")) return "💪";
+  if(b.includes("hypertrophy")) return "🏋️";
+  return "🥤";
+}
+
+function displayCategory(category){
+  const c = normalizeText(category);
+  if(!c) return "Other";
+  return c
+    .replace(/mass\s*gainer/i,"Mass Gainer")
+    .replace(/pre[-\s]?workout/i,"Pre-Workout")
+    .replace(/fat[-\s]?burner/i,"Fat Burner")
+    .replace(/whey\s*protein/i,"Whey Protein")
+    .replace(/whey\s*isolate/i,"Whey Isolate");
+}
+
+function getBrands(){
+  const map = new Map();
+  products.forEach(p=>{
+    const brand = normalizeText(p.brand) || "Other";
+    const key = brandKey(brand);
+    if(!map.has(key)) map.set(key, brand);
+  });
+  return [...map.values()].sort((a,b)=>a.localeCompare(b));
+}
+
+function getCategoriesForBrand(brand){
+  const map = new Map();
+  products
+    .filter(p => selectedBrand === "ALL" || brandKey(p.brand) === brandKey(brand))
+    .forEach(p=>{
+      const raw = normalizeText(p.category) || "Other";
+      const key = categoryKey(raw);
+      if(!map.has(key)) map.set(key, displayCategory(raw));
+    });
+  return [...map.values()].sort((a,b)=>a.localeCompare(b));
+}
+
+function renderBrandNavigation(){
+  const grid = document.getElementById("brandGrid");
+  if(!grid) return;
+
+  const brands = getBrands();
+
+  if(!brands.length){
+    grid.innerHTML = '<p style="color:#99a3b3">No brands available yet.</p>';
+    document.getElementById("categoryBar").style.display = "none";
+    return;
+  }
+
+  grid.innerHTML = `
+    <div class="brandCard ${selectedBrand==="ALL" ? "active" : ""}" onclick="selectBrand('ALL')">
+      <div class="brandLogo">🛒</div>
+      <h3>All Brands</h3>
+      <p>${products.length} product${products.length===1?"":"s"}</p>
+    </div>
+    ${brands.map(brand=>{
+      const count = products.filter(p=>brandKey(p.brand)===brandKey(brand)).length;
+      return `
+        <div class="brandCard ${brandKey(selectedBrand)===brandKey(brand) ? "active" : ""}"
+             onclick='selectBrand(${JSON.stringify(brand)})'>
+          <div class="brandLogo">${brandIcon(brand)}</div>
+          <h3>${brand}</h3>
+          <p>${count} product${count===1?"":"s"}</p>
+        </div>
+      `;
+    }).join("")}
+  `;
+
+  renderCategoryNavigation();
+}
+
+function renderCategoryNavigation(){
+  const bar = document.getElementById("categoryBar");
+  if(!bar) return;
+
+  const categories = getCategoriesForBrand(selectedBrand);
+
+  bar.style.display = "flex";
+  bar.innerHTML = `
+    <button class="categoryBtn ${selectedCategory==="ALL" ? "active" : ""}"
+            data-category="ALL"
+            onclick="selectCategory('ALL')">
+      All Products
+    </button>
+    ${categories.map(category=>`
+      <button class="categoryBtn ${categoryKey(selectedCategory)===categoryKey(category) ? "active" : ""}"
+              data-category="${category.replace(/"/g,'&quot;')}"
+              onclick='selectCategory(${JSON.stringify(category)})'>
+        ${category}
+      </button>
+    `).join("")}
+  `;
+
+  // If the selected category no longer exists for this brand, reset it.
+  if(selectedCategory !== "ALL" &&
+     !categories.some(c=>categoryKey(c)===categoryKey(selectedCategory))){
+    selectedCategory = "ALL";
+  }
+}
+
+function selectBrand(brand){
+  selectedBrand = brand;
+  selectedCategory = "ALL";
+  renderBrandNavigation();
+  renderProducts();
+
+  document.getElementById("shop")?.scrollIntoView({
+    behavior:"smooth",
+    block:"start"
+  });
+}
+
+function selectCategory(category){
+  selectedCategory = category;
+  renderCategoryNavigation();
+  renderProducts();
+
+  document.getElementById("shop")?.scrollIntoView({
+    behavior:"smooth",
+    block:"start"
+  });
+}
+
+function productMatches(p){
+  const brandMatch =
+    selectedBrand === "ALL" ||
+    brandKey(p.brand) === brandKey(selectedBrand);
+
+  const categoryMatch =
+    selectedCategory === "ALL" ||
+    categoryKey(displayCategory(p.category)) === categoryKey(selectedCategory);
+
+  return brandMatch && categoryMatch;
+}
+
+function renderProducts(){
+  const visibleProducts = products.filter(productMatches);
+
+  const title = document.getElementById("productSectionTitle");
+  const subtitle = document.getElementById("productSectionSubtitle");
+
+  if(title){
+    title.textContent =
+      selectedBrand === "ALL"
+        ? "All Supplements"
+        : selectedCategory === "ALL"
+          ? selectedBrand
+          : `${selectedBrand} — ${selectedCategory}`;
+  }
+
+  if(subtitle){
+    subtitle.textContent =
+      `${visibleProducts.length} product${visibleProducts.length===1?"":"s"} available`;
+  }
+
+  const container = document.getElementById("products");
+
+  if(!visibleProducts.length){
+    container.innerHTML = `
+      <div style="grid-column:1/-1;padding:30px;text-align:center;color:#99a3b3;">
+        No products found in this category yet.
+      </div>
+    `;
+  }else{
+    container.innerHTML = visibleProducts.map(p => `
+      <article class="product">
+        <div class="pic">
+          ${p.image
+            ? `<img src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain;border-radius:12px;">`
+            : p.icon}
+        </div>
+
+        <div class="pbody">
+          <span class="tag">${displayCategory(p.category || p.brand)}</span>
+
+          <h3>${p.name}</h3>
+
+          <p>
+            ${[
+              p.brand,
+              p.flavor,
+              p.size
+            ].filter(Boolean).join(" • ") || p.description || ""}
+          </p>
+
+          <div class="price">${money(p.price)}</div>
+
+          <button
+            class="buy"
+            onclick="add(${p.id})">
+            Add to Cart
+          </button>
+        </div>
+      </article>
+    `).join("");
+  }
+
+  document.getElementById("cartCount").textContent = count();
+}
 
 /* =====================================================
    CART
@@ -1926,7 +2241,7 @@ return;
 
 
 closeM("cartModal");
-appliedCoupon=null;appliedDiscount=0;
+
 
 document
 .getElementById("checkoutArea")
@@ -1989,7 +2304,16 @@ placeholder="Full address with PIN code">
 </div>
 
 
-<div class="couponBox"><b>🎟️ Have a coupon?</b><div class="couponRow" style="margin-top:10px"><input id="couponCode" placeholder="Enter WELCOME10 or 1STORDER10" maxlength="20"><button class="secondary" type="button" onclick="applyCoupon()">Apply Coupon</button></div><div id="couponMsg" class="couponMsg">WELCOME10 • 10% OFF</div></div><div id="checkoutSummary" class="priceSummary"></div><button class="primary" onclick="createUPIOrder()">Create Order & Pay by UPI</button>
+<div class="total">
+Payable: ${money(total())}
+</div>
+
+
+<button
+class="primary"
+onclick="createUPIOrder()">
+Create Order & Pay by UPI
+</button>
 
 <p style="color:#99a3b3;font-size:12px">
 After creating the order, scan the QR code and pay the exact amount.
@@ -1997,14 +2321,11 @@ Then enter your UTR/reference number.
 </p>
 
 `;
-renderCheckoutSummary();
+
 show("checkoutModal");
 
 }
 
-
-function renderCheckoutSummary(){const subtotal=total(),discount=Number(appliedDiscount||0),final=Math.max(0,subtotal-discount),el=document.getElementById("checkoutSummary");if(!el)return;el.innerHTML=`<div class="summaryLine"><span>Subtotal</span><b>${money(subtotal)}</b></div>${discount>0?`<div class="summaryLine discount"><span>Coupon ${esc(appliedCoupon||"")}</span><b>- ${money(discount)}</b></div>`:""}<div class="summaryLine final"><span>Total Payable</span><b>${money(final)}</b></div>`;}
-async function applyCoupon(){const input=document.getElementById("couponCode"),msg=document.getElementById("couponMsg"),code=(input?.value||"").trim().toUpperCase();if(!code){msg.textContent="Enter a coupon code.";msg.className="couponMsg err";return;}try{const response=await fetch("/api/coupons/validate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code,subtotal:total()})});const data=await response.json();if(!response.ok||!data.success)throw new Error(data.message||"Invalid coupon");appliedCoupon=data.code;appliedDiscount=Number(data.discount||0);msg.textContent=`✓ ${data.message} — You save ${money(appliedDiscount)}`;msg.className="couponMsg ok";renderCheckoutSummary();}catch(e){appliedCoupon=null;appliedDiscount=0;msg.textContent=e.message||"Invalid coupon";msg.className="couponMsg err";renderCheckoutSummary();}}
 
 /* =====================================================
    CREATE UPI ORDER
@@ -2106,8 +2427,8 @@ email:email,
 address:address,
 
 items:items,
-couponCode:appliedCoupon || "",
-amount:Math.max(0,total()-Number(appliedDiscount||0))
+
+amount:total()
 
 })
 
@@ -2180,79 +2501,182 @@ alert(
 function showUPIPayment(order){
 
 const amount = Number(order?.amount || 0);
-const safeOrderId = Number(order?.id || order?.localOrderId || 0);
 
-currentUPIOrderId = Number.isInteger(safeOrderId) && safeOrderId > 0
-  ? safeOrderId : null;
+// Accept either field returned by different server versions.
+const safeOrderId = Number(
+  order?.id ||
+  order?.localOrderId ||
+  0
+);
 
-const upiLink =
-  "upi://pay?pa=" + encodeURIComponent(UPI_ID) +
-  "&pn=" + encodeURIComponent(STORE_NAME) +
-  "&am=" + encodeURIComponent(amount.toFixed(2)) +
-  "&cu=INR" +
-  "&tn=" + encodeURIComponent("Shiv Supplements Order #" + safeOrderId);
+currentUPIOrderId =
+  Number.isInteger(safeOrderId) && safeOrderId > 0
+    ? safeOrderId
+    : null;
 
-document.getElementById("checkoutArea").innerHTML = `
+document
+.getElementById("checkoutArea")
+.innerHTML = `
 
-<div class="upiBox" style="max-width:560px;margin:auto;text-align:center">
+<div class="upiBox">
 
-<div class="upiTitle">💳 Complete Your Payment</div>
-
-<div style="margin:10px 0 18px;color:#99a3b3;font-size:14px">
-Order <b style="color:#fff">#${safeOrderId}</b>
+<div class="upiTitle">
+📱 Pay Using UPI
 </div>
 
-<div style="background:#111820;border:1px solid #303a46;border-radius:18px;padding:18px;margin-bottom:18px">
-<div style="font-size:13px;color:#99a3b3">TOTAL PAYABLE</div>
-<div style="font-size:36px;font-weight:900;color:#f7b51b;margin-top:5px">${money(amount)}</div>
+<div class="upiText">
+Scan the QR code using PhonePe, Google Pay, Paytm or any UPI app.
+<br><br>
+Pay the exact amount:
 </div>
 
-<a href="${upiLink}"
-style="display:block;background:linear-gradient(90deg,#5f259f,#7b2cbf);color:white;text-decoration:none;border-radius:14px;padding:16px 18px;font-weight:900;font-size:17px;box-shadow:0 8px 25px rgba(95,37,159,.3);margin-bottom:10px">
-📱 Pay Now with PhonePe / UPI
-</a>
-
-<div style="font-size:12px;color:#77808d;margin:8px 0 18px">
-Tap the button on your phone to open your UPI app with the exact amount.
+<div class="total">
+${money(amount)}
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
-<button class="copyBtn" onclick="copyUPI()">📋 Copy UPI ID</button>
-<button class="copyBtn" onclick="copyUPIAmount(${amount})">💰 Copy Amount</button>
-</div>
-
-<div class="upiText">UPI ID</div>
-<div class="upiId" style="margin:8px 0 18px">${esc(UPI_ID)}</div>
-
-<img class="qr" src="${QR_IMAGE}"
+<img
+class="qr"
+src="${QR_IMAGE}"
 alt="Shiv Supplements UPI QR Code"
 onerror="this.style.display='none';document.getElementById('qrError').style.display='block';">
 
-<div id="qrError" style="display:none;color:#ff9b9b;margin:10px 0">
-QR image <b>qr.png</b> was not found. You can still use the Pay Now button or UPI ID.
+<div
+id="qrError"
+style="display:none;color:#ff9b9b;margin:10px 0">
+
+QR image <b>qr.png</b> was not found.
+Please upload qr.png to the same folder as index.html.
+
 </div>
 
-<div style="margin:20px 0 10px;text-align:left">
-<div style="font-weight:800;margin-bottom:6px">After payment</div>
-<div class="upiText">Enter the UTR / transaction reference number from PhonePe or your UPI app.</div>
+<div class="upiText">
+UPI ID
 </div>
 
-<div class="field" style="text-align:left">
-<label>UTR / Transaction Reference Number *</label>
-<input id="utrInput" type="text" maxlength="100" placeholder="Enter UTR / transaction ID">
+<div class="upiId">
+${esc(UPI_ID)}
 </div>
 
-<button class="primary" style="width:100%;margin-top:8px" onclick="submitUTR(${safeOrderId})">
-✅ Submit Payment Details
+<br>
+
+<button
+class="copyBtn"
+onclick="copyUPI()">
+📋 Copy UPI ID
 </button>
 
-<p style="color:#99a3b3;font-size:12px;margin-top:15px">
-Your order will remain <b>Payment Pending</b> until the store admin verifies your payment.
+<div class="orderNumber">
+
+<b>Order ID</b>
+
+<br>
+
+<span style="font-size:24px;color:#ffd45c">
+${currentUPIOrderId ? "#" + currentUPIOrderId : "Creating..."}
+</span>
+
+</div>
+
+<p class="upiText">
+After successful payment, enter the UTR / transaction reference number below.
+</p>
+
+<div class="field">
+
+<label>
+UTR / Transaction Reference Number *
+</label>
+
+<input
+id="utrInput"
+type="text"
+maxlength="100"
+autocomplete="off"
+placeholder="Enter UTR / transaction ID"
+oninput="updateUTRButton()">
+
+</div>
+
+<div
+id="utrError"
+style="display:none;color:#ff9b9b;font-size:13px;margin:8px 0">
+</div>
+
+<button
+id="submitUTRButton"
+class="primary"
+style="width:100%"
+onclick="submitUTR(currentUPIOrderId)"
+disabled>
+
+Submit Payment Details
+
+</button>
+
+<p
+style="color:#99a3b3;font-size:12px;margin-top:15px">
+
+Your order will remain
+<b>Payment Pending</b>
+until the store admin verifies your payment.
+
 </p>
 
 </div>
+
 `;
+
+setTimeout(()=>{
+  const input = document.getElementById("utrInput");
+  if(input) input.focus();
+}, 100);
+
 }
+
+
+/* =====================================================
+   UTR BUTTON STATE
+===================================================== */
+
+function updateUTRButton(){
+
+const input =
+document.getElementById("utrInput");
+
+const button =
+document.getElementById("submitUTRButton");
+
+const error =
+document.getElementById("utrError");
+
+if(!input || !button) return;
+
+const utr =
+input.value.trim();
+
+button.disabled =
+  utr.length < 6 ||
+  !currentUPIOrderId;
+
+if(error){
+
+if(utr.length > 0 && utr.length < 6){
+
+error.textContent =
+"Please enter at least 6 characters of your UTR.";
+
+error.style.display = "block";
+
+}else{
+
+error.style.display = "none";
+
+}
+
+}
+
+}
+
 
 /* =====================================================
    COPY UPI
@@ -2280,16 +2704,6 @@ alert(
 
 }
 
-
-
-async function copyUPIAmount(amount){
-  try{
-    await navigator.clipboard.writeText(Number(amount).toFixed(2));
-    alert("Amount copied!");
-  }catch(error){
-    alert("Amount: ₹" + Number(amount).toFixed(2));
-  }
-}
 
 /* =====================================================
    SUBMIT UTR
@@ -2595,13 +3009,12 @@ overlay.style.display="none";
 });
 
 
-window.addEventListener("scroll",()=>{const b=document.getElementById("backTop");if(b)b.style.display=window.scrollY>500?"block":"none";});
-
 /* =====================================================
    INITIAL LOAD
 ===================================================== */
 
-loadProductsFromServer();
+renderCart();
+loadProducts();
 
 me().then(user=>{
 
