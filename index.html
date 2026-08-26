@@ -539,21 +539,24 @@ async function renderAccount(){
   const area = document.getElementById("accountArea");
   if(!area) return;
 
-  // Always show the login/registration UI immediately.
+  // Render the account UI immediately. This prevents a blank modal
+  // if /api/me is slow, unavailable, or returns an unexpected response.
   area.innerHTML = `
     <div class="tabs">
       <button id="loginTab" class="tab active" onclick="showLogin()">Login</button>
       <button id="regTab" class="tab" onclick="showRegister()">Registration</button>
     </div>
-    <div id="formArea">${loginForm()}</div>
+    <div id="formArea"></div>
   `;
+  const formArea = document.getElementById("formArea");
+  if(formArea) formArea.innerHTML = loginForm();
 
   try {
     const user = await me();
     if(user){
       area.innerHTML = `
-        <p>Welcome back, <b>${esc(user.name)}</b> 👋</p>
-        <p style="color:#99a3b3">${esc(user.phone)}<br>${esc(user.email)}</p>
+        <p>Welcome back, <b>${esc(user.name || "Customer")}</b> 👋</p>
+        <p style="color:#99a3b3">${esc(user.phone || "")}<br>${esc(user.email || "")}</p>
         <div class="accountActions">
           <button class="primary" onclick="closeM('accountModal');openCart()">🛒 Cart & Checkout</button>
           <button class="secondary" onclick="loadMyOrders()">📦 My Orders</button>
@@ -565,7 +568,7 @@ async function renderAccount(){
     }
   } catch(error) {
     console.error("ACCOUNT CHECK ERROR:", error);
-    // Keep the already-rendered login form visible if /api/me is unavailable.
+    // Keep the login form already rendered above.
   }
 }
 
