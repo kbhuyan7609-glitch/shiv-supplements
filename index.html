@@ -698,6 +698,8 @@ headers:{
 
 body:JSON.stringify({
 
+identifier: identifier,
+
 email: identifier,
 
 phone: identifier,
@@ -708,19 +710,20 @@ password: password
 
 });
 
-const data =
-await response.json();
+const raw = await response.text();
+let data = {};
+try { data = raw ? JSON.parse(raw) : {}; } catch(e) {
+  console.error("Login response was not JSON:", raw);
+}
 
 if(!response.ok){
+  alert(data.message || data.error || `Login failed (HTTP ${response.status})`);
+  return;
+}
 
-alert(
-data.message ||
-data.error ||
-"Invalid login details"
-);
-
-return;
-
+if(!data.success){
+  alert(data.message || "Invalid login details");
+  return;
 }
 
 document
