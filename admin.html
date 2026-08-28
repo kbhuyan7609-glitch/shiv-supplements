@@ -103,7 +103,7 @@ async function addBulkStock(){
       idCol=-1; qtyCol=-1;
     }
 
-    // If there is no header, accept the simple 2-column format: ID, Quantity.
+    // If there is no header, accept the simple 2-column format: Product ID, Quantity.
     if(headerRow<0){ headerRow=-1; idCol=0; qtyCol=1; }
 
     const updates=[];
@@ -111,34 +111,50 @@ async function addBulkStock(){
       const rawId=String(rows[r]?.[idCol]??'').trim();
       const rawQty=String(rows[r]?.[qtyCol]??'').trim();
       if(!rawId&&!rawQty) continue;
-      const id=Number(rawId.replace(/,/g,''));
-      const qty=Number(rawQty.replace(/,/g,''));
-      if(!Number.isInteger(id)||!Number.isInteger(qty)||id<=0||qty<=0){
-        throw new Error(`Invalid row ${r+1}. Product ID and Quantity must be positive whole numbers.`);
+
+      // Product IDs may be numeric (1, 2, 3) OR text IDs such as PROD0001/SKU001.
+      // Only Quantity is required to be a positive whole number.
+      const id=rawId.replace(/^['\"]|['\"]$/g,'').trim();
+      const qty=Number(rawQty.replace(/,/g,'').trim());
+      if(!id || !Number.isInteger(qty) || qty<=0){
+        throw new Error(`Invalid row ${r+1}. Product ID is required and Quantity must be a positive whole number.`);
       }
       updates.push({id,qty});
     }
     if(!updates.length) throw new Error('No valid Product ID + Quantity rows found.');
 
-    // Combine duplicate product IDs so one product is updated once.
-    const combined=new Map();
-    for(const u of updates) combined.set(u.id,(combined.get(u.id)||0)+u.qty);
-
+    // Load the real products and match the uploaded Product ID against the
+    // database id, productId, sku, or code. This supports both numeric and
+    // alphanumeric Product IDs without changing the rest of the admin system.
     const d=await api('/api/admin/products');
     const list=d.products||[];
-    const byId=new Map(list.map(p=>[Number(p.id),p]));
-    const missing=[...combined.keys()].filter(id=>!byId.has(id));
+    const key=v=>String(v??'').trim().toLowerCase();
+    const productMap=new Map();
+    for(const p of list){
+      for(const v of [p.id,p.productId,p.product_id,p.sku,p.code]){
+        if(v!==undefined&&v!==null&&String(v).trim()!=='') productMap.set(key(v),p);
+      }
+    }
+
+    // Combine duplicate Product IDs so each product is updated only once.
+    const combined=new Map();
+    for(const u of updates){
+      const k=key(u.id);
+      combined.set(k,(combined.get(k)||0)+u.qty);
+    }
+
+    const missing=[...combined.keys()].filter(k=>!productMap.has(k));
     if(missing.length) throw new Error('Product ID not found: '+missing.join(', '));
 
     let done=0;
-    for(const [id,qty] of combined){
-      const p=byId.get(id);
+    for(const [k,qty] of combined){
+      const p=productMap.get(k);
       const body={
         brand:p.brand,name:p.name,category:p.category,flavor:p.flavor,size:p.size,
         mrp:p.mrp,price:p.price,stock:Number(p.stock||0)+qty,image:p.image,
         description:p.description,active:p.active
       };
-      await api('/api/admin/products/'+encodeURIComponent(id),{
+      await api('/api/admin/products/'+encodeURIComponent(p.id),{
         method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)
       });
       done++;
