@@ -977,9 +977,8 @@ function renderCustomerOrder(order){
   if(!Number.isFinite(amount)&&Number.isFinite(paise))amount=paise/100;
   if(!Number.isFinite(amount))amount=0;
   const method=order.payment_method||"UPI";
-  const ref=order.payment_ref||"";
   const itemHTML=items.length?items.map(item=>{const name=item.name||item.product_name||"Product";const qty=Number(item.qty||item.quantity||1);const price=Number(item.price||0);return '<div class="orderItem"><span>'+esc(name)+' × '+qty+'</span><span>'+money(price*qty)+'</span></div>';}).join(""): '<div class="orderItem"><span>Order items</span><span>—</span></div>';
-  return '<div class="orderCard"><div class="orderCardTop"><div><div class="orderId">Order #'+esc(orderId)+'</div><div class="orderDate">'+formatOrderDate(order.created_at)+'</div></div><span class="orderStatus '+orderStatusClass(status)+'">'+esc(orderStatusText(status))+'</span></div><div class="orderItems">'+itemHTML+'</div><div class="orderTotal">Total: '+money(amount)+'</div><div class="orderPayment">💳 Payment: '+esc(method)+'<br>'+(ref?'🔢 UTR: <b>'+esc(ref)+'</b>':'🔢 UTR: Not submitted yet')+'</div></div>';
+  return '<div class="orderCard"><div class="orderCardTop"><div><div class="orderId">Order #'+esc(orderId)+'</div><div class="orderDate">'+formatOrderDate(order.created_at)+'</div></div><span class="orderStatus '+orderStatusClass(status)+'">'+esc(orderStatusText(status))+'</span></div><div class="orderItems">'+itemHTML+'</div><div class="orderTotal">Total: '+money(amount)+'</div><div class="orderPayment">💳 Payment: '+esc(method)+'<br>⏳ Payment verification: <b>Pending</b></div></div>';
 }
 
 function orderStatusClass(status){
@@ -1114,7 +1113,7 @@ Create Order & Pay by UPI
 
 <p style="color:#99a3b3;font-size:12px">
 After creating the order, scan the QR code and pay the exact amount.
-Then enter your UTR/reference number.
+After payment, your order will remain pending until verified.
 </p>
 
 `;
@@ -1385,106 +1384,28 @@ ${currentUPIOrderId ? "#" + currentUPIOrderId : "Creating..."}
 
 </div>
 
-<p class="upiText">
-After successful payment, enter the UTR / transaction reference number below.
-</p>
-
-<div class="field">
-
-<label>
-UTR / Transaction Reference Number *
-</label>
-
-<input
-id="utrInput"
-type="text"
-maxlength="100"
-autocomplete="off"
-placeholder="Enter UTR / transaction ID"
-oninput="updateUTRButton()">
-
+<div class="successBox" style="margin-top:18px">
+  <div style="font-size:42px">💳</div>
+  <h3 style="margin:8px 0">Payment Verification</h3>
+  <p style="color:#99a3b3;font-size:13px">
+    Complete the payment in PhonePe/your UPI app using the button above.
+    Your order will stay <b>Payment Pending</b> until the store admin verifies the payment.
+  </p>
+  <button class="primary" style="width:100%;margin-top:8px" onclick="finishOrder()">
+    ✅ I Have Completed Payment
+  </button>
 </div>
-
-<div
-id="utrError"
-style="display:none;color:#ff9b9b;font-size:13px;margin:8px 0">
-</div>
-
-<button
-id="submitUTRButton"
-class="primary"
-style="width:100%"
-onclick="submitUTR(currentUPIOrderId)"
-disabled>
-
-Submit Payment Details
-
-</button>
-
-<p
-style="color:#99a3b3;font-size:12px;margin-top:15px">
-
-Your order will remain
-<b>Payment Pending</b>
-until the store admin verifies your payment.
-
-</p>
 
 </div>
 
 `;
 
-setTimeout(()=>{
-  const input = document.getElementById("utrInput");
-  if(input) input.focus();
-}, 100);
-
 }
 
 
 /* =====================================================
-   UTR BUTTON STATE
+   COPY UPI
 ===================================================== */
-
-function updateUTRButton(){
-
-const input =
-document.getElementById("utrInput");
-
-const button =
-document.getElementById("submitUTRButton");
-
-const error =
-document.getElementById("utrError");
-
-if(!input || !button) return;
-
-const utr =
-input.value.trim();
-
-button.disabled =
-  utr.length < 6 ||
-  !currentUPIOrderId;
-
-if(error){
-
-if(utr.length > 0 && utr.length < 6){
-
-error.textContent =
-"Please enter at least 6 characters of your UTR.";
-
-error.style.display = "block";
-
-}else{
-
-error.style.display = "none";
-
-}
-
-}
-
-}
-
 
 /* =====================================================
    COPY UPI
@@ -1541,204 +1462,6 @@ alert(
 
 
 /* =====================================================
-   SUBMIT UTR
-===================================================== */
-
-async function submitUTR(orderId){
-
-const numericOrderId =
-  Number(orderId || currentUPIOrderId || 0);
-
-const utr =
-  val("utrInput");
-
-const errorBox =
-  document.getElementById("utrError");
-
-const button =
-  document.getElementById("submitUTRButton");
-
-function showUTRError(message){
-
-  if(errorBox){
-    errorBox.textContent = message;
-    errorBox.style.display = "block";
-  }else{
-    alert(message);
-  }
-
-}
-
-if(
-  !Number.isInteger(numericOrderId) ||
-  numericOrderId <= 0
-){
-
-showUTRError(
-  "Your order number was not created. Please go back and create the order again."
-);
-
-return;
-
-}
-
-if(!utr){
-
-showUTRError(
-  "Please enter your UTR / transaction reference number."
-);
-
-return;
-
-}
-
-if(utr.length < 6){
-
-showUTRError(
-  "Please enter a valid UTR / transaction reference number."
-);
-
-return;
-
-}
-
-if(button){
-  button.disabled = true;
-  button.textContent = "Submitting...";
-}
-
-try{
-
-const response =
-await fetch(
-"/api/manual-order",
-{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-credentials:"same-origin",
-
-body:JSON.stringify({
-
-localOrderId:numericOrderId,
-
-// Send aliases too so this works with the current
-// and earlier manual-order server implementations.
-orderId:numericOrderId,
-
-id:numericOrderId,
-
-utr:utr
-
-})
-
-});
-
-let data = {};
-
-try{
-  data = await response.json();
-}catch(e){
-  data = {};
-}
-
-if(!response.ok){
-
-showUTRError(
-  data.message ||
-  data.error ||
-  "Could not submit payment details. Please try again."
-);
-
-if(button){
-  button.disabled = false;
-  button.textContent = "Submit Payment Details";
-}
-
-return;
-
-}
-
-document
-.getElementById("checkoutArea")
-.innerHTML = `
-
-<div class="successBox">
-
-<div style="font-size:50px">
-✅
-</div>
-
-<h2>
-Payment Details Submitted
-</h2>
-
-<p style="color:#99a3b3">
-
-Order ID:
-<b>#${numericOrderId}</b>
-
-<br><br>
-
-UTR:
-<b>${esc(utr)}</b>
-
-</p>
-
-<p>
-Your payment is now
-<b>Pending Verification</b>.
-</p>
-
-<p style="color:#99a3b3;font-size:13px">
-
-The store admin will verify your UPI payment
-and update the order status.
-
-</p>
-
-<button
-class="primary"
-onclick="finishOrder()">
-Done
-</button>
-
-</div>
-
-`;
-
-currentUPIOrderId =
-  numericOrderId;
-
-cart = [];
-save();
-
-}catch(error){
-
-console.error(
-"UTR ERROR:",
-error
-);
-
-showUTRError(
-"Unable to submit UTR. Please check your internet connection and try again."
-);
-
-if(button){
-  button.disabled = false;
-  button.textContent = "Submit Payment Details";
-}
-
-}
-
-}
-
-
-/* =====================================================
    FINISH ORDER
 ===================================================== */
 
@@ -1747,7 +1470,7 @@ function finishOrder(){
 closeM("checkoutModal");
 
 alert(
-"Order placed successfully. Payment is pending verification."
+"Order placed successfully. Payment is pending verification. The store will confirm your payment."
 );
 
 }
