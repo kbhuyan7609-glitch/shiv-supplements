@@ -21,7 +21,7 @@
   <div class="headerMain">
     <a class="brand" href="#"><img src="logo.png" alt="Shiv Supplements"></a>
     <div class="search"><input id="searchInput" placeholder="Search for whey protein, creatine, pre workout..." oninput="handleSearch(this.value)"><button aria-label="Search">⌕</button></div>
-    <div class="headerActions"><button id="accountText" class="headerAction" onclick="openAccount()">👤 ACCOUNT</button><button class="headerAction cartBtn" onclick="openCart()">🛒 CART <span class="cartBubble" id="cartCount">0</span></button></div>
+    <div class="headerActions"><button class="headerAction" onclick="openAccount()">👤 ACCOUNT</button><button class="headerAction cartBtn" onclick="openCart()">🛒 CART <span class="cartBubble" id="cartCount">0</span></button></div>
   </div>
   <div class="navline"><nav class="navLinks"><a class="home" href="#">HOME</a><a href="#shop" onclick="selectCategory('Whey Protein')">PROTEIN⌄</a><a href="#shop" onclick="selectCategory('Mass Gainer')">MASS GAINER⌄</a><a href="#shop" onclick="selectCategory('Pre-Workout')">PRE WORKOUT</a><a href="#shop" onclick="selectCategory('Creatine')">CREATINE</a><a href="#shop" onclick="selectCategory('Vitamins')">VITAMINS</a><a href="#shop" onclick="selectCategory('Accessories')">ACCESSORIES</a><a href="#offers">COMBOS</a><a class="offers" href="#offers">OFFERS</a></nav></div>
 </header>
@@ -213,7 +213,20 @@ function brandKey(value){
 }
 
 function categoryKey(value){
-  return normalizeText(value).toLowerCase();
+  return normalizeText(value).toLowerCase().replace(/[^a-z0-9]+/g, "");
+}
+
+function categoryMatches(productCategory, selected){
+  const p = categoryKey(productCategory);
+  const s = categoryKey(selected);
+  if(!s || s === "all") return true;
+  if(s === "wheyprotein" || s === "protein") return /protein|whey|isolate/i.test(String(productCategory || ""));
+  if(s === "massgainer") return /mass\s*gainer|gainer/i.test(String(productCategory || ""));
+  if(s === "preworkout") return /pre[-\s]*workout/i.test(String(productCategory || ""));
+  if(s === "creatine") return /creatine/i.test(String(productCategory || ""));
+  if(s === "vitamins") return /vitamin/i.test(String(productCategory || ""));
+  if(s === "accessories") return /accessor/i.test(String(productCategory || ""));
+  return p === s;
 }
 
 function brandIcon(brand){
@@ -346,7 +359,7 @@ function selectCategory(category){
 
 function productMatches(p){
   const brandMatch = selectedBrand === "ALL" || brandKey(p.brand) === brandKey(selectedBrand);
-  const categoryMatch = selectedCategory === "ALL" || categoryKey(displayCategory(p.category)) === categoryKey(selectedCategory);
+  const categoryMatch = categoryMatches(p.category, selectedCategory);
   const q = searchQuery.trim().toLowerCase();
   const searchMatch = !q || [p.name,p.brand,p.category,p.flavor,p.size,p.description].filter(Boolean).join(" ").toLowerCase().includes(q);
   return brandMatch && categoryMatch && searchMatch;
@@ -1121,7 +1134,7 @@ Payable: ${money(total())}
 <button
 class="primary"
 onclick="createUPIOrder()">
-Create Order & Pay with PhonePe
+Create Order & Pay by UPI
 </button>
 
 <p style="color:#99a3b3;font-size:12px">
@@ -1142,68 +1155,164 @@ show("checkoutModal");
 
 async function createUPIOrder(){
 
-const name=val("cname");
-const phone=val("cphone");
-const email=val("cemail");
-const address=val("caddress");
+const name =
+val("cname");
 
-if(!name || !phone || !email || !address){
-  alert("Please complete all delivery details.");
-  return;
+const phone =
+val("cphone");
+
+const email =
+val("cemail");
+
+const address =
+val("caddress");
+
+
+if(
+!name ||
+!phone ||
+!email ||
+!address
+){
+
+alert(
+"Please complete all delivery details."
+);
+
+return;
+
 }
+
 
 if(!/^\d{10}$/.test(phone)){
-  alert("Enter a valid 10-digit mobile number.");
-  return;
+
+alert(
+"Enter a valid 10-digit mobile number."
+);
+
+return;
+
 }
+
 
 if(!cart.length){
-  alert("Your cart is empty.");
-  return;
+
+alert("Your cart is empty.");
+
+return;
+
 }
 
-const items=cart.map(item=>{
-  const product=products.find(p=>p.id===item.id);
-  return {id:product.id,name:product.name,price:product.price,qty:item.qty};
+
+const items =
+cart.map(item=>{
+
+const product =
+products.find(p=>p.id===item.id);
+
+return {
+
+id:product.id,
+
+name:product.name,
+
+price:product.price,
+
+qty:item.qty
+
+};
+
 });
 
-const button=document.querySelector('#checkoutArea .primary');
-if(button){
-  button.disabled=true;
-  button.textContent="Connecting to PhonePe...";
-}
 
 try{
-  const response=await fetch("/api/create-order",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    credentials:"same-origin",
-    body:JSON.stringify({name,phone,email,address,items,amount:total()})
-  });
 
-  let data={};
-  try{data=await response.json();}catch(e){}
+const response =
+await fetch(
+"/api/create-order",
+{
 
-  if(!response.ok){
-    alert(data.message || data.error || "Could not start PhonePe payment.");
-    if(button){button.disabled=false;button.textContent="Create Order & Pay with PhonePe";}
-    return;
-  }
+method:"POST",
 
-  if(!data.success || !data.order || !data.order.id || !data.order.redirectUrl){
-    alert("PhonePe checkout URL was not created. Please try again.");
-    if(button){button.disabled=false;button.textContent="Create Order & Pay with PhonePe";}
-    return;
-  }
+headers:{
+"Content-Type":"application/json"
+},
 
-  currentUPIOrderId=Number(data.order.id);
-  window.location.href=data.order.redirectUrl;
+body:JSON.stringify({
+
+name:name,
+
+phone:phone,
+
+email:email,
+
+address:address,
+
+items:items,
+
+amount:total()
+
+})
+
+});
+
+
+const data =
+await response.json();
+
+
+if(!response.ok){
+
+alert(
+data.message ||
+data.error ||
+"Could not create order"
+);
+
+return;
+
+}
+
+
+if(
+!data.success ||
+!data.order ||
+!data.order.id
+){
+
+alert(
+"Order was not created correctly."
+);
+
+return;
+
+}
+
+
+currentUPIOrderId = Number(
+  data.order.id ||
+  data.order.localOrderId ||
+  0
+);
+
+showUPIPayment(
+  data.order
+);
+
 
 }catch(error){
-  console.error("PHONEPE CREATE ORDER ERROR:",error);
-  alert("Unable to connect to PhonePe. Please try again.");
-  if(button){button.disabled=false;button.textContent="Create Order & Pay with PhonePe";}
+
+console.error(
+"CREATE ORDER ERROR:",
+error
+);
+
+alert(
+"Unable to create order. Please try again."
+);
+
 }
+
 }
 
 
@@ -1211,108 +1320,86 @@ try{
    UPI PAYMENT SCREEN
 ===================================================== */
 
-function showUPIPayment(order){
-
-const amount = Number(order?.amount || 0);
-const safeOrderId = Number(order?.id || order?.localOrderId || 0);
-
-currentUPIOrderId =
-  Number.isInteger(safeOrderId) && safeOrderId > 0
-    ? safeOrderId : null;
-
-const phonePeUrl = buildPhonePeUrl(amount, currentUPIOrderId);
-
- document.getElementById("checkoutArea").innerHTML = `
-
-<div class="upiBox">
-
-<div class="upiTitle">📱 Pay with PhonePe</div>
-
-<div class="upiText">
-Your order <b>#${currentUPIOrderId || "—"}</b> has been created.
-<br><br>
-Payable amount:
-</div>
-
-<div class="total">${money(amount)}</div>
-
-<div class="upiText">
-Payment UPI ID
-</div>
-
-<div class="upiId">${esc(UPI_ID)}</div>
-
-<br>
-
-<button class="primary" style="width:100%;font-size:18px;padding:15px" onclick="payWithPhonePe(${JSON.stringify(phonePeUrl)})">
-📲 Pay Now with PhonePe
-</button>
-
-<p style="color:#99a3b3;font-size:12px;margin-top:12px">
-Tap the button to open PhonePe with the amount and UPI ID already filled in.
-</p>
-
-<div class="orderNumber">
-<b>Order ID</b><br>
-<span style="font-size:24px;color:#ffd45c">
-${currentUPIOrderId ? "#" + currentUPIOrderId : "—"}
-</span>
-</div>
-
-<p class="upiText">
-After completing payment in PhonePe, return to this page and enter your UTR / transaction reference number.
-</p>
-
-<div class="field">
-<label>UTR / Transaction Reference Number *</label>
-<input id="utrInput" type="text" maxlength="100" autocomplete="off"
-placeholder="Enter UTR / transaction ID" oninput="updateUTRButton()">
-</div>
-
-<div id="utrError" style="display:none;color:#ff9b9b;font-size:13px;margin:8px 0"></div>
-
-<button id="submitUTRButton" class="primary" style="width:100%"
-onclick="submitUTR(currentUPIOrderId)" disabled>
-Submit Payment Details
-</button>
-
-<p style="color:#99a3b3;font-size:12px;margin-top:15px">
-Your order will remain <b>Payment Pending</b> until the store admin verifies the payment.
-</p>
-
-</div>
-
-`;
-}
-
 function buildPhonePeUrl(amount, orderId){
   const params = new URLSearchParams({
     pa: UPI_ID,
     pn: STORE_NAME,
     am: Number(amount || 0).toFixed(2),
     cu: "INR",
-    tn: orderId ? `Shiv Supplements Order #${orderId}` : "Shiv Supplements Payment"
+    tn: `Shiv Supplements Order #${orderId || ""}`
   });
-  return "phonepe://pay?" + params.toString();
+  return `phonepe://pay?${params.toString()}`;
 }
 
 function payWithPhonePe(phonePeUrl){
-  const upiUrl = phonePeUrl.replace(/^phonepe:\/\/pay\?/, "upi://pay?");
-  let leftPage = false;
-
-  const onVisibility = () => {
-    if(document.hidden) leftPage = true;
-  };
-  document.addEventListener("visibilitychange", onVisibility, {once:false});
-
+  // On Android this opens the installed PhonePe app.
   window.location.href = phonePeUrl;
+  // If PhonePe is not installed, the browser remains on the checkout page.
+}
 
-  setTimeout(() => {
-    document.removeEventListener("visibilitychange", onVisibility);
-    if(!leftPage && !document.hidden){
-      window.location.href = upiUrl;
-    }
-  }, 1500);
+function showUPIPayment(order){
+  const amount = Number(order?.amount || 0);
+  const safeOrderId = Number(order?.id || order?.localOrderId || 0);
+  currentUPIOrderId = Number.isInteger(safeOrderId) && safeOrderId > 0 ? safeOrderId : null;
+
+  const phonePeUrl = buildPhonePeUrl(amount, currentUPIOrderId);
+
+  document.getElementById("checkoutArea").innerHTML = `
+    <div class="upiBox">
+      <div class="upiTitle">📱 Pay Using PhonePe</div>
+      <div class="upiText">
+        Pay directly to Shiv Supplements using PhonePe.
+        <br><br>Payable amount:
+      </div>
+      <div class="total">${money(amount)}</div>
+
+      <div class="upiText">Payment UPI ID</div>
+      <div class="upiId">${esc(UPI_ID)}</div>
+
+      <br>
+      <button class="primary" style="width:100%;font-size:18px;padding:15px"
+        onclick='payWithPhonePe(${JSON.stringify(phonePeUrl)})'>
+        📲 Pay Now with PhonePe
+      </button>
+
+      <p style="color:#99a3b3;font-size:12px;margin-top:12px">
+        Tap the button to open the PhonePe app with the amount and UPI ID filled in.
+      </p>
+
+      <div class="orderNumber">
+        <b>Order ID</b><br>
+        <span style="font-size:24px;color:#ffd45c">
+          ${currentUPIOrderId ? "#" + currentUPIOrderId : "—"}
+        </span>
+      </div>
+
+      <p class="upiText">
+        After completing payment in PhonePe, return here and enter your UTR / transaction reference number.
+      </p>
+
+      <div class="field">
+        <label>UTR / Transaction Reference Number *</label>
+        <input id="utrInput" type="text" maxlength="100" autocomplete="off"
+          placeholder="Enter UTR / transaction ID" oninput="updateUTRButton()">
+      </div>
+
+      <div id="utrError" style="display:none;color:#ff9b9b;font-size:13px;margin:8px 0"></div>
+
+      <button id="submitUTRButton" class="primary" style="width:100%"
+        onclick="submitUTR(currentUPIOrderId)" disabled>
+        Submit Payment Details
+      </button>
+
+      <p style="color:#99a3b3;font-size:12px;margin-top:15px">
+        Your order will remain <b>Payment Pending</b> until the store admin verifies your payment.
+      </p>
+    </div>
+  `;
+
+  setTimeout(()=>{
+    const input=document.getElementById("utrInput");
+    if(input) input.focus();
+  },100);
 }
 
 
@@ -1320,8 +1407,7 @@ function payWithPhonePe(phonePeUrl){
    UTR BUTTON STATE
 ===================================================== */
 
-
-
+function updateUTRButton(){
 
 const input =
 document.getElementById("utrInput");
@@ -1692,37 +1778,12 @@ overlay.style.display="none";
 });
 
 
-function handlePhonePeReturn(){
-  const params=new URLSearchParams(window.location.search);
-  const payment=params.get("payment");
-  const orderId=params.get("orderId");
-  if(!payment)return;
-
-  if(payment==="success"){
-    cart=[];
-    save();
-    renderCart();
-    alert(`Payment successful! Order #${orderId||""} has been placed.`);
-  }else if(payment==="failed"){
-    alert(`PhonePe payment failed or was cancelled. Order #${orderId||""} was not paid.`);
-  }else if(payment==="pending"){
-    alert(`Payment is still being confirmed for Order #${orderId||""}. Please check My Orders in a moment.`);
-  }else{
-    alert("We could not confirm the PhonePe payment. Please check My Orders or contact the store.");
-  }
-
-  try{
-    window.history.replaceState({},document.title,window.location.pathname);
-  }catch(e){}
-}
-
 /* =====================================================
    INITIAL LOAD
 ===================================================== */
 
 renderCart();
 loadProducts();
-handlePhonePeReturn();
 
 me().then(user=>{
 
