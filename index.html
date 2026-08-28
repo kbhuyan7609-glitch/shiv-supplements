@@ -213,20 +213,7 @@ function brandKey(value){
 }
 
 function categoryKey(value){
-  return normalizeText(value).toLowerCase().replace(/[^a-z0-9]+/g, "");
-}
-
-function categoryMatches(productCategory, selected){
-  const p = categoryKey(productCategory);
-  const s = categoryKey(selected);
-  if(!s || s === "all") return true;
-  if(s === "wheyprotein" || s === "protein") return /protein|whey|isolate/i.test(String(productCategory || ""));
-  if(s === "massgainer") return /mass\s*gainer|gainer/i.test(String(productCategory || ""));
-  if(s === "preworkout") return /pre[-\s]*workout/i.test(String(productCategory || ""));
-  if(s === "creatine") return /creatine/i.test(String(productCategory || ""));
-  if(s === "vitamins") return /vitamin/i.test(String(productCategory || ""));
-  if(s === "accessories") return /accessor/i.test(String(productCategory || ""));
-  return p === s;
+  return normalizeText(value).toLowerCase();
 }
 
 function brandIcon(brand){
@@ -359,7 +346,7 @@ function selectCategory(category){
 
 function productMatches(p){
   const brandMatch = selectedBrand === "ALL" || brandKey(p.brand) === brandKey(selectedBrand);
-  const categoryMatch = categoryMatches(p.category, selectedCategory);
+  const categoryMatch = selectedCategory === "ALL" || categoryKey(displayCategory(p.category)) === categoryKey(selectedCategory);
   const q = searchQuery.trim().toLowerCase();
   const searchMatch = !q || [p.name,p.brand,p.category,p.flavor,p.size,p.description].filter(Boolean).join(" ").toLowerCase().includes(q);
   return brandMatch && categoryMatch && searchMatch;
@@ -691,10 +678,6 @@ if(!data.success){
   return;
 }
 
-document
-.getElementById("accountText")
-.textContent="Account";
-
 closeM("accountModal");
 
 alert("Login successful!");
@@ -916,10 +899,6 @@ return;
 }
 
 
-document
-.getElementById("accountText")
-.textContent="Account";
-
 
 alert(
 "Account created successfully!"
@@ -961,10 +940,6 @@ method:"POST"
 console.error(error);
 
 }
-
-document
-.getElementById("accountText")
-.textContent="Login";
 
 renderAccount();
 
@@ -1320,86 +1295,139 @@ alert(
    UPI PAYMENT SCREEN
 ===================================================== */
 
-function buildPhonePeUrl(amount, orderId){
-  const params = new URLSearchParams({
-    pa: UPI_ID,
-    pn: STORE_NAME,
-    am: Number(amount || 0).toFixed(2),
-    cu: "INR",
-    tn: `Shiv Supplements Order #${orderId || ""}`
-  });
-  return `phonepe://pay?${params.toString()}`;
-}
-
-function payWithPhonePe(phonePeUrl){
-  // On Android this opens the installed PhonePe app.
-  window.location.href = phonePeUrl;
-  // If PhonePe is not installed, the browser remains on the checkout page.
-}
-
 function showUPIPayment(order){
-  const amount = Number(order?.amount || 0);
-  const safeOrderId = Number(order?.id || order?.localOrderId || 0);
-  currentUPIOrderId = Number.isInteger(safeOrderId) && safeOrderId > 0 ? safeOrderId : null;
 
-  const phonePeUrl = buildPhonePeUrl(amount, currentUPIOrderId);
+const amount = Number(order?.amount || 0);
 
-  document.getElementById("checkoutArea").innerHTML = `
-    <div class="upiBox">
-      <div class="upiTitle">📱 Pay Using PhonePe</div>
-      <div class="upiText">
-        Pay directly to Shiv Supplements using PhonePe.
-        <br><br>Payable amount:
-      </div>
-      <div class="total">${money(amount)}</div>
+// Accept either field returned by different server versions.
+const safeOrderId = Number(
+  order?.id ||
+  order?.localOrderId ||
+  0
+);
 
-      <div class="upiText">Payment UPI ID</div>
-      <div class="upiId">${esc(UPI_ID)}</div>
+currentUPIOrderId =
+  Number.isInteger(safeOrderId) && safeOrderId > 0
+    ? safeOrderId
+    : null;
 
-      <br>
-      <button class="primary" style="width:100%;font-size:18px;padding:15px"
-        onclick='payWithPhonePe(${JSON.stringify(phonePeUrl)})'>
-        📲 Pay Now with PhonePe
-      </button>
+document
+.getElementById("checkoutArea")
+.innerHTML = `
 
-      <p style="color:#99a3b3;font-size:12px;margin-top:12px">
-        Tap the button to open the PhonePe app with the amount and UPI ID filled in.
-      </p>
+<div class="upiBox">
 
-      <div class="orderNumber">
-        <b>Order ID</b><br>
-        <span style="font-size:24px;color:#ffd45c">
-          ${currentUPIOrderId ? "#" + currentUPIOrderId : "—"}
-        </span>
-      </div>
+<div class="upiTitle">
+📱 Pay Using UPI
+</div>
 
-      <p class="upiText">
-        After completing payment in PhonePe, return here and enter your UTR / transaction reference number.
-      </p>
+<div class="upiText">
+Scan the QR code using PhonePe, Google Pay, Paytm or any UPI app.
+<br><br>
+Pay the exact amount:
+</div>
 
-      <div class="field">
-        <label>UTR / Transaction Reference Number *</label>
-        <input id="utrInput" type="text" maxlength="100" autocomplete="off"
-          placeholder="Enter UTR / transaction ID" oninput="updateUTRButton()">
-      </div>
+<div class="total">
+${money(amount)}
+</div>
 
-      <div id="utrError" style="display:none;color:#ff9b9b;font-size:13px;margin:8px 0"></div>
+<img
+class="qr"
+src="${QR_IMAGE}"
+alt="Shiv Supplements UPI QR Code"
+onerror="this.style.display='none';document.getElementById('qrError').style.display='block';">
 
-      <button id="submitUTRButton" class="primary" style="width:100%"
-        onclick="submitUTR(currentUPIOrderId)" disabled>
-        Submit Payment Details
-      </button>
+<div
+id="qrError"
+style="display:none;color:#ff9b9b;margin:10px 0">
 
-      <p style="color:#99a3b3;font-size:12px;margin-top:15px">
-        Your order will remain <b>Payment Pending</b> until the store admin verifies your payment.
-      </p>
-    </div>
-  `;
+QR image <b>qr.png</b> was not found.
+Please upload qr.png to the same folder as index.html.
 
-  setTimeout(()=>{
-    const input=document.getElementById("utrInput");
-    if(input) input.focus();
-  },100);
+</div>
+
+<div class="upiText">
+UPI ID
+</div>
+
+<div class="upiId">
+${esc(UPI_ID)}
+</div>
+
+<br>
+
+<button
+class="copyBtn"
+onclick="copyUPI()">
+📋 Copy UPI ID
+</button>
+
+<div class="orderNumber">
+
+<b>Order ID</b>
+
+<br>
+
+<span style="font-size:24px;color:#ffd45c">
+${currentUPIOrderId ? "#" + currentUPIOrderId : "Creating..."}
+</span>
+
+</div>
+
+<p class="upiText">
+After successful payment, enter the UTR / transaction reference number below.
+</p>
+
+<div class="field">
+
+<label>
+UTR / Transaction Reference Number *
+</label>
+
+<input
+id="utrInput"
+type="text"
+maxlength="100"
+autocomplete="off"
+placeholder="Enter UTR / transaction ID"
+oninput="updateUTRButton()">
+
+</div>
+
+<div
+id="utrError"
+style="display:none;color:#ff9b9b;font-size:13px;margin:8px 0">
+</div>
+
+<button
+id="submitUTRButton"
+class="primary"
+style="width:100%"
+onclick="submitUTR(currentUPIOrderId)"
+disabled>
+
+Submit Payment Details
+
+</button>
+
+<p
+style="color:#99a3b3;font-size:12px;margin-top:15px">
+
+Your order will remain
+<b>Payment Pending</b>
+until the store admin verifies your payment.
+
+</p>
+
+</div>
+
+`;
+
+setTimeout(()=>{
+  const input = document.getElementById("utrInput");
+  if(input) input.focus();
+}, 100);
+
 }
 
 
@@ -1788,10 +1816,6 @@ loadProducts();
 me().then(user=>{
 
 if(user){
-
-document
-.getElementById("accountText")
-.textContent="Account";
 
 }
 
