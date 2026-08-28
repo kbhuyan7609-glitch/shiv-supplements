@@ -1,5 +1,5 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Shiv Supplements - Admin</title><style>
-:root{--bg:#090b10;--card:#111722;--line:#293447;--gold:#ffb000;--muted:#9aa3b3;--green:#37e69a;--red:#ff6b6b}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#fff;font-family:Arial,sans-serif}.header{background:#11151d;border-bottom:2px solid var(--gold);padding:17px 5%;display:flex;justify-content:space-between;align-items:center;gap:15px}.logo{font-size:24px;font-weight:1000}.logo span{color:var(--gold)}.container{width:92%;max-width:1450px;margin:28px auto}.tabs{display:flex;gap:10px;margin-bottom:20px}.tab{padding:12px 18px;border-radius:10px;border:1px solid var(--line);background:#151b23;color:#fff;font-weight:900}.tab.active{background:linear-gradient(135deg,#ffb000,#ff7417);color:#111}.panel{display:none}.panel.active{display:block}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:22px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}.card h3{margin:0 0 10px;color:var(--muted);font-size:14px}.number{font-size:28px;font-weight:1000}.controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}.input,.select{background:#111722;color:#fff;border:1px solid #33445b;padding:12px;border-radius:10px}.input{flex:1;min-width:180px}.btn{border:0;border-radius:10px;padding:11px 15px;font-weight:900;cursor:pointer}.gold{background:var(--gold);color:#111}.dark{background:#151b23;color:#fff;border:1px solid #394351}.red{background:#4a1111;color:#ff7777;border:1px solid #7a2222}.green{background:#063d27;color:#37e69a}.blue{background:#26365b;color:#7db4ff}.orders,.products{display:grid;gap:14px}.order,.product{background:#111722;border:1px solid var(--line);border-radius:16px;padding:20px}.top{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}.id{color:var(--gold);font-weight:1000}.status{display:inline-block;padding:7px 12px;border-radius:20px;font-size:11px;font-weight:1000}.pending{background:#4b3500;color:#ffc400}.paid{background:#063d27;color:#37e69a}.processing{background:#26365b;color:#7db4ff}.shipped{background:#073b58;color:#55c7ff}.delivered{background:#233b12;color:#9cff50}.cancelled{background:#4a1111;color:#ff6b6b}.customer{margin-top:12px;line-height:1.7;color:#ddd}.items{margin-top:12px;background:#0b0f16;border-radius:10px;padding:12px}.item{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #202a38}.item:last-child{border-bottom:0}.amount{font-size:20px;font-weight:1000;color:var(--gold);margin-top:12px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px;padding-top:15px;border-top:1px solid var(--line)}.formCard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:20px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.field label{display:block;color:#cbd2dd;font-size:12px;margin-bottom:5px}.field input,.field textarea,.field select{width:100%;background:#0a0e14;color:#fff;border:1px solid #343c49;border-radius:9px;padding:11px}.field textarea{min-height:70px}.full{grid-column:1/-1}.loginWrap{max-width:430px;margin:9vh auto;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:25px}.loginWrap h1{margin-top:0}.toast{position:fixed;right:18px;bottom:18px;background:#151c27;border:1px solid var(--gold);padding:13px 17px;border-radius:10px;display:none;z-index:99}.toast.show{display:block}.empty{text-align:center;padding:45px;color:#888;background:#111722;border:1px dashed var(--line);border-radius:15px}.muted{color:var(--muted)}@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr 1fr}}@media(max-width:600px){.stats{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.header{align-items:flex-start;flex-direction:column}.tabs{overflow:auto}.tab{white-space:nowrap}}
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Shiv Supplements - Admin</title><script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script><style>
+:root{--bg:#090b10;--card:#111722;--line:#293447;--gold:#ffb000;--muted:#9aa3b3;--green:#37e69a;--red:#ff6b6b}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#fff;font-family:Arial,sans-serif}.header{background:#11151d;border-bottom:2px solid var(--gold);padding:17px 5%;display:flex;justify-content:space-between;align-items:center;gap:15px}.logo{font-size:24px;font-weight:1000}.logo span{color:var(--gold)}.container{width:92%;max-width:1450px;margin:28px auto}.tabs{display:flex;gap:10px;margin-bottom:20px}.tab{padding:12px 18px;border-radius:10px;border:1px solid var(--line);background:#151b23;color:#fff;font-weight:900}.tab.active{background:linear-gradient(135deg,#ffb000,#ff7417);color:#111}.panel{display:none}.panel.active{display:block}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:22px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}.card h3{margin:0 0 10px;color:var(--muted);font-size:14px}.number{font-size:28px;font-weight:1000}.controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}.input,.select{background:#111722;color:#fff;border:1px solid #33445b;padding:12px;border-radius:10px}.input{flex:1;min-width:180px}.btn{border:0;border-radius:10px;padding:11px 15px;font-weight:900;cursor:pointer}.gold{background:var(--gold);color:#111}.dark{background:#151b23;color:#fff;border:1px solid #394351}.red{background:#4a1111;color:#ff7777;border:1px solid #7a2222}.green{background:#063d27;color:#37e69a}.blue{background:#26365b;color:#7db4ff}.orders,.products{display:grid;gap:14px}.order,.product{background:#111722;border:1px solid var(--line);border-radius:16px;padding:20px}.top{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}.id{color:var(--gold);font-weight:1000}.status{display:inline-block;padding:7px 12px;border-radius:20px;font-size:11px;font-weight:1000}.pending{background:#4b3500;color:#ffc400}.paid{background:#063d27;color:#37e69a}.processing{background:#26365b;color:#7db4ff}.shipped{background:#073b58;color:#55c7ff}.delivered{background:#233b12;color:#9cff50}.cancelled{background:#4a1111;color:#ff6b6b}.customer{margin-top:12px;line-height:1.7;color:#ddd}.items{margin-top:12px;background:#0b0f16;border-radius:10px;padding:12px}.item{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #202a38}.item:last-child{border-bottom:0}.amount{font-size:20px;font-weight:1000;color:var(--gold);margin-top:12px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px;padding-top:15px;border-top:1px solid var(--line)}.formCard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:20px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.field label{display:block;color:#cbd2dd;font-size:12px;margin-bottom:5px}.field input,.field textarea,.field select{width:100%;background:#0a0e14;color:#fff;border:1px solid #343c49;border-radius:9px;padding:11px}.field textarea{min-height:70px}.full{grid-column:1/-1}.loginWrap{max-width:430px;margin:9vh auto;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:25px}.loginWrap h1{margin-top:0}.toast{position:fixed;right:18px;bottom:18px;background:#151c27;border:1px solid var(--gold);padding:13px 17px;border-radius:10px;display:none;z-index:99}.toast.show{display:block}.bulkRow{display:grid;grid-template-columns:2fr 110px 110px 44px;gap:8px;align-items:end;padding:10px 0;border-bottom:1px solid var(--line)}.bulkTotal{font-size:22px;font-weight:1000;color:var(--gold)}.empty{text-align:center;padding:45px;color:#888;background:#111722;border:1px dashed var(--line);border-radius:15px}.muted{color:var(--muted)}@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr 1fr}}@media(max-width:600px){.stats{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.header{align-items:flex-start;flex-direction:column}.tabs{overflow:auto}.tab{white-space:nowrap}}
 </style></head><body><header class="header"><div class="logo">SHIV <span>SUPPLEMENTS</span></div><div id="headerRight"></div></header><main id="app"></main><div id="toast" class="toast"></div><script>
 const $=id=>document.getElementById(id);let orders=[],products=[],editingId=null;
 const money=n=>'₹'+Number(n||0).toLocaleString('en-IN');const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -9,180 +9,179 @@ async function init(){try{const d=await api('/api/admin/me');if(d.loggedIn)dashb
 function loginPage(){$('headerRight').innerHTML='';$('app').innerHTML=`<div class="loginWrap"><h1>🔐 Admin Login</h1><p class="muted">Shiv Supplements management panel</p><div class="field"><label>Username</label><input id="au" class="input" style="width:100%"></div><br><div class="field"><label>Password</label><input id="ap" type="password" class="input" style="width:100%"></div><br><button class="btn gold" style="width:100%" onclick="adminLogin()">Login</button><p class="muted" style="font-size:12px;margin-top:14px">Use the ADMIN_USERNAME and ADMIN_PASSWORD configured on Render.</p></div>`}
 async function adminLogin(){try{await api('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:$('au').value,password:$('ap').value})});dashboard()}catch(e){alert(e.message)}}
 async function logout(){await api('/api/admin/logout',{method:'POST'});loginPage()}
-function dashboard(){$('headerRight').innerHTML='<button class="btn dark" onclick="logout()">Logout</button>';$('app').innerHTML=`<div class="container"><h1>📦 Admin Dashboard</h1><div class="tabs"><button class="tab active" id="ordersTab" onclick="showPanel('orders')">Orders</button><button class="tab" id="productsTab" onclick="showPanel('products')">Products / Inventory</button></div><section id="ordersPanel" class="panel active"><div class="stats"><div class="card"><h3>Total Orders</h3><div class="number" id="totalOrders">0</div></div><div class="card"><h3>Pending</h3><div class="number" id="pendingOrders">0</div></div><div class="card"><h3>Paid</h3><div class="number" id="paidOrders">0</div></div><div class="card"><h3>Sales</h3><div class="number" id="sales">₹0</div></div></div><div class="controls"><input id="orderSearch" class="input" placeholder="Search customer, phone, email, order ID..." oninput="renderOrders()"><button class="btn gold" onclick="loadOrders()">🔄 Refresh</button></div><div id="orders" class="orders"><div class="empty">Loading...</div></div></section><section id="productsPanel" class="panel"><div class="formCard"><h2 id="productFormTitle">➕ Add Product</h2><div class="grid"><div class="field"><label>Brand *</label><input id="brand" class="input"></div><div class="field"><label>Product Name *</label><input id="pname" class="input"></div><div class="field"><label>Category *</label><input id="category" class="input" placeholder="Whey Protein / Creatine / Mass Gainer"></div><div class="field"><label>Flavor</label><input id="flavor" class="input"></div><div class="field"><label>Size</label><input id="size" class="input" placeholder="1 kg / 250 g"></div><div class="field"><label>Stock</label><input id="stock" type="number" min="0" class="input" value="0"></div><div class="field"><label>MRP ₹</label><input id="mrp" type="number" min="0" step="0.01" class="input"></div><div class="field"><label>Selling Price ₹</label><input id="price" type="number" min="0" step="0.01" class="input"></div><div class="field"><label>Image URL (optional)</label><input id="image" class="input" placeholder="https://..."></div><div class="field full"><label>Description</label><textarea id="desc"></textarea></div></div><div class="actions" style="border:0;padding-top:10px"><button class="btn gold" onclick="saveProduct()">💾 Save Product</button><button class="btn dark" onclick="clearProductForm()">Clear</button></div></div>
-<div class="formCard">
-  <h2>📦 Bulk Add Stock</h2>
-  <p class="muted">Upload an Excel (.xlsx/.xls) or CSV file with columns <b>Product ID</b> and <b>Quantity</b>. Quantity is ADDED to the existing stock — it does not replace it.</p>
-  <div class="controls" style="margin-bottom:8px">
-    <input id="bulkStockFile" type="file" accept=".xlsx,.xls,.csv" class="input">
-    <button class="btn gold" onclick="bulkAddStock()">➕ Add Stock</button>
-    <button class="btn dark" onclick="downloadStockTemplate()">⬇️ Download Template</button>
-  </div>
-  <div id="bulkStockResult" class="muted" style="margin-top:10px"></div>
-  <small class="muted">Example: Product ID 1, Quantity 50 → current stock 10 becomes 60.</small>
-</div>
-<div class="controls"><input id="productSearch" class="input" placeholder="Search products..." oninput="renderProducts()"><button class="btn gold" onclick="loadProducts()">🔄 Refresh Products</button></div><div id="products" class="products"></div></section></div>`;loadOrders();loadProducts()}
-function showPanel(which){$('ordersPanel').classList.toggle('active',which==='orders');$('productsPanel').classList.toggle('active',which==='products');$('ordersTab').classList.toggle('active',which==='orders');$('productsTab').classList.toggle('active',which==='products')}
+function dashboard(){$('headerRight').innerHTML='<button class="btn dark" onclick="logout()">Logout</button>';$('app').innerHTML=`<div class="container"><h1>📦 Admin Dashboard</h1><div class="tabs"><button class="tab active" id="ordersTab" onclick="showPanel('orders')">Orders</button><button class="tab" id="bulkTab" onclick="showPanel('bulk')">📦 Bulk Order</button><button class="tab" id="productsTab" onclick="showPanel('products')">Products / Inventory</button></div><section id="ordersPanel" class="panel active"><div class="stats"><div class="card"><h3>Total Orders</h3><div class="number" id="totalOrders">0</div></div><div class="card"><h3>Pending</h3><div class="number" id="pendingOrders">0</div></div><div class="card"><h3>Paid</h3><div class="number" id="paidOrders">0</div></div><div class="card"><h3>Sales</h3><div class="number" id="sales">₹0</div></div></div><div class="controls"><input id="orderSearch" class="input" placeholder="Search customer, phone, email, order ID..." oninput="renderOrders()"><button class="btn gold" onclick="loadOrders()">🔄 Refresh</button></div><div id="orders" class="orders"><div class="empty">Loading...</div></div></section><section id="bulkPanel" class="panel"><div class="formCard"><h2>📦 Create Bulk / Wholesale Order</h2><p class="muted">Create an order for any quantity of multiple products. Stock is deducted only when you choose <b>Paid</b>.</p><div class="grid"><div class="field"><label>Customer Name *</label><input id="bulkName" class="input"></div><div class="field"><label>Phone *</label><input id="bulkPhone" class="input" maxlength="10"></div><div class="field"><label>Email *</label><input id="bulkEmail" class="input" type="email"></div><div class="field full"><label>Delivery Address *</label><textarea id="bulkAddress"></textarea></div><div class="field"><label>Payment Method</label><select id="bulkPayment" class="input"><option>UPI</option><option>COD</option><option>BANK TRANSFER</option><option>CASH</option><option>OTHER</option></select></div><div class="field"><label>Initial Status</label><select id="bulkStatus" class="input"><option value="pending">Pending</option><option value="paid">Paid</option></select></div></div><h3 style="margin-top:24px">Products & Quantities</h3><div id="bulkItems"></div><div class="actions"><button class="btn dark" onclick="addBulkRow()">➕ Add Product</button><button class="btn gold" onclick="createBulkOrder()">💾 Create Bulk Order</button><span class="bulkTotal" id="bulkTotal">Total: ₹0</span></div></div></section><section id="productsPanel" class="panel"><div class="formCard"><h2 id="productFormTitle">➕ Add Product</h2><div class="grid"><div class="field"><label>Brand *</label><input id="brand" class="input"></div><div class="field"><label>Product Name *</label><input id="pname" class="input"></div><div class="field"><label>Category *</label><input id="category" class="input" placeholder="Whey Protein / Creatine / Mass Gainer"></div><div class="field"><label>Flavor</label><input id="flavor" class="input"></div><div class="field"><label>Size</label><input id="size" class="input" placeholder="1 kg / 250 g"></div><div class="field"><label>Stock</label><input id="stock" type="number" min="0" class="input" value="0"></div><div class="field"><label>MRP ₹</label><input id="mrp" type="number" min="0" step="0.01" class="input"></div><div class="field"><label>Selling Price ₹</label><input id="price" type="number" min="0" step="0.01" class="input"></div><div class="field"><label>Image URL (optional)</label><input id="image" class="input" placeholder="https://..."></div><div class="field full"><label>Description</label><textarea id="desc"></textarea></div></div><div class="actions" style="border:0;padding-top:10px"><button class="btn gold" onclick="saveProduct()">💾 Save Product</button><button class="btn dark" onclick="clearProductForm()">Clear</button></div></div><div class="controls"><input id="productSearch" class="input" placeholder="Search products..." oninput="renderProducts()"><button class="btn gold" onclick="loadProducts()">🔄 Refresh Products</button></div><div id="products" class="products"></div></section></div>`;loadOrders();loadProducts()}
+function showPanel(which){$('ordersPanel').classList.toggle('active',which==='orders');$('bulkPanel').classList.toggle('active',which==='bulk');$('productsPanel').classList.toggle('active',which==='products');$('ordersTab').classList.toggle('active',which==='orders');$('bulkTab').classList.toggle('active',which==='bulk');$('productsTab').classList.toggle('active',which==='products');if(which==='bulk'&&$('bulkItems')&&!$('bulkItems').children.length)addBulkRow()}
 async function loadOrders(){try{const d=await api('/api/admin/orders');orders=d.orders||[];updateStats();renderOrders()}catch(e){$('orders').innerHTML=`<div class="empty">❌ ${esc(e.message)}</div>`}}
 function updateStats(){const pending=orders.filter(o=>o.status==='pending').length,paid=orders.filter(o=>['paid','processing','shipped','delivered'].includes(o.status)).length,sales=orders.filter(o=>o.status!=='cancelled').reduce((s,o)=>s+Number(o.amount||0),0);$('totalOrders').textContent=orders.length;$('pendingOrders').textContent=pending;$('paidOrders').textContent=paid;$('sales').textContent=money(sales)}
-function renderOrders(){const q=($('orderSearch')?.value||'').toLowerCase().trim(),list=orders.filter(o=>JSON.stringify(o).toLowerCase().includes(q));if(!list.length){$('orders').innerHTML='<div class="empty">📭 No orders found.</div>';return}$('orders').innerHTML=list.map(o=>{const status=o.status||'pending';return `<div class="order"><div class="top"><div><div class="id">Order #${esc(o.id)}</div><small class="muted">${esc(o.created_at||'')}</small></div><span class="status ${esc(status)}">${esc(status.toUpperCase())}</span></div><div class="customer">👤 <b>${esc(o.name)}</b><br>📱 ${esc(o.phone)}<br>📧 ${esc(o.email)}<br>📍 ${esc(o.address)}<br>💳 UPI ${o.payment_ref?'• UTR: '+esc(o.payment_ref):'• UTR not submitted'}</div><div class="items"><b>🛒 Products</b>${(o.items||[]).map(i=>`<div class="item"><span>${esc(i.brand||'')} ${esc(i.name)} × ${i.qty}</span><span>${money(i.price*i.qty)}</span></div>`).join('')}</div><div class="amount">Total: ${money(o.amount)}</div><div class="actions">${actionButtons(o)}<button class="btn dark" onclick='printBill(${JSON.stringify(o).replace(/</g,'\\u003c')})'>🧾 Print Bill</button></div></div>`}).join('')}
+function renderOrders(){const q=($('orderSearch')?.value||'').toLowerCase().trim(),list=orders.filter(o=>JSON.stringify(o).toLowerCase().includes(q));if(!list.length){$('orders').innerHTML='<div class="empty">📭 No orders found.</div>';return}$('orders').innerHTML=list.map(o=>{const status=o.status||'pending';return `<div class="order"><div class="top"><div><div class="id">Order #${esc(o.id)}</div><small class="muted">${esc(o.created_at||'')}</small></div><span class="status ${esc(status)}">${esc(status.toUpperCase())}</span></div><div class="customer">👤 <b>${esc(o.name)}</b><br>📱 ${esc(o.phone)}<br>📧 ${esc(o.email)}<br>📍 ${esc(o.address)}<br>💳 UPI • Direct payment pending verification</div><div class="items"><b>🛒 Products</b>${(o.items||[]).map(i=>`<div class="item"><span>${esc(i.brand||'')} ${esc(i.name)} × ${i.qty}</span><span>${money(i.price*i.qty)}</span></div>`).join('')}</div><div class="amount">Total: ${money(o.amount)}</div><div class="actions">${actionButtons(o)}<button class="btn dark" onclick='printBill(${JSON.stringify(o).replace(/</g,'\\u003c')})'>🧾 Print Bill</button></div></div>`}).join('')}
 function actionButtons(o){if(o.status==='pending')return `<button class="btn gold" onclick="approve(${o.id})">✅ Approve Payment</button><button class="btn red" onclick="changeStatus(${o.id},'cancelled')">❌ Cancel</button>`;if(o.status==='paid')return `<button class="btn blue" onclick="changeStatus(${o.id},'processing')">⚙️ Processing</button><button class="btn red" onclick="changeStatus(${o.id},'cancelled')">❌ Cancel</button>`;if(o.status==='processing')return `<button class="btn blue" onclick="changeStatus(${o.id},'shipped')">🚚 Shipped</button><button class="btn red" onclick="changeStatus(${o.id},'cancelled')">❌ Cancel</button>`;if(o.status==='shipped')return `<button class="btn green" onclick="changeStatus(${o.id},'delivered')">✅ Delivered</button>`;return ''}
-async function approve(id){if(!confirm('Approve this UPI payment? Stock will be deducted.'))return;try{await api('/api/admin/orders/'+id+'/approve-payment',{method:'PATCH'});toast('Payment approved');loadOrders()}catch(e){alert(e.message)}}
+async function approve(id){if(!confirm('Confirm that you received this UPI payment? Stock will be deducted.'))return;try{await api('/api/admin/orders/'+id+'/approve-payment',{method:'PATCH'});toast('Payment approved');loadOrders()}catch(e){alert(e.message)}}
 async function changeStatus(id,status){if(!confirm('Change order status to '+status+'?'))return;try{await api('/api/admin/orders/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});toast('Order updated');loadOrders()}catch(e){alert(e.message)}}
-function printBill(o){const items=(o.items||[]).map(i=>`<tr><td>${esc(i.brand)} ${esc(i.name)}</td><td>${i.qty}</td><td>₹${Number(i.price).toLocaleString('en-IN')}</td><td>₹${Number(i.price*i.qty).toLocaleString('en-IN')}</td></tr>`).join('');const w=window.open('','_blank');w.document.write(`<!doctype html><title>Bill #${o.id}</title><style>body{font-family:Arial;padding:30px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ccc;padding:8px;text-align:left}.right{text-align:right}</style><h1>SHIV SUPPLEMENTS</h1><p>Invoice / Bill #${o.id}<br>${esc(o.created_at||'')}</p><hr><h3>Customer</h3><p>${esc(o.name)}<br>${esc(o.phone)}<br>${esc(o.email)}<br>${esc(o.address)}</p><table><tr><th>Product</th><th>Qty</th><th>Price</th><th>Total</th></tr>${items}</table><h2 class="right">Total: ₹${Number(o.amount).toLocaleString('en-IN')}</h2><p>Payment: ${esc(o.payment_method||'UPI')}<br>UTR: ${esc(o.payment_ref||'Not submitted')}</p><p>Thank you for shopping with Shiv Supplements.</p><script>window.print()<\/script>`);w.document.close()}
+function printBill(o){const items=(o.items||[]).map(i=>`<tr><td>${esc(i.brand)} ${esc(i.name)}</td><td>${i.qty}</td><td>₹${Number(i.price).toLocaleString('en-IN')}</td><td>₹${Number(i.price*i.qty).toLocaleString('en-IN')}</td></tr>`).join('');const w=window.open('','_blank');w.document.write(`<!doctype html><title>Bill #${o.id}</title><style>body{font-family:Arial;padding:30px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ccc;padding:8px;text-align:left}.right{text-align:right}</style><h1>SHIV SUPPLEMENTS</h1><p>Invoice / Bill #${o.id}<br>${esc(o.created_at||'')}</p><hr><h3>Customer</h3><p>${esc(o.name)}<br>${esc(o.phone)}<br>${esc(o.email)}<br>${esc(o.address)}</p><table><tr><th>Product</th><th>Qty</th><th>Price</th><th>Total</th></tr>${items}</table><h2 class="right">Total: ₹${Number(o.amount).toLocaleString('en-IN')}</h2><p>Payment: ${esc(o.payment_method||'UPI')}</p><p>Thank you for shopping with Shiv Supplements.</p><script>window.print()<\/script>`);w.document.close()}
+function bulkOptions(){return '<option value="">Select product...</option>'+products.filter(p=>p.active!==false).map(p=>`<option value="${p.id}" data-price="${p.price}">${esc(p.brand)} ${esc(p.name)}${p.flavor?' • '+esc(p.flavor):''} — ${money(p.price)} (stock ${p.stock})</option>`).join('')}
+function addBulkRow(){const wrap=$('bulkItems');if(!wrap)return;const row=document.createElement('div');row.className='bulkRow';row.innerHTML=`<div class="field"><label>Product</label><select class="input bulkProduct" onchange="updateBulkTotal()">${bulkOptions()}</select></div><div class="field"><label>Qty</label><input class="input bulkQty" type="number" min="1" value="1" oninput="updateBulkTotal()"></div><div class="field"><label>Line Total</label><input class="input bulkLine" readonly value="₹0"></div><button class="btn red" type="button" onclick="this.closest('.bulkRow').remove();updateBulkTotal()">×</button>`;wrap.appendChild(row);updateBulkTotal()}
+function updateBulkTotal(){let total=0;document.querySelectorAll('.bulkRow').forEach(r=>{const sel=r.querySelector('.bulkProduct'),qty=Math.max(0,Math.floor(Number(r.querySelector('.bulkQty').value||0))),opt=sel.options[sel.selectedIndex],price=Number(opt?.dataset.price||0),line=price*qty;total+=line;r.querySelector('.bulkLine').value=money(line)});if($('bulkTotal'))$('bulkTotal').textContent='Total: '+money(total)}
+async function createBulkOrder(){try{const items=[];document.querySelectorAll('.bulkRow').forEach(r=>{const id=Number(r.querySelector('.bulkProduct').value),qty=Math.floor(Number(r.querySelector('.bulkQty').value||0));if(id&&qty>0)items.push({id,qty})});if(!items.length)throw new Error('Add at least one product');const body={name:$('bulkName').value,phone:$('bulkPhone').value,email:$('bulkEmail').value,address:$('bulkAddress').value,paymentMethod:$('bulkPayment').value,status:$('bulkStatus').value,items};const d=await api('/api/admin/bulk-orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});toast('Bulk order #'+d.order.id+' created');clearBulkOrder();await loadOrders();await loadProducts();showPanel('orders')}catch(e){alert(e.message)}}
+function clearBulkOrder(){['bulkName','bulkPhone','bulkEmail','bulkAddress'].forEach(id=>{if($(id))$(id).value=''});if($('bulkStatus'))$('bulkStatus').value='pending';if($('bulkPayment'))$('bulkPayment').value='UPI';if($('bulkItems')){$('bulkItems').innerHTML='';addBulkRow()}updateBulkTotal()}
+
 async function loadProducts(){try{const d=await api('/api/admin/products');products=d.products||[];renderProducts()}catch(e){$('products').innerHTML=`<div class="empty">❌ ${esc(e.message)}</div>`}}
 function renderProducts(){const q=($('productSearch')?.value||'').toLowerCase().trim(),list=products.filter(p=>JSON.stringify(p).toLowerCase().includes(q));$('products').innerHTML=list.length?list.map(p=>`<div class="product"><div class="top"><div><div class="id">${esc(p.brand)}</div><h3 style="margin:6px 0">${esc(p.name)}</h3><div class="muted">${esc(p.category)} • ${esc(p.flavor||'')} • ${esc(p.size||'')}</div></div><div><b>${money(p.price)}</b> <span class="muted">MRP ${money(p.mrp)}</span><br><span class="muted">Stock: ${p.stock}</span></div></div><p class="muted">${esc(p.description||'')}</p><div class="actions"><button class="btn gold" onclick="editProduct(${p.id})">✏️ Edit</button><button class="btn red" onclick="deleteProduct(${p.id})">🗑️ Delete</button></div></div>`).join(''):'<div class="empty">No products found.</div>'}
 function setVal(id,v){$(id).value=v??''}function clearProductForm(){editingId=null;$('productFormTitle').textContent='➕ Add Product';['brand','pname','category','flavor','size','mrp','price','image','desc'].forEach(id=>setVal(id,''));setVal('stock',0)}
 function editProduct(id){const p=products.find(x=>x.id===id);if(!p)return;editingId=id;$('productFormTitle').textContent='✏️ Edit Product #'+id;setVal('brand',p.brand);setVal('pname',p.name);setVal('category',p.category);setVal('flavor',p.flavor);setVal('size',p.size);setVal('stock',p.stock);setVal('mrp',p.mrp);setVal('price',p.price);setVal('image',p.image);setVal('desc',p.description);window.scrollTo({top:0,behavior:'smooth'})}
 async function saveProduct(){const body={brand:$('brand').value,name:$('pname').value,category:$('category').value,flavor:$('flavor').value,size:$('size').value,stock:Number($('stock').value),mrp:Number($('mrp').value),price:Number($('price').value),image:$('image').value,description:$('desc').value};try{if(editingId)await api('/api/admin/products/'+editingId,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});else await api('/api/admin/products',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});toast(editingId?'Product updated':'Product added');clearProductForm();loadProducts()}catch(e){alert(e.message)}}
+async function deleteProduct(id){if(!confirm('Delete this product? Existing orders are not deleted.'))return;try{await api('/api/admin/products/'+id,{method:'DELETE'});toast('Product deleted');loadProducts()}catch(e){alert(e.message)}}
+init();
+</script>
+<section class="card" id="bulkStock" style="margin:18px 0">
+  <h2>📦 Bulk Add Stock</h2>
+  <p style="color:#666">
+    Upload an <b>Excel file (.xlsx)</b> or <b>CSV</b> with columns:
+    <b>Product ID</b> and <b>Quantity to Add</b>.
+  </p>
+  <input id="bulkStockFile" type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+  <button type="button" onclick="addBulkStock()" style="margin-top:10px">➕ Add Stock</button>
+  <div id="bulkStockMsg" style="margin-top:10px"></div>
+  <small>
+    Example: Product ID <code>1</code>, Quantity <code>50</code> → adds 50 to existing stock.
+  </small>
+</section>
 
-function downloadStockTemplate(){
-  const rows = [
-    ["Product ID","Quantity"],
-    [1,50],
-    [2,25]
-  ];
-  if(window.XLSX){
-    const ws=XLSX.utils.aoa_to_sheet(rows);
-    const wb=XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb,ws,"Stock");
-    XLSX.writeFile(wb,"stock_template.xlsx");
-  }else{
-    const blob=new Blob(["Product ID,Quantity\n1,50\n2,25\n"],{type:"text/csv"});
-    const a=document.createElement("a");
-    a.href=URL.createObjectURL(blob);
-    a.download="stock_template.csv";
-    a.click();
-    URL.revokeObjectURL(a.href);
-  }
-}
+<script>
+async function addBulkStock(){
+  const file = document.getElementById('bulkStockFile').files[0];
+  const msg = document.getElementById('bulkStockMsg');
 
-function normalizeStockHeaders(row){
-  const out={};
-  Object.keys(row||{}).forEach(k=>{
-    const key=String(k).trim().toLowerCase().replace(/[\s_-]+/g,"");
-    if(["productid","id","product"].includes(key)) out.productId=row[k];
-    if(["quantity","qty","stock","addstock"].includes(key)) out.quantity=row[k];
-  });
-  return out;
-}
-
-async function readStockFile(file){
-  const name=String(file.name||"").toLowerCase();
-  if(name.endsWith(".csv")){
-    const text=await file.text();
-    const lines=text.split(/\r?\n/).filter(x=>x.trim());
-    if(!lines.length) throw new Error("The CSV file is empty.");
-    const headers=lines[0].split(",").map(x=>x.trim());
-    return lines.slice(1).map(line=>{
-      const vals=line.split(",");
-      const row={};
-      headers.forEach((h,i)=>row[h]=vals[i]);
-      return normalizeStockHeaders(row);
-    });
-  }
-
-  if(!window.XLSX) throw new Error("Excel reader could not load. Please use CSV.");
-  const buf=await file.arrayBuffer();
-  const wb=XLSX.read(buf,{type:"array"});
-  const first=wb.SheetNames[0];
-  if(!first) throw new Error("The Excel file has no sheet.");
-  const ws=wb.Sheets[first];
-  return XLSX.utils.sheet_to_json(ws,{defval:""}).map(normalizeStockHeaders);
-}
-
-async function bulkAddStock(){
-  const input=$("bulkStockFile");
-  const result=$("bulkStockResult");
-  if(!input || !input.files || !input.files[0]){
-    alert("Please choose an Excel or CSV file first.");
+  if(!file){
+    msg.textContent = '❌ Please choose an Excel or CSV file.';
     return;
   }
 
-  const file=input.files[0];
-  result.textContent="Reading file...";
+  try {
+    let rows = [];
 
-  try{
-    const rows=await readStockFile(file);
-    const valid=[];
-    const errors=[];
-
-    rows.forEach((r,index)=>{
-      const line=index+2;
-      const id=Number(String(r.productId??"").trim());
-      const qty=Number(String(r.quantity??"").trim());
-
-      if(!Number.isInteger(id) || id<=0){
-        errors.push("Row "+line+": invalid Product ID.");
-        return;
+    // XLSX support: use SheetJS if it is already loaded by the admin page.
+    if(/\.xlsx$/i.test(file.name)){
+      if(typeof XLSX === 'undefined'){
+        throw new Error('Excel (.xlsx) support is not loaded. Please use CSV, or add SheetJS to the page.');
       }
-      if(!Number.isInteger(qty) || qty<=0){
-        errors.push("Row "+line+": Quantity must be a positive whole number.");
-        return;
-      }
-      valid.push({id,qty,line});
-    });
+      const buffer = await file.arrayBuffer();
+      const wb = XLSX.read(buffer, {type:'array'});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+    } else {
+      // Decode UTF-8, UTF-16 LE/BE and normal Excel CSV safely.
+      const buffer = await file.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      let text;
 
-    if(!valid.length){
-      throw new Error(errors.length ? errors.join(" ") : "No valid rows found.");
+      if(bytes[0]===0xFF && bytes[1]===0xFE){
+        text = new TextDecoder('utf-16le').decode(bytes);
+      } else if(bytes[0]===0xFE && bytes[1]===0xFF){
+        text = new TextDecoder('utf-16be').decode(bytes);
+      } else {
+        text = new TextDecoder('utf-8').decode(bytes);
+      }
+
+      // Remove BOM and parse simple CSV/TSV, including quoted fields.
+      text = text.replace(/^\uFEFF/, '');
+      const lines = text.split(/\r?\n/).filter(x => x.trim() !== '');
+
+      rows = lines.map(line => {
+        const delimiter = line.includes('\t') ? '\t' : ',';
+        const result = [];
+        let cur = '', quoted = false;
+
+        for(let i=0;i<line.length;i++){
+          const ch=line[i];
+          if(ch === '"'){
+            if(quoted && line[i+1] === '"'){ cur += '"'; i++; }
+            else quoted = !quoted;
+          } else if(ch === delimiter && !quoted){
+            result.push(cur.trim());
+            cur='';
+          } else {
+            cur += ch;
+          }
+        }
+        result.push(cur.trim());
+        return result;
+      });
     }
 
-    // Combine duplicate Product IDs so one product is updated once.
-    const combined=new Map();
-    valid.forEach(x=>combined.set(x.id,(combined.get(x.id)||0)+x.qty));
-
-    let added=0;
-    const failed=[];
-
-    for(const [id,qty] of combined.entries()){
-      const product=products.find(p=>Number(p.id)===Number(id));
-      if(!product){
-        failed.push("Product ID "+id+" was not found.");
-        continue;
-      }
-
-      try{
-        const body={
-          brand:product.brand,
-          name:product.name,
-          category:product.category,
-          flavor:product.flavor||"",
-          size:product.size||"",
-          stock:Number(product.stock||0)+qty,
-          mrp:Number(product.mrp||0),
-          price:Number(product.price||0),
-          image:product.image||"",
-          description:product.description||"",
-          active:product.active!==false
-        };
-
-        await api("/api/admin/products/"+id,{
-          method:"PATCH",
-          headers:{"Content-Type":"application/json"},
-          body:JSON.stringify(body)
-        });
-
-        added++;
-      }catch(e){
-        failed.push("Product ID "+id+": "+e.message);
+    // Find header row if present.
+    let headerIndex = -1;
+    for(let i=0;i<Math.min(rows.length,10);i++){
+      const a = String(rows[i][0] ?? '').toLowerCase().replace(/[^a-z0-9]/g,'');
+      const b = String(rows[i][1] ?? '').toLowerCase().replace(/[^a-z0-9]/g,'');
+      if(a.includes('productid') && (b.includes('quantity') || b.includes('stock'))){
+        headerIndex=i;
+        break;
       }
     }
 
-    await loadProducts();
+    const updates=[];
+    const firstDataRow = headerIndex >= 0 ? headerIndex+1 : 0;
 
-    let msg="✅ Stock added to "+added+" product(s).";
-    if(errors.length) msg+=" "+errors.length+" invalid row(s) skipped.";
-    if(failed.length) msg+=" Failed: "+failed.join(" | ");
+    for(let i=firstDataRow;i<rows.length;i++){
+      const id=Number(String(rows[i][0] ?? '').trim());
+      const qty=Number(String(rows[i][1] ?? '').trim());
 
-    result.textContent=msg;
-    toast(added ? "Bulk stock update completed" : "No stock was added");
-    input.value="";
-  }catch(e){
-    result.textContent="❌ "+e.message;
-    alert(e.message);
+      if(!Number.isInteger(id) || !Number.isInteger(qty) || qty <= 0){
+        // Ignore completely empty rows.
+        if(rows[i].every(v => String(v ?? '').trim()==='')) continue;
+        throw new Error(`Invalid row ${i+1}. Use: Product ID, Quantity to Add`);
+      }
+      updates.push({id,qty});
+    }
+
+    if(!updates.length) throw new Error('No valid stock rows found.');
+
+    const r=await fetch('/api/admin/products');
+    const d=await r.json();
+    if(!r.ok || !d.success) throw new Error(d.message||'Could not load products');
+
+    const products = d.products || [];
+    const byId = new Map(products.map(p=>[Number(p.id),p]));
+
+    let done=0;
+    for(const u of updates){
+      const p=byId.get(u.id);
+      if(!p) throw new Error(`Product ID ${u.id} not found`);
+
+      const body={
+        brand:p.brand,
+        name:p.name,
+        category:p.category,
+        flavor:p.flavor,
+        size:p.size,
+        mrp:p.mrp,
+        price:p.price,
+        stock:Number(p.stock||0)+u.qty,
+        image:p.image,
+        description:p.description,
+        active:p.active
+      };
+
+      const rr=await fetch('/api/admin/products/'+encodeURIComponent(u.id),{
+        method:'PATCH',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(body)
+      });
+
+      const x=await rr.json().catch(()=>({}));
+      if(!rr.ok || !x.success){
+        throw new Error(x.message || `Failed for product ${u.id}`);
+      }
+      done++;
+    }
+
+    msg.textContent=`✅ Successfully added stock to ${done} product(s).`;
+    if(typeof loadProducts==='function') await loadProducts();
+    else if(typeof loadProductsAdmin==='function') await loadProductsAdmin();
+
+  } catch(e) {
+    msg.textContent='❌ '+e.message;
   }
 }
-
-async function deleteProduct(id){if(!confirm('Delete this product? Existing orders are not deleted.'))return;try{await api('/api/admin/products/'+id,{method:'DELETE'});toast('Product deleted');loadProducts()}catch(e){alert(e.message)}}
-init();
-</script></body></html>
+</script>
+</body></html>
