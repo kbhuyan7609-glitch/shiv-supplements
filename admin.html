@@ -31,4 +31,56 @@ function editProduct(id){const p=products.find(x=>x.id===id);if(!p)return;editin
 async function saveProduct(){const body={brand:$('brand').value,name:$('pname').value,category:$('category').value,flavor:$('flavor').value,size:$('size').value,stock:Number($('stock').value),mrp:Number($('mrp').value),price:Number($('price').value),image:$('image').value,description:$('desc').value};try{if(editingId)await api('/api/admin/products/'+editingId,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});else await api('/api/admin/products',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});toast(editingId?'Product updated':'Product added');clearProductForm();loadProducts()}catch(e){alert(e.message)}}
 async function deleteProduct(id){if(!confirm('Delete this product? Existing orders are not deleted.'))return;try{await api('/api/admin/products/'+id,{method:'DELETE'});toast('Product deleted');loadProducts()}catch(e){alert(e.message)}}
 init();
-</script></body></html>
+</script>
+<section class="card" id="bulkStock" style="margin:18px 0">
+  <h2>📦 Bulk Add Stock</h2>
+  <p style="color:#666">Upload a CSV containing <b>Product ID, Quantity to Add</b>.</p>
+  <input id="bulkStockFile" type="file" accept=".csv,text/csv">
+  <button type="button" onclick="addBulkStock()" style="margin-top:10px">➕ Add Stock</button>
+  <div id="bulkStockMsg" style="margin-top:10px"></div>
+  <small>Example CSV: <code>1,50</code> = add 50 units to product ID 1.</small>
+</section>
+
+<script>
+async function addBulkStock(){
+  const file=document.getElementById('bulkStockFile').files[0];
+  const msg=document.getElementById('bulkStockMsg');
+  if(!file){msg.textContent='Please choose a CSV file.';return;}
+  const rows=(await file.text()).split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  const updates=[];
+  for(let i=0;i<rows.length;i++){
+    const p=rows[i].split(',').map(x=>x.trim());
+    if(i===0 && /product\s*id/i.test(p[0]||'')) continue;
+    const id=Number(p[0]), qty=Number(p[1]);
+    if(!Number.isInteger(id)||!Number.isInteger(qty)||qty<=0){
+      msg.textContent='❌ Invalid row '+(i+1)+': '+rows[i];return;
+    }
+    updates.push({id,qty});
+  }
+  if(!updates.length){msg.textContent='❌ No valid stock rows found.';return;}
+  try{
+    const r=await fetch('/api/admin/products');
+    const d=await r.json();
+    if(!d.success) throw new Error(d.message||'Could not load products');
+    const byId=new Map(d.products.map(p=>[Number(p.id),p]));
+    let done=0;
+    for(const u of updates){
+      const p=byId.get(u.id);
+      if(!p) throw new Error('Product ID '+u.id+' not found');
+      const body={brand:p.brand,name:p.name,category:p.category,flavor:p.flavor,size:p.size,
+        mrp:p.mrp,price:p.price,stock:Number(p.stock)+u.qty,image:p.image,
+        description:p.description,active:p.active};
+      const rr=await fetch('/api/admin/products/'+u.id,{
+        method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)
+      });
+      const x=await rr.json();
+      if(!rr.ok||!x.success) throw new Error(x.message||('Failed for product '+u.id));
+      done++;
+    }
+    msg.textContent='✅ Added stock to '+done+' product(s).';
+    if(typeof loadProducts==='function') await loadProducts();
+    else if(typeof loadProductsAdmin==='function') await loadProductsAdmin();
+  }catch(e){msg.textContent='❌ '+e.message;}
+}
+</script>
+</body></html>
