@@ -977,8 +977,9 @@ function renderCustomerOrder(order){
   if(!Number.isFinite(amount)&&Number.isFinite(paise))amount=paise/100;
   if(!Number.isFinite(amount))amount=0;
   const method=order.payment_method||"UPI";
+  const ref=order.payment_ref||"";
   const itemHTML=items.length?items.map(item=>{const name=item.name||item.product_name||"Product";const qty=Number(item.qty||item.quantity||1);const price=Number(item.price||0);return '<div class="orderItem"><span>'+esc(name)+' × '+qty+'</span><span>'+money(price*qty)+'</span></div>';}).join(""): '<div class="orderItem"><span>Order items</span><span>—</span></div>';
-  return '<div class="orderCard"><div class="orderCardTop"><div><div class="orderId">Order #'+esc(orderId)+'</div><div class="orderDate">'+formatOrderDate(order.created_at)+'</div></div><span class="orderStatus '+orderStatusClass(status)+'">'+esc(orderStatusText(status))+'</span></div><div class="orderItems">'+itemHTML+'</div><div class="orderTotal">Total: '+money(amount)+'</div><div class="orderPayment">💳 Payment: '+esc(method)+'<br>⏳ Payment verification: <b>Pending</b></div></div>';
+  return '<div class="orderCard"><div class="orderCardTop"><div><div class="orderId">Order #'+esc(orderId)+'</div><div class="orderDate">'+formatOrderDate(order.created_at)+'</div></div><span class="orderStatus '+orderStatusClass(status)+'">'+esc(orderStatusText(status))+'</span></div><div class="orderItems">'+itemHTML+'</div><div class="orderTotal">Total: '+money(amount)+'</div><div class="orderPayment">💳 Payment: '+esc(method)+'<br>'+ '🔒 Direct UPI payment — awaiting admin verification' +'</div></div>';
 }
 
 function orderStatusClass(status){
@@ -1112,8 +1113,8 @@ Create Order & Pay by UPI
 </button>
 
 <p style="color:#99a3b3;font-size:12px">
-After creating the order, scan the QR code and pay the exact amount.
-After payment, your order will remain pending until verified.
+After creating the order, pay the exact amount directly using PhonePe or any UPI app.
+Then tap “I Have Completed Payment”.
 </p>
 
 `;
@@ -1291,175 +1292,64 @@ alert(
 
 
 /* =====================================================
-   UPI PAYMENT SCREEN
+   UPI PAYMENT SCREEN — DIRECT PAYMENT
 ===================================================== */
 
 function showUPIPayment(order){
 
 const amount = Number(order?.amount || 0);
+const safeOrderId = Number(order?.id || order?.localOrderId || 0);
+currentUPIOrderId = Number.isInteger(safeOrderId) && safeOrderId > 0 ? safeOrderId : null;
 
-// Accept either field returned by different server versions.
-const safeOrderId = Number(
-  order?.id ||
-  order?.localOrderId ||
-  0
-);
-
-currentUPIOrderId =
-  Number.isInteger(safeOrderId) && safeOrderId > 0
-    ? safeOrderId
-    : null;
-
-document
-.getElementById("checkoutArea")
-.innerHTML = `
-
+document.getElementById("checkoutArea").innerHTML = `
 <div class="upiBox">
-
-<div class="upiTitle">
-📱 Pay Using UPI
-</div>
-
-<div class="upiText">
-Scan the QR code using PhonePe, Google Pay, Paytm or any UPI app.
-<br><br>
-Pay the exact amount:
-</div>
-
-<div class="total">
-${money(amount)}
-</div>
-
-<img
-class="qr"
-src="${QR_IMAGE}"
-alt="Shiv Supplements UPI QR Code"
-onerror="this.style.display='none';document.getElementById('qrError').style.display='block';">
-
-<div
-id="qrError"
-style="display:none;color:#ff9b9b;margin:10px 0">
-
-QR image <b>qr.png</b> was not found.
-Please upload qr.png to the same folder as index.html.
-
-</div>
-
-<div class="upiText">
-UPI ID
-</div>
-
-<div class="upiId">
-${esc(UPI_ID)}
-</div>
-
-<br>
-
-<button
-class="copyBtn"
-onclick="copyUPI()">
-📋 Copy UPI ID
-</button>
-
-<button
-class="primary"
-style="width:100%;margin-top:10px;background:#6d3bd1;color:#fff;border-color:#6d3bd1"
-onclick="payDirectlyWithPhonePe(${amount})">
-💜 Pay Directly with PhonePe
-</button>
-
-<p style="color:#99a3b3;font-size:11px;margin-top:8px">
-On Android, this opens PhonePe with the amount and UPI ID filled in.
-</p>
-
-<div class="orderNumber">
-
-<b>Order ID</b>
-
-<br>
-
-<span style="font-size:24px;color:#ffd45c">
-${currentUPIOrderId ? "#" + currentUPIOrderId : "Creating..."}
-</span>
-
-</div>
-
-<div class="successBox" style="margin-top:18px">
-  <div style="font-size:42px">💳</div>
-  <h3 style="margin:8px 0">Payment Verification</h3>
-  <p style="color:#99a3b3;font-size:13px">
-    Complete the payment in PhonePe/your UPI app using the button above.
-    Your order will stay <b>Payment Pending</b> until the store admin verifies the payment.
-  </p>
-  <button class="primary" style="width:100%;margin-top:8px" onclick="finishOrder()">
-    ✅ I Have Completed Payment
-  </button>
-</div>
-
-</div>
-
-`;
-
+  <div class="upiTitle">📱 Pay Directly with UPI</div>
+  <div class="upiText">Pay the exact amount using PhonePe, Google Pay, Paytm or another UPI app.</div>
+  <div class="total">${money(amount)}</div>
+  <div class="upiText">UPI ID</div>
+  <div class="upiId">${esc(UPI_ID)}</div>
+  <button class="copyBtn" onclick="copyUPI()">📋 Copy UPI ID</button>
+  <button class="primary" style="width:100%;margin-top:10px;background:#6d3bd1;color:#fff;border-color:#6d3bd1" onclick="payDirectlyWithPhonePe(${amount})">💜 Pay Directly with PhonePe</button>
+  <p style="color:#99a3b3;font-size:11px;margin-top:8px">On Android, this opens the installed UPI app with the amount and UPI ID filled in.</p>
+  <div class="orderNumber"><b>Order ID</b><br><span style="font-size:24px;color:#ffd45c">${currentUPIOrderId ? "#" + currentUPIOrderId : "—"}</span></div>
+  <button id="paymentDoneButton" class="primary" style="width:100%;margin-top:14px" onclick="markPaymentDone(currentUPIOrderId)">✅ I Have Completed Payment</button>
+  <p style="color:#99a3b3;font-size:12px;margin-top:12px">Your order will stay <b>Payment Pending</b> until the store admin confirms the payment.</p>
+</div>`;
 }
 
-
-/* =====================================================
-   COPY UPI
-===================================================== */
-
-/* =====================================================
-   COPY UPI
-===================================================== */
-
-function payDirectlyWithPhonePe(amount){
-
-const value = Number(amount || 0);
-if(!Number.isFinite(value) || value <= 0){
-  alert("Invalid payment amount.");
-  return;
+function payDirectlyWithPhonePe(value){
+  const amount = Number(value || 0);
+  if(!amount || amount <= 0){ alert("Invalid payment amount."); return; }
+  const transactionNote = currentUPIOrderId ? `Shiv Supplements Order #${currentUPIOrderId}` : "Shiv Supplements Order";
+  const params = new URLSearchParams({pa:UPI_ID,pn:STORE_NAME,am:amount.toFixed(2),cu:"INR",tn:transactionNote});
+  window.location.href = `upi://pay?${params.toString()}`;
 }
-
-const transactionNote = currentUPIOrderId
-  ? `Shiv Supplements Order #${currentUPIOrderId}`
-  : "Shiv Supplements Order";
-
-const params = new URLSearchParams({
-  pa: UPI_ID,
-  pn: STORE_NAME,
-  am: value.toFixed(2),
-  cu: "INR",
-  tn: transactionNote
-});
-
-// Standard UPI Intent. Android will open the installed UPI app
-// (PhonePe when selected/available) with the payment pre-filled.
-window.location.href = `upi://pay?${params.toString()}`;
-
-}
-
 
 async function copyUPI(){
-
-try{
-
-await navigator.clipboard.writeText(
-UPI_ID
-);
-
-alert(
-"UPI ID copied!"
-);
-
-}catch(error){
-
-alert(
-"UPI ID: " + UPI_ID
-);
-
+  try{ await navigator.clipboard.writeText(UPI_ID); alert("UPI ID copied!"); }
+  catch(error){ alert("UPI ID: " + UPI_ID); }
 }
 
-}
+/* =====================================================
+   PAYMENT COMPLETED — NO UTR
+===================================================== */
 
+async function markPaymentDone(orderId){
+  const numericOrderId = Number(orderId || currentUPIOrderId || 0);
+  const button = document.getElementById("paymentDoneButton");
+  if(!Number.isInteger(numericOrderId) || numericOrderId <= 0){ alert("Your order number was not created. Please create the order again."); return; }
+  if(button){ button.disabled=true; button.textContent="Saving..."; }
+  try{
+    const response=await fetch("/api/manual-order",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({orderId:numericOrderId})});
+    let data={}; try{data=await response.json();}catch(e){}
+    if(!response.ok){ alert(data.message || "Could not record payment status."); if(button){button.disabled=false;button.textContent="✅ I Have Completed Payment";} return; }
+    document.getElementById("checkoutArea").innerHTML=`<div class="successBox"><div style="font-size:50px">✅</div><h2>Order Placed Successfully</h2><p style="color:#99a3b3">Order ID: <b>#${numericOrderId}</b></p><p>Your payment has been marked as <b>Pending Verification</b>.</p><p style="color:#99a3b3;font-size:13px">The store admin will confirm the UPI payment and process your order.</p><button class="primary" onclick="finishOrder()">Done</button></div>`;
+    cart=[]; save();
+  }catch(error){
+    console.error("PAYMENT STATUS ERROR:",error); alert("Unable to save payment status. Please check your internet connection and try again.");
+    if(button){button.disabled=false;button.textContent="✅ I Have Completed Payment";}
+  }
+}
 
 /* =====================================================
    FINISH ORDER
@@ -1470,7 +1360,7 @@ function finishOrder(){
 closeM("checkoutModal");
 
 alert(
-"Order placed successfully. Payment is pending verification. The store will confirm your payment."
+"Order placed successfully. Payment is pending verification."
 );
 
 }
