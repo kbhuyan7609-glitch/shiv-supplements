@@ -1362,6 +1362,17 @@ onclick="copyUPI()">
 📋 Copy UPI ID
 </button>
 
+<button
+class="primary"
+style="width:100%;margin-top:10px;background:#6d3bd1;color:#fff;border-color:#6d3bd1"
+onclick="payDirectlyWithPhonePe(${amount})">
+💜 Pay Directly with PhonePe
+</button>
+
+<p style="color:#99a3b3;font-size:11px;margin-top:8px">
+On Android, this opens PhonePe with the amount and UPI ID filled in.
+</p>
+
 <div class="orderNumber">
 
 <b>Order ID</b>
@@ -1478,6 +1489,33 @@ error.style.display = "none";
 /* =====================================================
    COPY UPI
 ===================================================== */
+
+function payDirectlyWithPhonePe(amount){
+
+const value = Number(amount || 0);
+if(!Number.isFinite(value) || value <= 0){
+  alert("Invalid payment amount.");
+  return;
+}
+
+const transactionNote = currentUPIOrderId
+  ? `Shiv Supplements Order #${currentUPIOrderId}`
+  : "Shiv Supplements Order";
+
+const params = new URLSearchParams({
+  pa: UPI_ID,
+  pn: STORE_NAME,
+  am: value.toFixed(2),
+  cu: "INR",
+  tn: transactionNote
+});
+
+// Standard UPI Intent. Android will open the installed UPI app
+// (PhonePe when selected/available) with the payment pre-filled.
+window.location.href = `upi://pay?${params.toString()}`;
+
+}
+
 
 async function copyUPI(){
 
