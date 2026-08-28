@@ -34,53 +34,154 @@ init();
 </script>
 <section class="card" id="bulkStock" style="margin:18px 0">
   <h2>📦 Bulk Add Stock</h2>
-  <p style="color:#666">Upload a CSV containing <b>Product ID, Quantity to Add</b>.</p>
-  <input id="bulkStockFile" type="file" accept=".csv,text/csv">
+  <p style="color:#666">
+    Upload an <b>Excel file (.xlsx)</b> or <b>CSV</b> with columns:
+    <b>Product ID</b> and <b>Quantity to Add</b>.
+  </p>
+  <input id="bulkStockFile" type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
   <button type="button" onclick="addBulkStock()" style="margin-top:10px">➕ Add Stock</button>
   <div id="bulkStockMsg" style="margin-top:10px"></div>
-  <small>Example CSV: <code>1,50</code> = add 50 units to product ID 1.</small>
+  <small>
+    Example: Product ID <code>1</code>, Quantity <code>50</code> → adds 50 to existing stock.
+  </small>
 </section>
 
 <script>
 async function addBulkStock(){
-  const file=document.getElementById('bulkStockFile').files[0];
-  const msg=document.getElementById('bulkStockMsg');
-  if(!file){msg.textContent='Please choose a CSV file.';return;}
-  const rows=(await file.text()).split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
-  const updates=[];
-  for(let i=0;i<rows.length;i++){
-    const p=rows[i].split(',').map(x=>x.trim());
-    if(i===0 && /product\s*id/i.test(p[0]||'')) continue;
-    const id=Number(p[0]), qty=Number(p[1]);
-    if(!Number.isInteger(id)||!Number.isInteger(qty)||qty<=0){
-      msg.textContent='❌ Invalid row '+(i+1)+': '+rows[i];return;
-    }
-    updates.push({id,qty});
+  const file = document.getElementById('bulkStockFile').files[0];
+  const msg = document.getElementById('bulkStockMsg');
+
+  if(!file){
+    msg.textContent = '❌ Please choose an Excel or CSV file.';
+    return;
   }
-  if(!updates.length){msg.textContent='❌ No valid stock rows found.';return;}
-  try{
+
+  try {
+    let rows = [];
+
+    // XLSX support: use SheetJS if it is already loaded by the admin page.
+    if(/\.xlsx$/i.test(file.name)){
+      if(typeof XLSX === 'undefined'){
+        throw new Error('Excel (.xlsx) support is not loaded. Please use CSV, or add SheetJS to the page.');
+      }
+      const buffer = await file.arrayBuffer();
+      const wb = XLSX.read(buffer, {type:'array'});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+    } else {
+      // Decode UTF-8, UTF-16 LE/BE and normal Excel CSV safely.
+      const buffer = await file.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      let text;
+
+      if(bytes[0]===0xFF && bytes[1]===0xFE){
+        text = new TextDecoder('utf-16le').decode(bytes);
+      } else if(bytes[0]===0xFE && bytes[1]===0xFF){
+        text = new TextDecoder('utf-16be').decode(bytes);
+      } else {
+        text = new TextDecoder('utf-8').decode(bytes);
+      }
+
+      // Remove BOM and parse simple CSV/TSV, including quoted fields.
+      text = text.replace(/^\uFEFF/, '');
+      const lines = text.split(/\r?\n/).filter(x => x.trim() !== '');
+
+      rows = lines.map(line => {
+        const delimiter = line.includes('\t') ? '\t' : ',';
+        const result = [];
+        let cur = '', quoted = false;
+
+        for(let i=0;i<line.length;i++){
+          const ch=line[i];
+          if(ch === '"'){
+            if(quoted && line[i+1] === '"'){ cur += '"'; i++; }
+            else quoted = !quoted;
+          } else if(ch === delimiter && !quoted){
+            result.push(cur.trim());
+            cur='';
+          } else {
+            cur += ch;
+          }
+        }
+        result.push(cur.trim());
+        return result;
+      });
+    }
+
+    // Find header row if present.
+    let headerIndex = -1;
+    for(let i=0;i<Math.min(rows.length,10);i++){
+      const a = String(rows[i][0] ?? '').toLowerCase().replace(/[^a-z0-9]/g,'');
+      const b = String(rows[i][1] ?? '').toLowerCase().replace(/[^a-z0-9]/g,'');
+      if(a.includes('productid') && (b.includes('quantity') || b.includes('stock'))){
+        headerIndex=i;
+        break;
+      }
+    }
+
+    const updates=[];
+    const firstDataRow = headerIndex >= 0 ? headerIndex+1 : 0;
+
+    for(let i=firstDataRow;i<rows.length;i++){
+      const id=Number(String(rows[i][0] ?? '').trim());
+      const qty=Number(String(rows[i][1] ?? '').trim());
+
+      if(!Number.isInteger(id) || !Number.isInteger(qty) || qty <= 0){
+        // Ignore completely empty rows.
+        if(rows[i].every(v => String(v ?? '').trim()==='')) continue;
+        throw new Error(`Invalid row ${i+1}. Use: Product ID, Quantity to Add`);
+      }
+      updates.push({id,qty});
+    }
+
+    if(!updates.length) throw new Error('No valid stock rows found.');
+
     const r=await fetch('/api/admin/products');
     const d=await r.json();
-    if(!d.success) throw new Error(d.message||'Could not load products');
-    const byId=new Map(d.products.map(p=>[Number(p.id),p]));
+    if(!r.ok || !d.success) throw new Error(d.message||'Could not load products');
+
+    const products = d.products || [];
+    const byId = new Map(products.map(p=>[Number(p.id),p]));
+
     let done=0;
     for(const u of updates){
       const p=byId.get(u.id);
-      if(!p) throw new Error('Product ID '+u.id+' not found');
-      const body={brand:p.brand,name:p.name,category:p.category,flavor:p.flavor,size:p.size,
-        mrp:p.mrp,price:p.price,stock:Number(p.stock)+u.qty,image:p.image,
-        description:p.description,active:p.active};
-      const rr=await fetch('/api/admin/products/'+u.id,{
-        method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)
+      if(!p) throw new Error(`Product ID ${u.id} not found`);
+
+      const body={
+        brand:p.brand,
+        name:p.name,
+        category:p.category,
+        flavor:p.flavor,
+        size:p.size,
+        mrp:p.mrp,
+        price:p.price,
+        stock:Number(p.stock||0)+u.qty,
+        image:p.image,
+        description:p.description,
+        active:p.active
+      };
+
+      const rr=await fetch('/api/admin/products/'+encodeURIComponent(u.id),{
+        method:'PATCH',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(body)
       });
-      const x=await rr.json();
-      if(!rr.ok||!x.success) throw new Error(x.message||('Failed for product '+u.id));
+
+      const x=await rr.json().catch(()=>({}));
+      if(!rr.ok || !x.success){
+        throw new Error(x.message || `Failed for product ${u.id}`);
+      }
       done++;
     }
-    msg.textContent='✅ Added stock to '+done+' product(s).';
+
+    msg.textContent=`✅ Successfully added stock to ${done} product(s).`;
     if(typeof loadProducts==='function') await loadProducts();
     else if(typeof loadProductsAdmin==='function') await loadProductsAdmin();
-  }catch(e){msg.textContent='❌ '+e.message;}
+
+  } catch(e) {
+    msg.textContent='❌ '+e.message;
+  }
 }
 </script>
 </body></html>
