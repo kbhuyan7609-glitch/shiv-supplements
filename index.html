@@ -38,7 +38,7 @@
 <a class="wa" href="https://wa.me/918144989064?text=Hi%20Shiv%20Supplements,%20I%20need%20help%20with%20an%20order." target="_blank">💬 WhatsApp</a>
 <div class="overlay" id="accountModal"><div class="modal"><button class="close" onclick="closeM('accountModal')">×</button><h2>Customer Account</h2><p style="color:#99a3b3;margin-top:-8px">Login or create your account.</p><div id="accountArea"></div></div></div>
 <div class="overlay" id="cartModal"><div class="modal"><button class="close" onclick="closeM('cartModal')">×</button><h2>Your Cart</h2><div id="cartArea"></div></div></div>
-<div class="overlay" id="checkoutModal"><div class="modal"><button class="close" onclick="closeM('checkoutModal')">×</button><h2>UPI Checkout</h2><div id="checkoutArea"></div></div></div>
+<div class="overlay" id="checkoutModal"><div class="modal"><button class="close" onclick="closeM('checkoutModal')">×</button><h2>Checkout</h2><div id="checkoutArea"></div></div></div>
 <script>
 /* Shiv Supplements - UPI checkout fixed version 2026-08-23 */
 
@@ -1104,16 +1104,29 @@ placeholder="Full address with PIN code">
 Payable: ${money(total())}
 </div>
 
+<div style="margin:18px 0 10px">
+  <b>Choose Payment Method</b>
+</div>
+
+<label style="display:block;padding:14px;border:1px solid #6d3bd1;border-radius:12px;margin-bottom:10px;cursor:pointer">
+  <input type="radio" name="paymentMethod" value="UPI" checked>
+  💜 <b>UPI Payment</b> — PhonePe, Google Pay, Paytm or any UPI app
+</label>
+
+<label style="display:block;padding:14px;border:1px solid #444;border-radius:12px;cursor:pointer">
+  <input type="radio" name="paymentMethod" value="COD">
+  💵 <b>Cash on Delivery</b> — Pay when your order is delivered
+</label>
 
 <button
 class="primary"
-onclick="createUPIOrder()">
-Create Order & Pay by UPI
+onclick="createOrderWithPayment()">
+Continue
 </button>
 
 <p style="color:#99a3b3;font-size:12px">
-After creating the order, scan the QR code and pay the exact amount.
-After payment, your order will remain pending until verified.
+For UPI: pay securely using PhonePe, Google Pay, Paytm or any UPI app.
+For COD: no online payment is required.
 </p>
 
 `;
@@ -1126,6 +1139,15 @@ show("checkoutModal");
 /* =====================================================
    CREATE UPI ORDER
 ===================================================== */
+
+async function createOrderWithPayment(){
+
+const selectedMethod = document.querySelector("input[name=paymentMethod]:checked")?.value || "UPI";
+
+if(selectedMethod === "COD") return createCODOrder();
+
+return createUPIOrder();
+}
 
 async function createUPIOrder(){
 
@@ -1224,7 +1246,8 @@ address:address,
 
 items:items,
 
-amount:total()
+amount:total(),
+paymentMethod:"UPI"
 
 })
 
@@ -1289,6 +1312,26 @@ alert(
 
 }
 
+
+async function createCODOrder(){
+
+const name=val("cname"), phone=val("cphone"), email=val("cemail"), address=val("caddress");
+if(!name||!phone||!email||!address){ alert("Please complete all delivery details."); return; }
+if(!/^\d{10}$/.test(phone)){ alert("Enter a valid 10-digit mobile number."); return; }
+if(!cart.length){ alert("Your cart is empty."); return; }
+
+const items=cart.map(item=>{ const product=products.find(p=>p.id===item.id); return {id:product.id,name:product.name,price:product.price,qty:item.qty}; });
+
+try{
+ const response=await fetch("/api/create-order",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name,phone,email,address,items,amount:total(),paymentMethod:"COD"})});
+ const data=await response.json();
+ if(!response.ok){ alert(data.message||data.error||"Could not create order"); return; }
+ if(!data.success||!data.order||!data.order.id){ alert("Order was not created correctly."); return; }
+ currentUPIOrderId=Number(data.order.id||0);
+ closeM("checkoutModal");
+ alert("Order placed successfully! Payment method: Cash on Delivery. Please pay when your order is delivered.");
+}catch(error){ console.error("COD ORDER ERROR:",error); alert("Unable to create order. Please try again."); }
+}
 
 /* =====================================================
    UPI PAYMENT SCREEN
