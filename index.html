@@ -107,6 +107,9 @@ async function loadProducts(){
 let cart =
 JSON.parse(localStorage.getItem("shiv_cart") || "[]");
 
+let appliedCoupon = null;
+let couponDiscount = 0;
+
 
 const money = n =>
 "₹" + Number(n).toLocaleString("en-IN");
@@ -154,6 +157,9 @@ renderCart();
 
 function add(id){
 
+appliedCoupon=null;
+couponDiscount=0;
+
 let item =
 cart.find(i=>i.id===id);
 
@@ -176,6 +182,9 @@ save();
 
 
 function change(id,d){
+
+appliedCoupon=null;
+couponDiscount=0;
 
 let item =
 cart.find(i=>i.id===id);
@@ -1100,8 +1109,20 @@ placeholder="Full address with PIN code">
 </div>
 
 
+<div style="margin:18px 0 10px">
+  <b>🎟️ Have a Coupon?</b>
+</div>
+
+<div style="display:flex;gap:8px;margin-bottom:8px">
+  <input id="couponCode" placeholder="Enter coupon code" style="flex:1;text-transform:uppercase" value="${appliedCoupon ? esc(appliedCoupon) : ""}">
+  <button type="button" class="primary" style="white-space:nowrap" onclick="applyCoupon()">Apply</button>
+</div>
+<div id="couponMessage" style="font-size:12px;color:${appliedCoupon ? '#65e6a3' : '#99a3b3'};margin-bottom:12px">${appliedCoupon ? `✅ ${esc(appliedCoupon)} applied — ${money(couponDiscount)} off` : 'Use WELCOME10 or 1STORDER10 for 10% off.'}</div>
+
 <div class="total">
-Payable: ${money(total())}
+  <div style="font-size:13px;color:#99a3b3">Subtotal: ${money(total())}</div>
+  ${couponDiscount > 0 ? `<div style="font-size:13px;color:#65e6a3;margin-top:5px">Coupon discount: -${money(couponDiscount)}</div>` : ''}
+  <div style="margin-top:5px">Payable: ${money(Math.max(0,total()-couponDiscount))}</div>
 </div>
 
 <div style="margin:18px 0 10px">
@@ -1139,6 +1160,43 @@ show("checkoutModal");
 /* =====================================================
    CREATE UPI ORDER
 ===================================================== */
+
+async function applyCoupon(){
+  const input=document.getElementById("couponCode");
+  const message=document.getElementById("couponMessage");
+  const code=String(input?.value||"").trim().toUpperCase();
+  if(!code){
+    appliedCoupon=null; couponDiscount=0;
+    if(message){message.textContent="Enter a coupon code.";message.style.color="#ff8b8b";}
+    return;
+  }
+  try{
+    const response=await fetch("/api/coupons/validate",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({code,subtotal:total()})
+    });
+    const data=await response.json();
+    if(!response.ok || !data.success){
+      appliedCoupon=null; couponDiscount=0;
+      if(message){message.textContent="❌ "+(data.message||"Invalid coupon code");message.style.color="#ff8b8b";}
+      return;
+    }
+    appliedCoupon=data.code;
+    couponDiscount=Number(data.discount||0);
+    if(message){message.textContent=`✅ ${data.code} applied — ${money(couponDiscount)} off`;message.style.color="#65e6a3";}
+    startCheckout();
+  }catch(e){
+    console.error("COUPON ERROR:",e);
+    if(message){message.textContent="❌ Could not validate coupon. Please try again.";message.style.color="#ff8b8b";}
+  }
+}
+
+function removeCoupon(){
+  appliedCoupon=null;
+  couponDiscount=0;
+  startCheckout();
+}
 
 async function createOrderWithPayment(){
 
@@ -1246,8 +1304,9 @@ address:address,
 
 items:items,
 
-amount:total(),
-paymentMethod:"UPI"
+amount:Math.max(0,total()-couponDiscount),
+paymentMethod:"UPI",
+couponCode:appliedCoupon || ""
 
 })
 
@@ -1323,7 +1382,7 @@ if(!cart.length){ alert("Your cart is empty."); return; }
 const items=cart.map(item=>{ const product=products.find(p=>p.id===item.id); return {id:product.id,name:product.name,price:product.price,qty:item.qty}; });
 
 try{
- const response=await fetch("/api/create-order",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name,phone,email,address,items,amount:total(),paymentMethod:"COD"})});
+ const response=await fetch("/api/create-order",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name,phone,email,address,items,amount:Math.max(0,total()-couponDiscount),paymentMethod:"COD",couponCode:appliedCoupon || ""})});
  const data=await response.json();
  if(!response.ok){ alert(data.message||data.error||"Could not create order"); return; }
  if(!data.success||!data.order||!data.order.id){ alert("Order was not created correctly."); return; }
