@@ -192,6 +192,8 @@ async function validateCoupon(req, code) {
 
 async function createOrder(req,body) {
   const name=String(body.name||'').trim(), phone=normalizePhone(body.phone), email=String(body.email||'').trim().toLowerCase(), address=String(body.address||'').trim();
+  const paymentMethod=String(body.paymentMethod||'UPI').trim().toUpperCase();
+  if (!['UPI','COD'].includes(paymentMethod)) throw Object.assign(new Error('Invalid payment method'),{status:400});
   if (!name || !phone || !email || !address) throw Object.assign(new Error('All delivery details are required'),{status:400});
   if (!validPhone(phone)) throw Object.assign(new Error('Enter a valid 10-digit mobile number'),{status:400});
   if (!validEmail(email)) throw Object.assign(new Error('Enter a valid email address'),{status:400});
@@ -203,9 +205,9 @@ async function createOrder(req,body) {
   const discount=Math.round(subtotal*(coupon.valid?coupon.discount:0));
   const amount=Math.max(0,subtotal-discount);
   const r=await db(`INSERT INTO orders(user_id,name,phone,email,address,items_json,amount_paise,status,payment_method,coupon_code,discount_paise,subtotal_paise)
-    VALUES($1,$2,$3,$4,$5,$6,$7,'pending','UPI',$8,$9,$10) RETURNING id`,
-    [req.session.user.id,name,phone,email,address,JSON.stringify(items),Math.round(amount*100),coupon.valid?coupon.code:null,Math.round(discount*100),Math.round(subtotal*100)]);
-  return {id:Number(r.rows[0].id),amount,currency:'INR',status:'pending',paymentMethod:'UPI',subtotal,discount,couponCode:coupon.valid?coupon.code:null};
+    VALUES($1,$2,$3,$4,$5,$6,$7,'pending',$8,$9,$10,$11) RETURNING id`,
+    [req.session.user.id,name,phone,email,address,JSON.stringify(items),Math.round(amount*100),paymentMethod,coupon.valid?coupon.code:null,Math.round(discount*100),Math.round(subtotal*100)]);
+  return {id:Number(r.rows[0].id),amount,currency:'INR',status:'pending',paymentMethod,subtotal,discount,couponCode:coupon.valid?coupon.code:null};
 }
 
 // ---------------- PAGES / STATIC ----------------
@@ -269,7 +271,7 @@ app.post('/api/coupons/validate',requireLogin,async(req,res)=>{
 });
 
 app.post('/api/create-order',requireLogin,async(req,res)=>{
-  try{ const order=await createOrder(req,req.body); res.json({success:true,message:'Order created. Pay by UPI.',order}); }
+  try{ const order=await createOrder(req,req.body); res.json({success:true,message:order.paymentMethod==='COD'?'Order placed with Cash on Delivery.':'Order created. Pay by UPI.',order}); }
   catch(e){console.error(e);res.status(e.status||500).json({success:false,message:e.message||'Could not create order'});}
 });
 
