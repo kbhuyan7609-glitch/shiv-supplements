@@ -21,7 +21,7 @@
   <div class="headerMain">
     <a class="brand" href="#"><img src="logo.png" alt="Shiv Supplements"></a>
     <div class="search"><input id="searchInput" placeholder="Search for whey protein, creatine, pre workout..." oninput="handleSearch(this.value)"><button aria-label="Search">⌕</button></div>
-    <div class="headerActions"><button class="headerAction" onclick="openAccount()">👤 ACCOUNT</button><button class="headerAction cartBtn" onclick="openCart()">🛒 CART <span class="cartBubble" id="cartCount">0</span></button></div>
+    <div class="headerActions"><button id="accountText" class="headerAction" onclick="openAccount()">👤 ACCOUNT</button><button class="headerAction cartBtn" onclick="openCart()">🛒 CART <span class="cartBubble" id="cartCount">0</span></button></div>
   </div>
   <div class="navline"><nav class="navLinks"><a class="home" href="#">HOME</a><a href="#shop" onclick="selectCategory('Whey Protein')">PROTEIN⌄</a><a href="#shop" onclick="selectCategory('Mass Gainer')">MASS GAINER⌄</a><a href="#shop" onclick="selectCategory('Pre-Workout')">PRE WORKOUT</a><a href="#shop" onclick="selectCategory('Creatine')">CREATINE</a><a href="#shop" onclick="selectCategory('Vitamins')">VITAMINS</a><a href="#shop" onclick="selectCategory('Accessories')">ACCESSORIES</a><a href="#offers">COMBOS</a><a class="offers" href="#offers">OFFERS</a></nav></div>
 </header>
@@ -34,11 +34,11 @@
 <section class="section" id="shop"><div class="sectionHead"><div><h2 id="productSectionTitle">BEST SELLING PRODUCTS</h2><p id="productSectionSubtitle" style="margin:5px 0;color:#999;font-size:11px">Loading products...</p></div><a href="#" onclick="event.preventDefault();selectBrand('ALL');selectCategory('ALL')">VIEW ALL PRODUCTS →</a></div><div class="categoryBar" id="categoryBar"></div><div class="products" id="products"></div></section>
 <div class="offerBanner" id="offers"><div class="offerItem"><div class="offerIcon">🎁</div><div><b>FIRST ORDER OFFER</b><strong>GET 10% OFF</strong><span>Use Code: WELCOME10</span></div></div><div class="offerItem"><div class="offerIcon">🥤</div><div><b>WELCOME OFFER</b><strong>10% OFF</strong><span>For your first order</span></div></div><div class="offerItem"><div class="offerIcon">⚡</div><div><b>BIG SAVINGS</b><strong>BIGGER RESULTS</strong><span>Shop premium nutrition today</span></div></div></div>
 <div class="bottomBenefits"><div class="bottomBenefit"><span class="ico">🔒</span> 100% Secure Payment</div><div class="bottomBenefit"><span class="ico">📦</span> Easy Returns • 7 Days</div><div class="bottomBenefit"><span class="ico">🛡</span> Authentic Products</div><div class="bottomBenefit"><span class="ico">♙</span> Thousands of Happy Customers</div></div>
-<footer class="footer"><div>© 2026 Shiv Supplements. All Rights Reserved.</div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center"><b>PAYMENT OPTIONS</b><span style="font-weight:900;font-size:14px;letter-spacing:.3px">◉ UPI PAYMENTS</span><span style="opacity:.45">•</span><span style="font-weight:900;font-size:14px;letter-spacing:.3px">₹ CASH ON DELIVERY</span></div><div><a href="#">About Us</a><a href="#">Contact Us</a><a href="#">Terms & Conditions</a><a href="#">Privacy Policy</a></div></footer>
+<footer class="footer"><div>© 2026 Shiv Supplements. All Rights Reserved.</div><div><b>WE ACCEPT</b>　<span style="color:#6d3bd1;font-weight:950;font-size:16px">◉ PhonePe</span></div><div><a href="#">About Us</a><a href="#">Contact Us</a><a href="#">Terms & Conditions</a><a href="#">Privacy Policy</a></div></footer>
 <a class="wa" href="https://wa.me/918144989064?text=Hi%20Shiv%20Supplements,%20I%20need%20help%20with%20an%20order." target="_blank">💬 WhatsApp</a>
 <div class="overlay" id="accountModal"><div class="modal"><button class="close" onclick="closeM('accountModal')">×</button><h2>Customer Account</h2><p style="color:#99a3b3;margin-top:-8px">Login or create your account.</p><div id="accountArea"></div></div></div>
 <div class="overlay" id="cartModal"><div class="modal"><button class="close" onclick="closeM('cartModal')">×</button><h2>Your Cart</h2><div id="cartArea"></div></div></div>
-<div class="overlay" id="checkoutModal"><div class="modal"><button class="close" onclick="closeM('checkoutModal')">×</button><h2>Checkout</h2><div id="checkoutArea"></div></div></div>
+<div class="overlay" id="checkoutModal"><div class="modal"><button class="close" onclick="closeM('checkoutModal')">×</button><h2>UPI Checkout</h2><div id="checkoutArea"></div></div></div>
 <script>
 /* Shiv Supplements - UPI checkout fixed version 2026-08-23 */
 
@@ -107,9 +107,6 @@ async function loadProducts(){
 let cart =
 JSON.parse(localStorage.getItem("shiv_cart") || "[]");
 
-let appliedCoupon = null;
-let couponDiscount = 0;
-
 
 const money = n =>
 "₹" + Number(n).toLocaleString("en-IN");
@@ -157,9 +154,6 @@ renderCart();
 
 function add(id){
 
-appliedCoupon=null;
-couponDiscount=0;
-
 let item =
 cart.find(i=>i.id===id);
 
@@ -182,9 +176,6 @@ save();
 
 
 function change(id,d){
-
-appliedCoupon=null;
-couponDiscount=0;
 
 let item =
 cart.find(i=>i.id===id);
@@ -687,6 +678,10 @@ if(!data.success){
   return;
 }
 
+document
+.getElementById("accountText")
+.textContent="Account";
+
 closeM("accountModal");
 
 alert("Login successful!");
@@ -908,6 +903,10 @@ return;
 }
 
 
+document
+.getElementById("accountText")
+.textContent="Account";
+
 
 alert(
 "Account created successfully!"
@@ -950,6 +949,10 @@ console.error(error);
 
 }
 
+document
+.getElementById("accountText")
+.textContent="Login";
+
 renderAccount();
 
 }
@@ -986,8 +989,9 @@ function renderCustomerOrder(order){
   if(!Number.isFinite(amount)&&Number.isFinite(paise))amount=paise/100;
   if(!Number.isFinite(amount))amount=0;
   const method=order.payment_method||"UPI";
+  const ref=order.payment_ref||"";
   const itemHTML=items.length?items.map(item=>{const name=item.name||item.product_name||"Product";const qty=Number(item.qty||item.quantity||1);const price=Number(item.price||0);return '<div class="orderItem"><span>'+esc(name)+' × '+qty+'</span><span>'+money(price*qty)+'</span></div>';}).join(""): '<div class="orderItem"><span>Order items</span><span>—</span></div>';
-  return '<div class="orderCard"><div class="orderCardTop"><div><div class="orderId">Order #'+esc(orderId)+'</div><div class="orderDate">'+formatOrderDate(order.created_at)+'</div></div><span class="orderStatus '+orderStatusClass(status)+'">'+esc(orderStatusText(status))+'</span></div><div class="orderItems">'+itemHTML+'</div><div class="orderTotal">Total: '+money(amount)+'</div><div class="orderPayment">💳 Payment: '+esc(method)+'<br>⏳ Payment verification: <b>Pending</b></div></div>';
+  return '<div class="orderCard"><div class="orderCardTop"><div><div class="orderId">Order #'+esc(orderId)+'</div><div class="orderDate">'+formatOrderDate(order.created_at)+'</div></div><span class="orderStatus '+orderStatusClass(status)+'">'+esc(orderStatusText(status))+'</span></div><div class="orderItems">'+itemHTML+'</div><div class="orderTotal">Total: '+money(amount)+'</div><div class="orderPayment">💳 Payment: '+esc(method)+'<br>'+(ref?'🔢 UTR: <b>'+esc(ref)+'</b>':'🔢 UTR: Not submitted yet')+'</div></div>';
 }
 
 function orderStatusClass(status){
@@ -1109,45 +1113,20 @@ placeholder="Full address with PIN code">
 </div>
 
 
-<div style="margin:18px 0 10px">
-  <b>🎟️ Have a Coupon?</b>
-</div>
-
-<div style="display:flex;gap:8px;margin-bottom:8px">
-  <input id="couponCode" placeholder="Enter coupon code" style="flex:1;text-transform:uppercase" value="${appliedCoupon ? esc(appliedCoupon) : ""}">
-  <button type="button" class="primary" style="white-space:nowrap" onclick="applyCoupon()">Apply</button>
-</div>
-<div id="couponMessage" style="font-size:12px;color:${appliedCoupon ? '#65e6a3' : '#99a3b3'};margin-bottom:12px">${appliedCoupon ? `✅ ${esc(appliedCoupon)} applied — ${money(couponDiscount)} off` : 'Use WELCOME10 or 1STORDER10 for 10% off.'}</div>
-
 <div class="total">
-  <div style="font-size:13px;color:#99a3b3">Subtotal: ${money(total())}</div>
-  ${couponDiscount > 0 ? `<div style="font-size:13px;color:#65e6a3;margin-top:5px">Coupon discount: -${money(couponDiscount)}</div>` : ''}
-  <div style="margin-top:5px">Payable: ${money(Math.max(0,total()-couponDiscount))}</div>
+Payable: ${money(total())}
 </div>
 
-<div style="margin:18px 0 10px">
-  <b>Choose Payment Method</b>
-</div>
-
-<label style="display:block;padding:14px;border:1px solid #6d3bd1;border-radius:12px;margin-bottom:10px;cursor:pointer">
-  <input type="radio" name="paymentMethod" value="UPI" checked>
-  💜 <b>UPI Payment</b> — PhonePe, Google Pay, Paytm or any UPI app
-</label>
-
-<label style="display:block;padding:14px;border:1px solid #444;border-radius:12px;cursor:pointer">
-  <input type="radio" name="paymentMethod" value="COD">
-  💵 <b>Cash on Delivery</b> — Pay when your order is delivered
-</label>
 
 <button
 class="primary"
-onclick="createOrderWithPayment()">
-Continue
+onclick="createUPIOrder()">
+Create Order & Pay by UPI
 </button>
 
 <p style="color:#99a3b3;font-size:12px">
-For UPI: pay securely using PhonePe, Google Pay, Paytm or any UPI app.
-For COD: no online payment is required.
+After creating the order, scan the QR code and pay the exact amount.
+Then enter your UTR/reference number.
 </p>
 
 `;
@@ -1160,52 +1139,6 @@ show("checkoutModal");
 /* =====================================================
    CREATE UPI ORDER
 ===================================================== */
-
-async function applyCoupon(){
-  const input=document.getElementById("couponCode");
-  const message=document.getElementById("couponMessage");
-  const code=String(input?.value||"").trim().toUpperCase();
-  if(!code){
-    appliedCoupon=null; couponDiscount=0;
-    if(message){message.textContent="Enter a coupon code.";message.style.color="#ff8b8b";}
-    return;
-  }
-  try{
-    const response=await fetch("/api/coupons/validate",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({code,subtotal:total()})
-    });
-    const data=await response.json();
-    if(!response.ok || !data.success){
-      appliedCoupon=null; couponDiscount=0;
-      if(message){message.textContent="❌ "+(data.message||"Invalid coupon code");message.style.color="#ff8b8b";}
-      return;
-    }
-    appliedCoupon=data.code;
-    couponDiscount=Number(data.discount||0);
-    if(message){message.textContent=`✅ ${data.code} applied — ${money(couponDiscount)} off`;message.style.color="#65e6a3";}
-    startCheckout();
-  }catch(e){
-    console.error("COUPON ERROR:",e);
-    if(message){message.textContent="❌ Could not validate coupon. Please try again.";message.style.color="#ff8b8b";}
-  }
-}
-
-function removeCoupon(){
-  appliedCoupon=null;
-  couponDiscount=0;
-  startCheckout();
-}
-
-async function createOrderWithPayment(){
-
-const selectedMethod = document.querySelector("input[name=paymentMethod]:checked")?.value || "UPI";
-
-if(selectedMethod === "COD") return createCODOrder();
-
-return createUPIOrder();
-}
 
 async function createUPIOrder(){
 
@@ -1304,9 +1237,7 @@ address:address,
 
 items:items,
 
-amount:Math.max(0,total()-couponDiscount),
-paymentMethod:"UPI",
-couponCode:appliedCoupon || ""
+amount:total()
 
 })
 
@@ -1371,26 +1302,6 @@ alert(
 
 }
 
-
-async function createCODOrder(){
-
-const name=val("cname"), phone=val("cphone"), email=val("cemail"), address=val("caddress");
-if(!name||!phone||!email||!address){ alert("Please complete all delivery details."); return; }
-if(!/^\d{10}$/.test(phone)){ alert("Enter a valid 10-digit mobile number."); return; }
-if(!cart.length){ alert("Your cart is empty."); return; }
-
-const items=cart.map(item=>{ const product=products.find(p=>p.id===item.id); return {id:product.id,name:product.name,price:product.price,qty:item.qty}; });
-
-try{
- const response=await fetch("/api/create-order",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name,phone,email,address,items,amount:Math.max(0,total()-couponDiscount),paymentMethod:"COD",couponCode:appliedCoupon || ""})});
- const data=await response.json();
- if(!response.ok){ alert(data.message||data.error||"Could not create order"); return; }
- if(!data.success||!data.order||!data.order.id){ alert("Order was not created correctly."); return; }
- currentUPIOrderId=Number(data.order.id||0);
- closeM("checkoutModal");
- alert("Order placed successfully! Payment method: Cash on Delivery. Please pay when your order is delivered.");
-}catch(error){ console.error("COD ORDER ERROR:",error); alert("Unable to create order. Please try again."); }
-}
 
 /* =====================================================
    UPI PAYMENT SCREEN
@@ -1463,17 +1374,6 @@ onclick="copyUPI()">
 📋 Copy UPI ID
 </button>
 
-<button
-class="primary"
-style="width:100%;margin-top:10px;background:#6d3bd1;color:#fff;border-color:#6d3bd1"
-onclick="payDirectlyWithPhonePe(${amount})">
-💜 Pay Directly with PhonePe
-</button>
-
-<p style="color:#99a3b3;font-size:11px;margin-top:8px">
-On Android, this opens PhonePe with the amount and UPI ID filled in.
-</p>
-
 <div class="orderNumber">
 
 <b>Order ID</b>
@@ -1486,59 +1386,110 @@ ${currentUPIOrderId ? "#" + currentUPIOrderId : "Creating..."}
 
 </div>
 
-<div class="successBox" style="margin-top:18px">
-  <div style="font-size:42px">💳</div>
-  <h3 style="margin:8px 0">Payment Verification</h3>
-  <p style="color:#99a3b3;font-size:13px">
-    Complete the payment in PhonePe/your UPI app using the button above.
-    Your order will stay <b>Payment Pending</b> until the store admin verifies the payment.
-  </p>
-  <button class="primary" style="width:100%;margin-top:8px" onclick="finishOrder()">
-    ✅ I Have Completed Payment
-  </button>
+<p class="upiText">
+After successful payment, enter the UTR / transaction reference number below.
+</p>
+
+<div class="field">
+
+<label>
+UTR / Transaction Reference Number *
+</label>
+
+<input
+id="utrInput"
+type="text"
+maxlength="100"
+autocomplete="off"
+placeholder="Enter UTR / transaction ID"
+oninput="updateUTRButton()">
+
 </div>
+
+<div
+id="utrError"
+style="display:none;color:#ff9b9b;font-size:13px;margin:8px 0">
+</div>
+
+<button
+id="submitUTRButton"
+class="primary"
+style="width:100%"
+onclick="submitUTR(currentUPIOrderId)"
+disabled>
+
+Submit Payment Details
+
+</button>
+
+<p
+style="color:#99a3b3;font-size:12px;margin-top:15px">
+
+Your order will remain
+<b>Payment Pending</b>
+until the store admin verifies your payment.
+
+</p>
 
 </div>
 
 `;
 
+setTimeout(()=>{
+  const input = document.getElementById("utrInput");
+  if(input) input.focus();
+}, 100);
+
+}
+
+
+/* =====================================================
+   UTR BUTTON STATE
+===================================================== */
+
+function updateUTRButton(){
+
+const input =
+document.getElementById("utrInput");
+
+const button =
+document.getElementById("submitUTRButton");
+
+const error =
+document.getElementById("utrError");
+
+if(!input || !button) return;
+
+const utr =
+input.value.trim();
+
+button.disabled =
+  utr.length < 6 ||
+  !currentUPIOrderId;
+
+if(error){
+
+if(utr.length > 0 && utr.length < 6){
+
+error.textContent =
+"Please enter at least 6 characters of your UTR.";
+
+error.style.display = "block";
+
+}else{
+
+error.style.display = "none";
+
+}
+
+}
+
 }
 
 
 /* =====================================================
    COPY UPI
 ===================================================== */
-
-/* =====================================================
-   COPY UPI
-===================================================== */
-
-function payDirectlyWithPhonePe(amount){
-
-const value = Number(amount || 0);
-if(!Number.isFinite(value) || value <= 0){
-  alert("Invalid payment amount.");
-  return;
-}
-
-const transactionNote = currentUPIOrderId
-  ? `Shiv Supplements Order #${currentUPIOrderId}`
-  : "Shiv Supplements Order";
-
-const params = new URLSearchParams({
-  pa: UPI_ID,
-  pn: STORE_NAME,
-  am: value.toFixed(2),
-  cu: "INR",
-  tn: transactionNote
-});
-
-// Standard UPI Intent. Android will open the installed UPI app
-// (PhonePe when selected/available) with the payment pre-filled.
-window.location.href = `upi://pay?${params.toString()}`;
-
-}
-
 
 async function copyUPI(){
 
@@ -1564,6 +1515,204 @@ alert(
 
 
 /* =====================================================
+   SUBMIT UTR
+===================================================== */
+
+async function submitUTR(orderId){
+
+const numericOrderId =
+  Number(orderId || currentUPIOrderId || 0);
+
+const utr =
+  val("utrInput");
+
+const errorBox =
+  document.getElementById("utrError");
+
+const button =
+  document.getElementById("submitUTRButton");
+
+function showUTRError(message){
+
+  if(errorBox){
+    errorBox.textContent = message;
+    errorBox.style.display = "block";
+  }else{
+    alert(message);
+  }
+
+}
+
+if(
+  !Number.isInteger(numericOrderId) ||
+  numericOrderId <= 0
+){
+
+showUTRError(
+  "Your order number was not created. Please go back and create the order again."
+);
+
+return;
+
+}
+
+if(!utr){
+
+showUTRError(
+  "Please enter your UTR / transaction reference number."
+);
+
+return;
+
+}
+
+if(utr.length < 6){
+
+showUTRError(
+  "Please enter a valid UTR / transaction reference number."
+);
+
+return;
+
+}
+
+if(button){
+  button.disabled = true;
+  button.textContent = "Submitting...";
+}
+
+try{
+
+const response =
+await fetch(
+"/api/manual-order",
+{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+credentials:"same-origin",
+
+body:JSON.stringify({
+
+localOrderId:numericOrderId,
+
+// Send aliases too so this works with the current
+// and earlier manual-order server implementations.
+orderId:numericOrderId,
+
+id:numericOrderId,
+
+utr:utr
+
+})
+
+});
+
+let data = {};
+
+try{
+  data = await response.json();
+}catch(e){
+  data = {};
+}
+
+if(!response.ok){
+
+showUTRError(
+  data.message ||
+  data.error ||
+  "Could not submit payment details. Please try again."
+);
+
+if(button){
+  button.disabled = false;
+  button.textContent = "Submit Payment Details";
+}
+
+return;
+
+}
+
+document
+.getElementById("checkoutArea")
+.innerHTML = `
+
+<div class="successBox">
+
+<div style="font-size:50px">
+✅
+</div>
+
+<h2>
+Payment Details Submitted
+</h2>
+
+<p style="color:#99a3b3">
+
+Order ID:
+<b>#${numericOrderId}</b>
+
+<br><br>
+
+UTR:
+<b>${esc(utr)}</b>
+
+</p>
+
+<p>
+Your payment is now
+<b>Pending Verification</b>.
+</p>
+
+<p style="color:#99a3b3;font-size:13px">
+
+The store admin will verify your UPI payment
+and update the order status.
+
+</p>
+
+<button
+class="primary"
+onclick="finishOrder()">
+Done
+</button>
+
+</div>
+
+`;
+
+currentUPIOrderId =
+  numericOrderId;
+
+cart = [];
+save();
+
+}catch(error){
+
+console.error(
+"UTR ERROR:",
+error
+);
+
+showUTRError(
+"Unable to submit UTR. Please check your internet connection and try again."
+);
+
+if(button){
+  button.disabled = false;
+  button.textContent = "Submit Payment Details";
+}
+
+}
+
+}
+
+
+/* =====================================================
    FINISH ORDER
 ===================================================== */
 
@@ -1572,7 +1721,7 @@ function finishOrder(){
 closeM("checkoutModal");
 
 alert(
-"Order placed successfully. Payment is pending verification. The store will confirm your payment."
+"Order placed successfully. Payment is pending verification."
 );
 
 }
@@ -1679,6 +1828,10 @@ loadProducts();
 me().then(user=>{
 
 if(user){
+
+document
+.getElementById("accountText")
+.textContent="Account";
 
 }
 
